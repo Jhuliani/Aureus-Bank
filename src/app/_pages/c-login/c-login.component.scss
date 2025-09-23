@@ -1,0 +1,235 @@
+.main-login {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f8f9fa;
+}
+
+/* LADO ESQUERDO */
+.esquerda-login {
+    width: 50vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding: 100px;
+    background: linear-gradient(135deg, #00235D 0%, #1e4a8c 100%);
+    color: #ffffff;
+
+    h1 {
+        font-size: 50pt;
+        text-align: left;
+        line-height: 1.3;
+        margin-bottom: 20px;
+        font-weight: 700;
+    }
+
+    h2 {
+        font-size: 16pt;
+        font-weight: 300;
+        text-align: left;
+        line-height: 1.3;
+        opacity: 0.9;
+    }
+}
+
+/* LADO DIREITO*/
+.direita-login {
+    width: 50vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #ffffff;
+    padding: 40px;
+
+    .title {
+        color: #00235D;
+        font-size: 24pt;
+        text-align: center;
+        line-height: 1.3;
+        margin-bottom: 40px;
+        font-weight: 700;
+    }
+}
+
+/* Card do login */
+.card-login {
+    width: 100%;
+    max-width: 400px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+    
+}
+
+.campo-email, .campo-senha {
+    width: 500px;
+    margin-bottom: 1.5rem;
+ 
+
+    label {
+        display: block;
+        font-weight: 600;
+        color: #334155;
+        font-size: 0.95rem;
+        margin-bottom: 0.4rem;
+    }
+
+    input {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        box-sizing: border-box;
+
+        &:focus {
+            outline: none;
+            border-color: #00235D;
+            box-shadow: 0 0 0 3px rgba(0, 35, 93, 0.2);
+        }
+    }
+
+    ::placeholder {
+        color: #94a3b8;
+        font-size: 0.95rem;
+    }
+}
+
+/* Estilização para os componentes p-password */
+::ng-deep .p-password {
+    width: 500px;
+
+    input {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+
+        &:focus {
+            outline: none;
+            border-color: #00235D;
+            box-shadow: 0 0 0 3px rgba(0, 35, 93, 0.2);
+        }
+    }
+
+    .p-icon-wrapper {
+        right: 1rem;
+        color: #64748b;
+    }
+}
+
+.inferior-login {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .btn-login {
+        width: 100%;
+        padding: 16px 0px;
+        border: none;
+        border-radius: 8px;
+        outline: none;
+        text-transform: uppercase;
+        font-weight: 800;
+        letter-spacing: 2px;
+        color: #ffffff;
+        background: #FD7A1D;
+        cursor: pointer;
+        box-shadow: 0px 5px 15px rgba(253, 122, 29, 0.3);
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+        font-size: 1rem;
+
+        &:hover {
+            background: #ff8c3a;
+            transform: translateY(-2px);
+            box-shadow: 0px 8px 20px rgba(253, 122, 29, 0.4);
+        }
+    }
+
+    a {
+        color: #00235D;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s ease;
+
+        &:hover {
+            color: #1e4a8c;
+            text-decoration: underline;
+        }
+    }
+}
+
+/* Responsividade */
+@media (max-width: 992px) {
+    .main-login {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .esquerda-login, .direita-login {
+        width: 100%;
+        height: auto;
+        padding: 2rem 1.5rem;
+    }
+
+    .esquerda-login {
+        text-align: center;
+        
+        h1, h2 {
+            text-align: center;
+        }
+    }
+
+    .card-login, .inferior-login {
+        width: 90%;
+    }
+}
+
+@media (max-width: 576px) {
+    .esquerda-login {
+        h1 {
+            font-size: 36pt;
+        }
+        
+        h2 {
+            font-size: 14pt;
+        }
+    }
+
+    .direita-login .title {
+        font-size: 20pt;
+    }
+}
+
+/* Animações suaves */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.card-login {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.campo-email, .campo-senha {
+    animation: fadeIn 0.5s ease-out;
+    animation-fill-mode: both;
+}
+
+.campo-email { animation-delay: 0.1s; }
+.campo-senha { animation-delay: 0.2s; }
+.inferior-login { animation: fadeIn 0.5s ease-out; animation-delay: 0.3s; animation-fill-mode: both; }

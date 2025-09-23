@@ -1,0 +1,35 @@
+.main-painel{
+    display: flex;
+    height: 100vh;
+
+}
+
+.esquerda-painel{
+    background-color: #00235D;
+    flex: 0 0 250px;
+    padding: 50px 100px 70px 120px;
+}
+
+
+.direita-painel{
+    background-color: #00235D;
+    flex: 1;
+    padding: 25px;
+}
+.painel{
+    background-color: rgb(255, 255, 255);
+    height: 100%;
+    width: 100%;
+    padding: 25px;
+    border-radius: 25px;
+
+}
+
+.sidebar > p {
+    color: rgb(255, 255, 255);
+}
+
+table{
+    box-shadow: none;
+    width: 100%;
+}

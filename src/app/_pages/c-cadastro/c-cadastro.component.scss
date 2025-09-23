@@ -1,0 +1,214 @@
+.main-cadastro {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+}
+
+/*Divisão das telas*/
+header {
+    color: #ffffff;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+header h2 {
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    font-weight: 300;
+}
+
+.esquerda-cadastro, .direita-cadastro {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 2rem;
+    position: relative;
+}
+
+.direita-cadastro {
+    background:#ffffff;
+    text-align: center;
+    justify-content: center;
+}
+
+.direita-cadastro h3 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    color: #00235D;
+    position: relative;
+}
+
+
+.esquerda-cadastro {
+    background: linear-gradient(135deg, #00235D 0%, #1e4a8c 100%);
+    overflow-y: auto;
+}
+
+/* forms */
+.cadastro {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    flex-direction: column;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    background-color: #ffffff;
+    transition: all 0.3s ease;
+}
+
+.cadastro:hover {
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px);
+}
+
+.form-group {
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #334155;
+    font-size: 0.95rem;
+    margin-bottom: 0.4rem;
+}
+
+.in-cadastro {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.in-cadastro:focus {
+    outline: none;
+    border-color: #00235D;
+    box-shadow: 0 0 0 3px rgba(0, 35, 93, 0.2);
+}
+
+::placeholder {
+    color: #94a3b8;
+    font-size: 0.95rem;
+}
+
+/* Estilização para os componentes p-password */
+::ng-deep .p-password {
+    display: block;
+    width: 100%;
+}
+
+::ng-deep .p-password input {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+::ng-deep .p-password input:focus {
+    outline: none;
+    border-color: #00235D;
+    box-shadow: 0 0 0 3px rgba(0, 35, 93, 0.2);
+}
+
+::ng-deep .p-password .p-icon-wrapper {
+    right: 1rem; /*distanca da borda direita*/
+    color: #64748b;
+}
+
+/* botão */
+::ng-deep .btn-cadastrar .p-button {
+    width: 100%;
+    padding: 0.875rem;
+    background: #ff7300;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin-top: 0.5rem;
+}
+
+::ng-deep .btn-cadastrar .p-button:hover {
+    background: #c65900;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 35, 93, 0.3);
+}
+
+::ng-deep .btn-cadastrar .p-button:active {
+    transform: translateY(0);
+}
+
+/* Responsividade */
+@media (max-width: 992px) {
+    .main-cadastro {
+        flex-direction: column;
+    }
+    
+    .direita-cadastro {
+        border-left: none;
+        border-top: 1px solid #e2e8f0;
+        padding: 2rem 1.5rem;
+    }
+    
+    .esquerda-cadastro {
+        padding: 2rem 1.5rem;
+    }
+    
+    .cadastro {
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .cadastro {
+        padding: 1.5rem;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    header h2 {
+        font-size: 1.8rem;
+    }
+    
+    .direita-cadastro h3 {
+        font-size: 2rem;
+    }
+}
+
+/* Animações suaves */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.cadastro {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.form-group {
+    animation: fadeIn 0.5s ease-out;
+    animation-fill-mode: both;
+}
+
+.form-group:nth-child(1) { animation-delay: 0.1s; }
+.form-group:nth-child(2) { animation-delay: 0.2s; }
+.form-group:nth-child(3) { animation-delay: 0.3s; }
+.form-group:nth-child(4) { animation-delay: 0.4s; }
+.form-group:nth-child(5) { animation-delay: 0.5s; }
+::ng-deep .btn-cadastrar { animation: fadeIn 0.5s ease-out; animation-delay: 0.6s; animation-fill-mode: both; }

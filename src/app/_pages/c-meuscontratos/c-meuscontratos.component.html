@@ -1,0 +1,56 @@
+<div class="main-painel">
+    <div class="esquerda-painel">
+        <div class="sidebar">
+            <h1>Aureus</h1>
+            <p>Home</p>
+            <p>Meus contratos</p>
+
+        </div>
+    </div>
+
+    <div class="direita-painel">
+       <div class="painel">
+            <h1>Meus Contratos</h1>
+            <p>Aqui você pode acompanhar todos os seus contratos.</p>
+            <div class="card">
+                <p-table [value]="unlockedCustomers" [frozenValue]="lockedCustomers" [scrollable]="true" scrollHeight="400px" [tableStyle]="{ 'min-width': '60rem' }">
+                    <ng-template #header>
+                        <tr>
+                            <th>Name</th>
+                            <th>Country</th>
+                            <th>Company</th>
+                            <th>Representative</th>
+                            <th style="width:5rem"></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template #frozenbody let-customer let-index="rowIndex">
+                        <tr class="font-bold">
+                            <td> TAUANI </td>
+                            <td> TAUANI </td>
+                            <td> TAUANI </td>
+                            <td> TAUANI </td>
+                            <td>
+                                <button pButton pRipple type="button"  size="small" text></button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template #body let-customer let-index="rowIndex">
+                        <tr>
+                            <td>TAUANI</td>
+                            <td>TAUANI</td>
+                            <td>TAUANI</td>
+                            <td>TAUANI</td>
+                            <td>
+                                <button pButton pRipple type="button"  [disabled]="lockedCustomers.length >= 2"  size="small" text></button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+
+            
+
+
+       </div>
+    </div>
+</div>

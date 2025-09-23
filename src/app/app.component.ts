@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { CPaineladminComponent } from "./_pages/c-paineladmin/c-paineladmin.component";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, CPaineladminComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

@@ -1,0 +1,53 @@
+
+.main-painel{
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+.esquerda-painel{
+    background-color: #00235D;
+    flex: 0 0 5%;
+    padding: 50px 100px 70px 120px;
+}
+
+.direita-painel{
+    background-color: #00235D;
+    width: 70vw;
+    flex: 1;
+    padding: 25px;
+}
+.painel{
+    background-color: rgb(255, 255, 255);
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 25px;
+    border-radius: 25px;
+}
+.painel > h2{
+    margin-bottom: 0px;
+}
+.painel > p{
+    margin-bottom: 40px;
+    color: #5e5c5c;
+}
+
+/*botoes*/
+
+
+:host ::ng-deep .p-button{
+    width: 400px;
+    height: 50px;
+    background-color: #ff7f00;
+    border: none;
+}
+:host ::ng-deep .p-button:hover{
+    width: 400px;
+    background-color:  #d06800;
+}
+
+.sidebar > p {
+    color: rgb(255, 255, 255);
+}
