@@ -1,25 +1,32 @@
 import { Component, OnInit } from '@angular/core';
 import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
+import { TabMenuModule } from 'primeng/tabmenu';
+import { MenuItem } from 'primeng/api';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-meuscontratos',
   standalone: true,
-  imports: [TableModule, CommonModule,
+  imports: [TableModule, 
+    CommonModule,
+    TabMenuModule,
   ],
   templateUrl: './c-meuscontratos.component.html',
   styleUrl: './c-meuscontratos.component.scss',
-  providers: [],
 })
 export class CMeuscontratosComponent implements OnInit{
   unlockedCustomers!: any[];
   lockedCustomers!: any[];
 
-  constructor() {}
+  menuSuperior: MenuItem[] | undefined;
+  constructor(private router: Router) {}
 
   ngOnInit() {
-
+    this.menuSuperior = [
+      { label: 'Home', icon: 'pi pi-home', route: '/painelcliente' },
+      { label: 'Meus Contratos', icon: 'pi pi-file', route: '' },
+    ]
   }
     
 }

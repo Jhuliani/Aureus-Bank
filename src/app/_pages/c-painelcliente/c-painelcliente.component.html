@@ -1,19 +1,40 @@
-<div class="main-painel">
-  <div class="esquerda-painel">
-    <div class="sidebar">
-
+<div class="main-container">
+    <!-- Menu Superior -->
+    <div class="top-menu">
+        <div class="card">
+          <p-tabMenu [model]="menuSuperior">
+              <ng-template pTemplate="item" let-item>
+                  <ng-container *ngIf="item.route; else elseBlock">
+                      <a [routerLink]="item.route" class="p-menuitem-link">
+                          <span [class]="item.icon"></span>
+                          <span class="ml-2">
+                              {{ item.label }}
+                          </span>
+                      </a>
+                  </ng-container>
+                  <ng-template #elseBlock>
+                      <a [href]="item.url" class="p-menuitem-link">
+                          <span [class]="item.icon"></span>
+                          <span class="ml-2">
+                              {{ item.label }}
+                          </span>
+                      </a>
+                  </ng-template>
+              </ng-template>
+          </p-tabMenu>
+        </div>
     </div>
-  </div>
 
-  <div class="direita-painel">
-    <div class="painel">
-      <h2>Seja bem-vindo ao Aureus!</h2>
-      <p>
-        Seja bem-vindo ao Aureus! Aqui você pode planejar e conquistar o financiamento do seu veículo de forma simples, segura e transparente. Comece fazendo uma simulação rápida ou envie sua solicitação e dê o primeiro passo para realizar o seu sonho sobre quatro rodas.
-      </p>
-      <button pButton class="simulacao" label="Simulação" ></button>
-      <br>
-      <button pButton class="solicitacao" label="Solicitação" ></button>
+    <!-- Conteúdo Principal -->
+    <div class="content-wrapper">
+        <div class="painel">
+            <h2>Seja bem-vindo ao Aureus!</h2>
+            <p>
+                Seja bem-vindo ao Aureus! Aqui você pode planejar e conquistar o financiamento do seu veículo de forma simples, segura e transparente. Comece fazendo uma simulação rápida ou envie sua solicitação e dê o primeiro passo para realizar o seu sonho sobre quatro rodas.
+            </p>
+            <button pButton class="simulacao" label="Simulação"></button>
+            <br>
+            <button pButton class="solicitacao" label="Solicitação"></button>
+        </div>
     </div>
-  </div>
 </div>

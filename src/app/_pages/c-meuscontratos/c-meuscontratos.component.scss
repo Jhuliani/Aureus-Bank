@@ -1,35 +1,79 @@
-.main-painel{
+.main-container {
     display: flex;
+    flex-direction: column;
     height: 100vh;
-
+    width: 100vw;
+    background-color: #00235D;
 }
 
-.esquerda-painel{
+/* Menu Superior */
+.top-menu {
     background-color: #00235D;
-    flex: 0 0 250px;
-    padding: 50px 100px 70px 120px;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-
-.direita-painel{
-    background-color: #00235D;
+/* Conteúdo Principal */
+.content-wrapper {
     flex: 1;
-    padding: 25px;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
-.painel{
+
+.painel {
     background-color: rgb(255, 255, 255);
     height: 100%;
     width: 100%;
-    padding: 25px;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
     border-radius: 25px;
-
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.sidebar > p {
-    color: rgb(255, 255, 255);
+.painel > h2 {
+    margin-bottom: 1rem;
+    color: #00235D;
 }
 
-table{
-    box-shadow: none;
-    width: 100%;
+.painel > p {
+    margin-bottom: 2rem;
+    color: #5e5c5c;
+    line-height: 1.5;
+}
+
+/* Botões */
+:host ::ng-deep .p-button {
+    width: 400px;
+    height: 50px;
+    background-color: #ff7f00;
+    border: none;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+:host ::ng-deep .p-button:hover {
+    background-color: #d06800;
+    transform: translateY(-2px);
+    transition: all 0.2s ease;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .content-wrapper {
+        padding: 1rem;
+    }
+    
+    .painel {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+
+    :host ::ng-deep .p-button {
+        width: 100%;
+        max-width: 300px;
+    }
 }

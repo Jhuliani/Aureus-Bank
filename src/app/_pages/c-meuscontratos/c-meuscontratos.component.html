@@ -1,14 +1,32 @@
-<div class="main-painel">
-    <div class="esquerda-painel">
-        <div class="sidebar">
-            <h1>Aureus</h1>
-            <p>Home</p>
-            <p>Meus contratos</p>
-
+<div class="main-container">
+    <!-- Menu Superior -->
+    <div class="top-menu">
+        <div class="card">
+          <p-tabMenu [model]="menuSuperior">
+              <ng-template pTemplate="item" let-item>
+                  <ng-container *ngIf="item.route; else elseBlock">
+                      <a [routerLink]="item.route" class="p-menuitem-link">
+                          <span [class]="item.icon"></span>
+                          <span class="ml-2">
+                              {{ item.label }}
+                          </span>
+                      </a>
+                  </ng-container>
+                  <ng-template #elseBlock>
+                      <a [href]="item.url" class="p-menuitem-link">
+                          <span [class]="item.icon"></span>
+                          <span class="ml-2">
+                              {{ item.label }}
+                          </span>
+                      </a>
+                  </ng-template>
+              </ng-template>
+          </p-tabMenu>
         </div>
     </div>
 
-    <div class="direita-painel">
+
+    <div class="content-wrapper">
        <div class="painel">
             <h1>Meus Contratos</h1>
             <p>Aqui você pode acompanhar todos os seus contratos.</p>
