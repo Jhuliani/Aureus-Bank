@@ -6,8 +6,8 @@ import { CMeuscontratosComponent } from './_pages/c-meuscontratos/c-meuscontrato
 import { CPaineladminComponent } from './_pages/c-paineladmin/c-paineladmin.component';
 import { CBemvindoComponent } from './_pages/c-bemvindo/c-bemvindo.component';
 import { CConsultarComponent } from './_pages/c-consultar/c-consultar.component';
-import { CSimulacaoComponent } from './_pages/c-simulacao/c-simulacao.component';
-import { CSolicitacaoComponent } from './_pages/c-solicitacao/c-solicitacao.component';
+import { CSimulacaoComponent } from './_pages/_simulacao/c-simulacao/c-simulacao.component';
+import { CSolicitacaoComponent } from '../app/_pages/_solicitacao/c-solicitacao/c-solicitacao.component';
 
 export const routes: Routes = [
     {path: '', redirectTo: 'login', pathMatch: 'full'},

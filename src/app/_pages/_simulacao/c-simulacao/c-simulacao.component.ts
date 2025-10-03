@@ -1,0 +1,66 @@
+import { Component, OnInit} from '@angular/core';
+import { InputTextModule } from 'primeng/inputtext';
+import { FormsModule } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
+import { MenuItem } from 'primeng/api';
+import { TabMenuModule } from 'primeng/tabmenu';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { DropdownModule } from 'primeng/dropdown';
+
+interface City {
+  name: string;
+  code: string;
+}
+
+
+@Component({
+  selector: 'app-c-simulacao',
+  standalone: true,
+  imports: [FormsModule, 
+    InputTextModule, 
+    ButtonModule,
+    TabMenuModule, 
+    InputGroupModule, 
+    InputGroupAddonModule,
+    ReactiveFormsModule, 
+    SelectButtonModule,
+    RadioButtonModule,
+    FormsModule,
+    DropdownModule,
+  ],
+  templateUrl: './c-simulacao.component.html',
+  styleUrl: './c-simulacao.component.scss'
+})
+
+export class CSimulacaoComponent implements OnInit{
+  marca!: string;
+  modelo!: string;
+  ano!: number;
+
+  // OnInit
+  items: MenuItem[] | undefined;
+  formGroup!: FormGroup;
+  ingredient!: string;
+  valorVeiculo!: number;
+  valorFinanciado!: number;
+  valorEntrada!: number;
+  parcelas!: number;
+
+
+  stateOptions: any[] = [
+    { label: 'Carro', value: 'carro', icon: 'pi pi-car' },
+    { label: 'Moto', value: 'moto', icon: 'pi pi-motocycle' },
+    { label: 'Caminhao', value: 'caminhao'}
+  ];
+
+  ngOnInit() {
+    this.items = [
+
+    ];
+
+  }
+}

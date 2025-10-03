@@ -12,15 +12,18 @@ import { PasswordModule } from 'primeng/password';
   selector: 'app-c-cadastro',
   standalone: true,
   imports: [FormsModule, 
-    InputTextModule, ButtonModule,
-    TabMenuModule, InputGroupModule, InputGroupAddonModule,
+    InputTextModule, 
+    ButtonModule,
+    TabMenuModule, 
+    InputGroupModule, 
+    InputGroupAddonModule,
     PasswordModule,
   ],
   templateUrl: './c-cadastro.component.html',
   styleUrls: ['./c-cadastro.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CCadastroComponent {
+export class CCadastroComponent implements OnInit {
   value: string | undefined;
   usuario: string = '';
   email: string = '';
