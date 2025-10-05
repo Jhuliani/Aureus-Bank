@@ -13,3 +13,30 @@ html, body {
   height: 100%;
   overflow-x: hidden; /* Remove scroll horizontal */
 }
+
+/* Scrollbar personalizado - Global */
+* {
+  /* Webkit browsers (Chrome, Safari, Edge) */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 35, 93, 0.3);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 35, 93, 0.5);
+  }
+}
+
+/* Scrollbar para Firefox - Global */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 35, 93, 0.3) transparent;
+}

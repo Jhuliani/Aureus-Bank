@@ -25,11 +25,18 @@ export const routes: Routes = [
   // Rotas internas (usadas pelo layout global já presente no AppComponent)
   { path: 'inicio', component: CBemvindoComponent },
   { path: 'contratos', component: CMeuscontratosComponent },
-  { path: 'painelcliente', component: CPainelclienteComponent },
+  {
+    path: 'painelcliente',
+    component: CPainelclienteComponent,
+    children: [
+      { path: 'simulacao', component: CSimulacaoComponent },
+      { path: 'solicitacao', component: CSolicitacaoComponent }
+    ]
+  },
+  { path: 'simulacao', redirectTo: 'painelcliente/simulacao' },
+  { path: 'solicitacao', redirectTo: 'painelcliente/solicitacao' },
   { path: 'painel', component: CPaineladminComponent },
   { path: 'consultar', component: CConsultarComponent },
-  { path: 'simulacao', component: CSimulacaoComponent },
-  { path: 'solicitacao', component: CSolicitacaoComponent },
   { path: 'settings', component: CSettingsComponent },
 
   // Rota curinga (404 opcional)

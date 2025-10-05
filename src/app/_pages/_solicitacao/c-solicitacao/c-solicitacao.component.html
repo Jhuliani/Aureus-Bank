@@ -1,161 +1,165 @@
 <div class="main-container">
-  <div class="esquerda-simulacao">
-        <header>
-            <h2>Simulação</h2>
-            <p>Faça sua simulação</p>
-        </header>
+    <div class="content-wrapper">
+        <div class="painel">
+            <header>
+                <div class="header-actions">
+                    <button pButton
+                            type="button"
+                            icon="pi pi-arrow-left"
+                            class="p-button-outlined p-button-sm back-button"
+                            routerLink="/painelcliente"
+                            pTooltip="Voltar ao Painel">
+                    </button>
+                </div>
+                <h2>Solicitação</h2>
+                <p>Realize sua solicitação de financiamento</p>
+            </header>
 
-        <!-- formulario -->
-        <form class="form-simulacao" >       
-            <div class="card flex justify-content-center">
-                <form [formGroup]="formGroup">
-                    <p-selectButton 
-                        [options]="stateOptions" 
-                        formControlName="value" 
-                        optionLabel="label" 
-                        optionValue="value" />
-                </form>
-            </div>
-            
-            <!--Radio Button-->
-            <div class="card flex justify-content-center">
-                <div class="flex flex-wrap gap-3">
-                    <div class="flex align-items-center">
-                        <p-radioButton 
-                            name="pizza" 
-                            value="Cheese" 
-                            [(ngModel)]="ingredient" 
-                            inputId="ingredient1" />
-                        <label for="ingredient1" class="ml-2">
-                            Loja
-                        </label>
-                    </div>
+            <!-- formulario -->
+            <form class="form-solicitacao" >
+                <div class="card flex justify-content-center">
+                    <form [formGroup]="formGroup">
+                        <p-selectButton
+                            [options]="stateOptions"
+                            formControlName="value"
+                            optionLabel="label"
+                            optionValue="value" />
+                    </form>
+                </div>
 
-                    <div class="flex align-items-center">
-                        <p-radioButton 
-                            name="pizza" 
-                            value="Mushroom" 
-                            [(ngModel)]="ingredient" 
-                            inputId="ingredient2" />
-                        <label for="ingredient2" class="ml-2">
-                            Vendedor particular 
-                        </label>
+                <!--Radio Button-->
+                <div class="card flex justify-content-center">
+                    <div class="flex flex-wrap gap-3">
+                        <div class="flex align-items-center">
+                            <p-radioButton
+                                name="pizza"
+                                value="Cheese"
+                                [(ngModel)]="ingredient"
+                                inputId="ingredient1" />
+                            <label for="ingredient1" class="ml-2">
+                                Loja
+                            </label>
+                        </div>
+
+                        <div class="flex align-items-center">
+                            <p-radioButton
+                                name="pizza"
+                                value="Mushroom"
+                                [(ngModel)]="ingredient"
+                                inputId="ingredient2" />
+                            <label for="ingredient2" class="ml-2">
+                                Vendedor particular
+                            </label>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!--Dropdown-->
-            <div class="form-group">
-                <label for="marca">Marca</label>
-                <input 
-                    class="in-simulacao" 
-                    type="text" 
-                    id="marca" 
-                    pInputText 
-                    [(ngModel)]="marca" 
-                    name="marca" 
-                    placeholder="Marca*"
-                    required
-                />
-            </div>
+                <!--Dropdown-->
+                <div class="form-group">
+                    <label for="marca">Marca</label>
+                    <input
+                        class="in-solicitacao"
+                        type="text"
+                        id="marca"
+                        pInputText
+                        [(ngModel)]="marca"
+                        name="marca"
+                        placeholder="Marca*"
+                        required
+                    />
+                </div>
 
-            <div class="form-group">
-                <label for="modelo">Modelo</label>
-                <input 
-                    class="in-simulacao" 
-                    type="text" 
-                    id="modelo" 
-                    pInputText 
-                    [(ngModel)]="modelo" 
-                    name="modelo" 
-                    placeholder="Modelo*"
-                    required
-                />
-            </div>
+                <div class="form-group">
+                    <label for="modelo">Modelo</label>
+                    <input
+                        class="in-solicitacao"
+                        type="text"
+                        id="modelo"
+                        pInputText
+                        [(ngModel)]="modelo"
+                        name="modelo"
+                        placeholder="Modelo*"
+                        required
+                    />
+                </div>
 
-            <div class="form-group">
-                <label for="ano">Ano</label>
-                <input 
-                    class="in-simulacao" 
-                    type="number" 
-                    min="1900" max="2030" step="1"
-                    id="ano" 
-                    pInputText 
-                    [(ngModel)]="ano" 
-                    name="ano" 
-                    placeholder="Ano*"
-                    required
-                />
-            </div>
+                <div class="form-group">
+                    <label for="ano">Ano</label>
+                    <input
+                        class="in-solicitacao"
+                        type="number"
+                        min="1900" max="2030" step="1"
+                        id="ano"
+                        pInputText
+                        [(ngModel)]="ano"
+                        name="ano"
+                        placeholder="Ano*"
+                        required
+                    />
+                </div>
 
-            <div class="form-group">
-                <label for="valor-veiculo">Valor do veículo</label>
-                <input 
-                    class="in-simulacao" 
-                    type="number" 
-                    id="valor-veiculo" 
-                    pInputText 
-                    [(ngModel)]="valorVeiculo" 
-                    name="valor-veiculo" 
-                    placeholder="Valor do veículo*"
-                    required
-                />
-            </div>
+                <div class="form-group">
+                    <label for="valor-veiculo">Valor do veículo</label>
+                    <input
+                        class="in-solicitacao"
+                        type="number"
+                        id="valor-veiculo"
+                        pInputText
+                        [(ngModel)]="valorVeiculo"
+                        name="valor-veiculo"
+                        placeholder="Valor do veículo*"
+                        required
+                    />
+                </div>
 
-            <div class="form-group">
-                <label for="valor-financiado">Valor a financiar</label>
-                <input 
-                    class="in-simulacao" 
-                    type="number" 
-                    id="valor-financiado" 
-                    pInputText 
-                    [(ngModel)]="valorFinanciado" 
-                    name="valor-financiado" 
-                    placeholder="Valor a financiar*"
-                    required
-                />
-            </div>
+                <div class="form-group">
+                    <label for="valor-financiado">Valor a financiar</label>
+                    <input
+                        class="in-solicitacao"
+                        type="number"
+                        id="valor-financiado"
+                        pInputText
+                        [(ngModel)]="valorFinanciado"
+                        name="valor-financiado"
+                        placeholder="Valor a financiar*"
+                        required
+                    />
+                </div>
 
-            <div class="form-group">
-                <label for="valor-entrada">Valor de entrada</label>
-                <input 
-                    class="in-simulacao" 
-                    type="number" 
-                    id="valor-entrada" 
-                    pInputText 
-                    [(ngModel)]="valorEntrada" 
-                    name="valor-entrafa" 
-                    placeholder="Valor do veículo*"
-                    required
-                />
-            </div>
+                <div class="form-group">
+                    <label for="valor-entrada">Valor de entrada</label>
+                    <input
+                        class="in-solicitacao"
+                        type="number"
+                        id="valor-entrada"
+                        pInputText
+                        [(ngModel)]="valorEntrada"
+                        name="valor-entrafa"
+                        placeholder="Valor do veículo*"
+                        required
+                    />
+                </div>
 
-            <div class="form-group">
-                <label for="parcelas">Número de parcelas</label>
-                <input 
-                    class="in-simulacao" 
-                    type="number" 
-                    id="parcelas" 
-                    pInputText 
-                    [(ngModel)]="parcelas" 
-                    name="parcelas" 
-                    required
-                />
-            </div>
+                <div class="form-group">
+                    <label for="parcelas">Número de parcelas</label>
+                    <input
+                        class="in-solicitacao"
+                        type="number"
+                        id="parcelas"
+                        pInputText
+                        [(ngModel)]="parcelas"
+                        name="parcelas"
+                        required
+                    />
+                </div>
 
-
-            <!-- btn -->
-            <p-button 
-                class="btn-simular" 
-                label="Simular" 
-                type="submit">
-            </p-button>
-        </form>
+                <!-- btn -->
+                <p-button
+                    class="btn-solicitar"
+                    label="Solicitar"
+                    type="submit">
+                </p-button>
+            </form>
+        </div>
     </div>
-
-  <!-- lado direita -->
-  <div class="direita-simulacao">
-    <h3>Bem-vindo de volta!</h3>
-
-  </div>
 </div>

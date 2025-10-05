@@ -1,8 +1,8 @@
 .main-container {
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    width: 100vw;
+    height: 100%;
+    width: 100%;
     background-color: #00235D;
 }
 
@@ -66,7 +66,7 @@
     .content-wrapper {
         padding: 1rem;
     }
-    
+
     .painel {
         padding: 1.5rem;
         margin: 1rem;

@@ -129,14 +129,11 @@ $orange-accent: #f97316;
 // Área principal de conteúdo
 .main-content {
   grid-area: main;
-  padding: 2rem;
   background-color: $primary-blue;
   overflow-y: auto;
 
   .content-card {
     background-color: $primary-blue;
-    border-radius: 16px;
-    padding: 2rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     min-height: calc(100vh - 4rem);
     position: relative;

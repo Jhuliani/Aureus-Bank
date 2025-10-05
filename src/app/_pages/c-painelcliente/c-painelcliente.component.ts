@@ -1,17 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { TabMenuModule } from 'primeng/tabmenu';
+import { RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-c-painelcliente',
   standalone: true,
-  imports: [ButtonModule, 
+  imports: [ButtonModule,
     TabMenuModule,
     CommonModule,
-
+    RouterOutlet
   ],
   templateUrl: './c-painelcliente.component.html',
   styleUrls: ['./c-painelcliente.component.scss'],
@@ -19,14 +21,37 @@ import { TabMenuModule } from 'primeng/tabmenu';
 
 
 export class CPainelclienteComponent implements OnInit {
-    menuSuperior: MenuItem[] | undefined;
+    showBreadcrumb = false;
+    hasChildRoute = false;
+    currentPage = '';
 
     constructor(private router: Router) {}
 
     ngOnInit() {
-        this.menuSuperior = [
-            { label: 'Home', icon: 'pi pi-home', route: '' },
-            { label: 'Meus Contratos', icon: 'pi pi-file', route: '/meuscontratos' },
-        ];
+        // Monitora mudanças de rota para controlar breadcrumb
+        this.router.events
+            .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+            .subscribe((event) => {
+                this.updateBreadcrumb(event.url);
+            });
+
+        // Verifica rota inicial
+        this.updateBreadcrumb(this.router.url);
+    }
+
+    private updateBreadcrumb(url: string) {
+        if (url.includes('/painelcliente/simulacao')) {
+            this.showBreadcrumb = true;
+            this.hasChildRoute = true;
+            this.currentPage = 'Simulação';
+        } else if (url.includes('/painelcliente/solicitacao')) {
+            this.showBreadcrumb = true;
+            this.hasChildRoute = true;
+            this.currentPage = 'Solicitação';
+        } else if (url === '/painelcliente') {
+            this.showBreadcrumb = false;
+            this.hasChildRoute = false;
+            this.currentPage = '';
+        }
     }
 }

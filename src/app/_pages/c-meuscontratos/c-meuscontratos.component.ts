@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-meuscontratos',
   standalone: true,
-  imports: [TableModule, 
+  imports: [TableModule,
     CommonModule,
     TabMenuModule,
   ],
@@ -23,10 +23,7 @@ export class CMeuscontratosComponent implements OnInit{
   constructor(private router: Router) {}
 
   ngOnInit() {
-    this.menuSuperior = [
-      { label: 'Home', icon: 'pi pi-home', route: '/painelcliente' },
-      { label: 'Meus Contratos', icon: 'pi pi-file', route: '' },
-    ]
+
   }
-    
+
 }

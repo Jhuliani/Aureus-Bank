@@ -1,14 +1,55 @@
 .main-container {
     display: flex;
-    min-height: 100vh;
-    background-color: #f8f9fa;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
 }
 
-/*Divisão das telas*/
+/* Conteúdo Principal */
+.content-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.painel {
+    background-color: rgb(255, 255, 255);
+    height: 100%;
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    border-radius: 25px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+/*Header dentro do painel*/
 header {
-    color: #ffffff;
+    color: #00235D;
     text-align: center;
     margin-bottom: 2rem;
+    position: relative;
+}
+
+.header-actions {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.back-button {
+    background-color: #00235D !important;
+    border-color: #00235D !important;
+    color: white !important;
+}
+
+.back-button:hover {
+    background-color: #1e4a8c !important;
+    border-color: #1e4a8c !important;
 }
 
 header h2 {
@@ -16,60 +57,24 @@ header h2 {
     margin-bottom: 0.5rem;
     font-weight: 700;
     letter-spacing: 0.5px;
+    color: #00235D;
 }
 
 header p {
     font-size: 1.1rem;
-    opacity: 0.9;
+    color: #5e5c5c;
     font-weight: 300;
 }
 
-.esquerda-simulacao, .direita-simulacao {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    padding: 2rem;
-    position: relative;
-}
-
-.direita-simulacao {
-    background:#ffffff;
-    text-align: center;
-    justify-content: center;
-}
-
-.direita-simulacao h3 {
-    font-size: 2.5rem;
-    margin-bottom: 1.5rem;
-    font-weight: 700;
-    color: #00235D;
-    position: relative;
-}
-
-
-.esquerda-simulacao {
-    background: linear-gradient(135deg, #00235D 0%, #1e4a8c 100%);
-    overflow-y: auto;
-}
 
 /* forms */
 .form-simulacao {
     width: 100%;
-    max-width: 480px;
+    max-width: 100%;
     display: flex;
     flex-direction: column;
-    padding: 2.5rem;
-    border-radius: 12px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-    background-color: #ffffff;
-    transition: all 0.3s ease;
-}
-
-.form-simulacao:hover {
-    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2);
-    transform: translateY(-5px);
+    padding: 0;
+    background-color: transparent;
 }
 
 .form-group {
@@ -130,40 +135,22 @@ header p {
 }
 
 /* Responsividade */
-@media (max-width: 992px) {
-    .main-container {
-        flex-direction: column;
+@media (max-width: 768px) {
+    .content-wrapper {
+        padding: 1rem;
     }
-    
-    .direita-simulacao {
-        border-left: none;
-        border-top: 1px solid #e2e8f0;
-        padding: 2rem 1.5rem;
-    }
-    
-    .esquerda-simulacao {
-        padding: 2rem 1.5rem;
-    }
-    
-    .form-simulacao {
-        padding: 2rem;
-    }
-}
 
-@media (max-width: 576px) {
-    .form-simulacao {
+    .painel {
         padding: 1.5rem;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        margin: 1rem;
     }
-    
+
     header h2 {
         font-size: 1.8rem;
     }
-    
-    .direita-simulacao h3 {
-        font-size: 2rem;
-    }
 }
+
+/* Scrollbar personalizado está no styles.scss global */
 
 /* Animações suaves */
 @keyframes fadeIn {
