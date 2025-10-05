@@ -1,2 +1,54 @@
 
-<router-outlet></router-outlet>
+<div class="app-container" *ngIf="showLayout">
+
+  <header class="header">
+    <div class="header-left">
+      <a class="logo" routerLink="/inicio">AUREUS</a>
+    </div>
+
+    <div class="header-right">
+      <span class="language">PT-BR</span>
+    </div>
+  </header>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <nav class="nav-menu">
+      <a class="nav-item"
+         routerLink="/painelcliente"
+         routerLinkActive="active"
+         [routerLinkActiveOptions]="{ exact: true }">
+        <div class="nav-indicator"></div>
+        <i class="pi pi-home nav-icon"></i>
+        <span class="nav-text">Início</span>
+      </a>
+
+      <a class="nav-item"
+         routerLink="/contratos"
+         routerLinkActive="active">
+        <div class="nav-indicator"></div>
+        <i class="pi pi-envelope nav-icon"></i>
+        <span class="nav-text">Meus contratos</span>
+      </a>
+
+      <a class="nav-item settings"
+         routerLink="/settings"
+         routerLinkActive="active">
+        <div class="nav-indicator"></div>
+        <i class="pi pi-cog nav-icon"></i>
+        <span class="nav-text">Settings</span>
+      </a>
+    </nav>
+  </aside>
+
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+    <div class="content-card">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>
+
+<!-- Modo tela cheia (sem layout) -->
+<router-outlet *ngIf="!showLayout"></router-outlet>

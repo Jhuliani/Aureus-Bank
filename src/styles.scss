@@ -3,3 +3,13 @@
 @import "primeng/resources/primeng.min.css";
 @import "primeicons/primeicons.css";
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  overflow-x: hidden; /* Remove scroll horizontal */
+}

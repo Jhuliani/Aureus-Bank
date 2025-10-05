@@ -25,19 +25,27 @@ header p {
 }
 
 .esquerda-cadastro, .direita-cadastro {
-    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    padding: 2rem;
+    padding: 1.86rem 2rem;
     position: relative;
+}
+
+.esquerda-cadastro {
+    flex: 2;
+}
+
+.direita-cadastro {
+    flex: 1;
 }
 
 .direita-cadastro {
     background:#ffffff;
     text-align: center;
-    justify-content: center;
+    justify-content: start;
+    margin-top: 200px;
 }
 
 .direita-cadastro h3 {
@@ -57,7 +65,7 @@ header p {
 /* forms */
 .cadastro {
     width: 100%;
-    max-width: 480px;
+    max-width: 650px; /* Aumentado de 480px para 650px */
     display: flex;
     flex-direction: column;
     padding: 2.5rem;
@@ -75,6 +83,32 @@ header p {
 .form-group {
     width: 100%;
     margin-bottom: 1.5rem;
+}
+
+
+.emails-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    width: 100%;
+    margin-bottom: 1.5rem;
+
+    .form-group {
+        margin-bottom: 0;
+    }
+}
+
+
+.senhas-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    width: 100%;
+    margin-bottom: 1.5rem;
+
+    .form-group {
+        margin-bottom: 0;
+    }
 }
 
 .form-group label {
@@ -106,7 +140,7 @@ header p {
     font-size: 0.95rem;
 }
 
-/* Estilização para os componentes p-password */
+
 ::ng-deep .p-password {
     display: block;
     width: 100%;
@@ -128,11 +162,11 @@ header p {
 }
 
 ::ng-deep .p-password .p-icon-wrapper {
-    right: 1rem; /*distanca da borda direita*/
+    right: 1rem;
     color: #64748b;
 }
 
-/* botão */
+
 ::ng-deep .btn-cadastrar .p-button {
     width: 100%;
     padding: 0.875rem;
@@ -160,17 +194,17 @@ header p {
     .main-cadastro {
         flex-direction: column;
     }
-    
+
     .direita-cadastro {
         border-left: none;
         border-top: 1px solid #e2e8f0;
         padding: 2rem 1.5rem;
     }
-    
+
     .esquerda-cadastro {
         padding: 2rem 1.5rem;
     }
-    
+
     .cadastro {
         padding: 2rem;
     }
@@ -181,11 +215,11 @@ header p {
         padding: 1.5rem;
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     }
-    
+
     header h2 {
         font-size: 1.8rem;
     }
-    
+
     .direita-cadastro h3 {
         font-size: 2rem;
     }

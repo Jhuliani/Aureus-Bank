@@ -7,89 +7,87 @@
         </header>
 
         <form class="cadastro" >
-            <!-- usuario -->
             <div class="form-group">
                 <label for="usuario">Usuário</label>
-                <input 
-                    class="in-cadastro" 
-                    type="text" 
-                    id="usuario" 
-                    pInputText 
-                    [(ngModel)]="usuario" 
-                    name="usuario" 
+                <input
+                    class="in-cadastro"
+                    type="text"
+                    id="usuario"
+                    pInputText
+                    [(ngModel)]="usuario"
+                    name="usuario"
                     placeholder="Digite seu usuário"
                     required
+                    style="width: 48%"
                 />
             </div>
 
-            <!-- email -->
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input 
-                    class="in-cadastro" 
-                    type="email" 
-                    id="email" 
-                    pInputText 
-                    [(ngModel)]="email" 
-                    name="email" 
-                    placeholder="Digite seu email"
-                    required
-                />
+            <div class="emails-grid">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input
+                        class="in-cadastro"
+                        type="email"
+                        id="email"
+                        pInputText
+                        [(ngModel)]="email"
+                        name="email"
+                        placeholder="Digite seu email"
+                        required
+                    />
+                </div>
+
+                <div class="form-group">
+                    <label for="emailConfirm">Confirmar Email</label>
+                    <input
+                        class="in-cadastro"
+                        type="email"
+                        id="emailConfirm"
+                        pInputText
+                        [(ngModel)]="emailConfirm"
+                        name="emailConfirm"
+                        placeholder="Confirme seu email"
+                        required
+                    />
+                </div>
             </div>
 
-            <!-- Confirmar email -->
-            <div class="form-group">
-                <label for="emailConfirm">Confirmar Email</label>
-                <input 
-                    class="in-cadastro" 
-                    type="email" 
-                    id="emailConfirm" 
-                    pInputText 
-                    [(ngModel)]="emailConfirm" 
-                    name="emailConfirm" 
-                    placeholder="Confirme seu email"
-                    required
-                />
+            <div class="senhas-grid">
+                <div class="form-group">
+                    <label for="senha">Senha</label>
+                    <p-password
+                        [(ngModel)]="senha"
+                        [toggleMask]="true"
+                        name="senha"
+                        id="senha"
+                        placeholder="Digite sua senha"
+                        required>
+                    </p-password>
+                </div>
+
+                <div class="form-group">
+                    <label for="senhaConfirm">Confirmar Senha</label>
+                    <p-password
+                        [(ngModel)]="senhaConfirm"
+                        [toggleMask]="true"
+                        name="senhaConfirm"
+                        id="senhaConfirm"
+                        placeholder="Confirme sua senha"
+                        required>
+                    </p-password>
+                </div>
             </div>
 
-            <!-- senhaa -->
-            <div class="form-group">
-                <label for="senha">Senha</label>
-                <p-password 
-                    [(ngModel)]="senha" 
-                    [toggleMask]="true"
-                    name="senha" 
-                    id="senha" 
-                    placeholder="Digite sua senha"
-                    required>
-                </p-password>
-            </div>
-
-            <!-- Confirmar Senha -->
-            <div class="form-group">
-                <label for="senhaConfirm">Confirmar Senha</label>
-                <p-password 
-                    [(ngModel)]="senhaConfirm" 
-                    [toggleMask]="true"
-                    name="senhaConfirm" 
-                    id="senhaConfirm" 
-                    placeholder="Confirme sua senha"
-                    required>
-                </p-password>
-            </div>
-
-            <!-- btn -->
-            <p-button 
-                class="btn-cadastrar" 
-                label="Cadastrar" 
+            <p-button
+                class="btn-cadastrar"
+                label="Cadastrar"
                 type="submit">
             </p-button>
         </form>
     </div>
 
-  <!-- lado direita -->
   <div class="direita-cadastro">
-    <h3>Bem-vindo de volta!</h3>
+    <h3>Bem-vindo(a)!</h3>
 
   </div>
 </div>

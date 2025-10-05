@@ -1,0 +1,195 @@
+// Cores do tema
+$primary-blue: #00235D;
+$white: #ffffff;
+$light-gray: #f8fafc;
+$text-dark: #374151;
+$text-light: #ffffff;
+$orange-accent: #f97316;
+
+// Layout principal
+.app-container {
+  display: grid;
+  grid-template-areas:
+    "header header header"
+    "sidebar main main";
+  grid-template-columns: 250px 1fr 1fr;
+  grid-template-rows: 60px 1fr;
+  height: 100vh;
+  background-color: $light-gray;
+}
+
+// Header
+.header {
+  grid-area: header;
+  background-color: $primary-blue;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+
+  .header-left {
+    .logo {
+      color: $text-light;
+      font-size: 1.5rem;
+      font-weight: bold;
+      font-family: sans-serif;
+      text-decoration: none;
+    }
+  }
+
+  .header-center {
+    flex: 1;
+    max-width: 400px;
+    margin: 0 2rem;
+
+    .search-input {
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+
+      &:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+      }
+    }
+  }
+
+  .header-right {
+    .language {
+      color: $text-light;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+  }
+}
+
+// Sidebar
+.sidebar {
+  grid-area: sidebar;
+  background-color: $primary-blue;
+  padding: 1rem 0;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+
+  .nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      color: $text-light;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      &.active {
+        background-color: rgba(255, 255, 255, 0.1);
+
+        .nav-indicator {
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: 4px;
+          background-color: $orange-accent;
+        }
+      }
+
+      &.settings {
+        margin-top: auto;
+        margin-bottom: 1rem;
+      }
+
+      .nav-icon {
+        font-size: 1.2rem;
+        margin-right: 1rem;
+        width: 20px;
+        text-align: center;
+      }
+
+      .nav-text {
+        font-size: 0.9rem;
+        font-weight: 500;
+        font-family: sans-serif;
+      }
+    }
+  }
+}
+
+// Área principal de conteúdo
+.main-content {
+  grid-area: main;
+  padding: 2rem;
+  background-color: $primary-blue;
+  overflow-y: auto;
+
+  .content-card {
+    background-color: $primary-blue;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    min-height: calc(100vh - 4rem);
+    position: relative;
+  }
+}
+
+// Estilos para os componentes PrimeNG
+::ng-deep {
+  .p-inputgroup {
+    .p-inputgroup-addon {
+      background-color: $primary-blue;
+      border: 1px solid #d1d5db;
+      border-right: none;
+      border-radius: 8px 0 0 8px;
+      color: #6b7280;
+    }
+
+    .p-inputtext {
+      border: 1px solid #d1d5db;
+      border-left: none;
+      border-radius: 0 8px 8px 0;
+
+      &:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+      }
+    }
+  }
+}
+
+// Responsividade
+@media (max-width: 768px) {
+  .app-container {
+    grid-template-areas:
+      "header"
+      "main";
+    grid-template-columns: 1fr;
+    grid-template-rows: 60px 1fr;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .main-content {
+    padding: 1rem;
+  }
+}
+
+.nav-item {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  color: inherit;
+}

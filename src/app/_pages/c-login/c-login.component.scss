@@ -1,6 +1,4 @@
 .main-login {
-    width: 100vw;
-    height: 100vh;
     display: flex;
     background-color: #f8f9fa;
 }
@@ -51,7 +49,7 @@
         font-size: 24pt;
         text-align: center;
         line-height: 1.3;
-        margin-bottom: 40px;
+        // margin-bottom: 40px;
         font-weight: 700;
     }
 }
@@ -65,14 +63,14 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-bottom: 30px;
-    
+    // margin-bottom: 30px;
+
 }
 
 .campo-email, .campo-senha {
     width: 500px;
     margin-bottom: 1.5rem;
- 
+
 
     label {
         display: block;
@@ -188,7 +186,7 @@
 
     .esquerda-login {
         text-align: center;
-        
+
         h1, h2 {
             text-align: center;
         }
@@ -204,7 +202,7 @@
         h1 {
             font-size: 36pt;
         }
-        
+
         h2 {
             font-size: 14pt;
         }
