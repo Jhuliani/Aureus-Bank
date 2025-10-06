@@ -45,6 +45,10 @@ header {
     background-color: #00235D !important;
     border-color: #00235D !important;
     color: white !important;
+    width: 40px !important;
+    height: 40px !important;
+    padding: 0 !important;
+    min-width: 40px !important;
 }
 
 .back-button:hover {
@@ -74,6 +78,30 @@ header p {
     flex-direction: column;
     padding: 0;
     background-color: transparent;
+}
+
+/* Radio buttons com margem */
+.card.flex.justify-content-center {
+    margin-bottom: 2rem;
+}
+
+/* Espaçamento entre os radio buttons */
+.flex.flex-wrap.gap-3 {
+    gap: 1rem !important;
+}
+
+/* SelectButton - três opções na mesma linha */
+::ng-deep .p-selectbutton {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 0.5rem !important;
+}
+
+::ng-deep .p-selectbutton .p-button {
+    flex: 1 !important;
+    min-width: 0 !important;
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.9rem !important;
 }
 
 .form-group {

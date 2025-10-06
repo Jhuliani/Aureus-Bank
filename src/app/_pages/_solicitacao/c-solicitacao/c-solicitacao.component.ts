@@ -6,7 +6,7 @@ import { MenuItem } from 'primeng/api';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { DropdownModule } from 'primeng/dropdown';
@@ -21,13 +21,13 @@ interface City {
 @Component({
   selector: 'app-c-solicitacao',
   standalone: true,
-  imports: [FormsModule, 
-    InputTextModule, 
+  imports: [FormsModule,
+    InputTextModule,
     ButtonModule,
-    TabMenuModule, 
-    InputGroupModule, 
+    TabMenuModule,
+    InputGroupModule,
     InputGroupAddonModule,
-    ReactiveFormsModule, 
+    ReactiveFormsModule,
     SelectButtonModule,
     RadioButtonModule,
     FormsModule,
@@ -53,14 +53,19 @@ export class CSolicitacaoComponent implements OnInit {
 
   stateOptions: any[] = [
     { label: 'Carro', value: 'carro', icon: 'pi pi-car' },
-    { label: 'Moto', value: 'moto', icon: 'pi pi-motocycle' },
-    { label: 'Caminhao', value: 'caminhao'}
+    { label: 'Moto', value: 'moto', icon: 'pi pi-circle' },
+    { label: 'Caminhão', value: 'caminhao', icon: 'pi pi-truck'}
   ];
 
   ngOnInit() {
     this.items = [
 
     ];
+
+    // Inicializar FormGroup
+    this.formGroup = new FormGroup({
+      value: new FormControl('')
+    });
   }
 
 }
