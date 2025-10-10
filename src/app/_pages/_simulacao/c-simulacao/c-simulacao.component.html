@@ -16,150 +16,281 @@
             </header>
 
             <!-- formulario -->
-            <form class="form-simulacao" >
-            <div class="card flex justify-content-center">
-                <form [formGroup]="formGroup">
-                    <p-selectButton
-                        [options]="stateOptions"
-                        formControlName="value"
-                        optionLabel="label"
-                        optionValue="value" />
-                </form>
-            </div>
+            <form class="form-simulacao">
+                <div class="consulta-fipe-container">
+                    <div class="card">
+                        <h2>Consulta Tabela FIPE</h2>
+                        <p class="subtitle">Consulte o valor de veículos utilizando a tabela FIPE oficial</p>
 
-            <!--Radio Button-->
-            <div class="card flex justify-content-center">
-                <div class="flex flex-wrap gap-3">
-                    <div class="flex align-items-center" style="margin-bottom: 10px;">
-                        <p-radioButton
-                            name="pizza"
-                            value="Cheese"
-                            [(ngModel)]="ingredient"
-                            inputId="ingredient1" />
-                        <label for="ingredient1" class="ml-2">
-                            Loja
-                        </label>
-                    </div>
+                        <!-- Loading Geral -->
+                        <div *ngIf="carregando && !marcasListagem.length" class="loading-container">
+                            <p-progressSpinner></p-progressSpinner>
+                            <p>Carregando...</p>
+                        </div>
 
-                    <div class="flex align-items-center">
-                        <p-radioButton
-                            name="pizza"
-                            value="Mushroom"
-                            [(ngModel)]="ingredient"
-                            inputId="ingredient2" />
-                        <label for="ingredient2" class="ml-2">
-                            Vendedor particular
-                        </label>
+                        <!-- Mensagem de Erro -->
+                        <div *ngIf="mensagens.length > 0" class="error-message p-mb-3">
+                            <p-messages [(value)]="mensagens"></p-messages>
+                        </div>
+
+                        <!-- Formulário de Consulta -->
+                        <div class="form-container" *ngIf="!carregando || marcasListagem.length">
+                            <div class="p-fluid grid">
+                                
+                                <!-- Tipo de Veículo -->
+                                <div class="field col-12 md:col-6 lg:col-3">
+                                    <label for="tipoVeiculo">Tipo de Veículo</label>
+                                    <p-dropdown
+                                        id="tipoVeiculo"
+                                        [options]="tiposVeiculo"
+                                        [(ngModel)]="tipoVeiculo"
+                                        (onChange)="onTipoVeiculoChange()"
+                                        placeholder="Selecione o tipo"
+                                        [disabled]="carregando"
+                                        appendTo="body"
+                                        name="tipoVeiculo">
+                                    </p-dropdown>
+                                </div>
+
+                                <!-- Marca -->
+                                <div class="field col-12 md:col-6 lg:col-3">
+                                    <label for="marca">Marca</label>
+                                    <p-dropdown
+                                        id="marca"
+                                        [options]="marcasListagem"
+                                        [(ngModel)]="marcaSelecionada"
+                                        (onChange)="onMarcaChange()"
+                                        placeholder="Selecione a marca"
+                                        [disabled]="!marcasListagem.length || carregando"
+                                        appendTo="body"
+                                        name="marca">
+                                        <ng-template pTemplate="empty">
+                                            <div class="empty-message">
+                                                {{ carregando ? 'Carregando...' : 'Nenhuma marca encontrada' }}
+                                            </div>
+                                        </ng-template>
+                                    </p-dropdown>
+                                </div>
+
+                                <!-- Modelo -->
+                                <div class="field col-12 md:col-6 lg:col-3">
+                                    <label for="modelo">Modelo</label>
+                                    <p-dropdown
+                                        id="modelo"
+                                        [options]="modelosListagem"
+                                        [(ngModel)]="modeloSelecionado"
+                                        (onChange)="onModeloChange()"
+                                        placeholder="Selecione o modelo"
+                                        [disabled]="!modelosListagem.length || carregando"
+                                        appendTo="body"
+                                        name="modelo">
+                                        <ng-template pTemplate="empty">
+                                            <div class="empty-message">
+                                                {{ !marcaSelecionada ? 'Selecione uma marca' : (carregando ? 'Carregando...' : 'Nenhum modelo encontrado') }}
+                                            </div>
+                                        </ng-template>
+                                    </p-dropdown>
+                                </div>
+
+                                <!-- Ano -->
+                                <div class="field col-12 md:col-6 lg:col-3">
+                                    <label for="ano">Ano</label>
+                                    <p-dropdown
+                                        id="ano"
+                                        [options]="anosListagem"
+                                        [(ngModel)]="anoSelecionado"
+                                        (onChange)="onAnoChange()"
+                                        placeholder="Selecione o ano"
+                                        [disabled]="!anosListagem.length || carregando"
+                                        appendTo="body"
+                                        name="ano">
+                                        <ng-template pTemplate="empty">
+                                            <div class="empty-message">
+                                                {{ !modeloSelecionado ? 'Selecione um modelo' : (carregando ? 'Carregando...' : 'Nenhum ano encontrado') }}
+                                            </div>
+                                        </ng-template>
+                                    </p-dropdown>
+                                </div>
+
+                            </div>
+
+                            <!-- Loading durante consultas -->
+                            <div *ngIf="carregando && marcasListagem.length" class="loading-inline">
+                                <p-progressSpinner styleClass="w-1rem h-1rem" strokeWidth="4"></p-progressSpinner>
+                                <span class="ml-2">Consultando...</span>
+                            </div>
+
+                            <!-- Botão Limpar -->
+                            <div class="flex justify-content-end mt-3">
+                                <button 
+                                    pButton 
+                                    pRipple
+                                    type="button" 
+                                    label="Limpar Consulta" 
+                                    class="p-button-outlined p-button-secondary"
+                                    (click)="limparConsulta()"
+                                    [disabled]="carregando">
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Resultado da Consulta -->
+                        <div *ngIf="informacoesFipe" class="resultado-container mt-4">
+                            <p-card header="Resultado da Consulta FIPE" styleClass="resultado-card">
+                                <div class="grid">
+                                    <div class="col-12 md:col-6">
+                                        <div class="info-item">
+                                            <strong>Valor do Veículo:</strong>
+                                            <span class="valor-fipe">{{ informacoesFipe.Valor }}</span>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-12 md:col-6">
+                                        <div class="info-item">
+                                            <strong>Combustível:</strong>
+                                            <span>{{ informacoesFipe.Combustivel }}</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <strong>Código FIPE:</strong>
+                                            <span>{{ informacoesFipe.CodigoFipe }}</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <strong>Mês Referência:</strong>
+                                            <span>{{ informacoesFipe.MesReferencia }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p-card>
+                        </div>
+
+                        <!-- Estado Vazio -->
+                        <div *ngIf="!informacoesFipe && formularioValido && !carregando" class="empty-state mt-4">
+                            <p-card>
+                                <div class="empty-state-content">
+                                    <i class="pi pi-info-circle empty-state-icon"></i>
+                                    <h3>Consulta Completa</h3>
+                                    <p>Selecione o ano do veículo para visualizar o valor FIPE</p>
+                                </div>
+                            </p-card>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!--Dropdown-->
-            <div class="form-group">
-                <label for="marca">Marca</label>
-                <input
-                    class="in-simulacao"
-                    type="text"
-                    id="marca"
-                    pInputText
-                    [(ngModel)]="marca"
-                    name="marca"
-                    placeholder="Marca*"
-                    required
-                />
-            </div>
+                <!-- Campos Adicionais para Simulação -->
+                <div *ngIf="informacoesFipe" class="campos-simulacao mt-4">
+                    <p-card header="Dados para Simulação">
+                        <div class="grid">
+                            <div class="field col-12 md:col-6">
+                                <label for="valorEntrada">Valor de Entrada (R$)</label>
+                                <p-inputNumber 
+                                    id="valorEntrada"
+                                    [(ngModel)]="valorEntrada"
+                                    mode="currency" 
+                                    currency="BRL" 
+                                    locale="pt-BR"
+                                    [min]="0"
+                                    [max]="valorVeiculoNumerico"
+                                    placeholder="Digite o valor da entrada"
+                                    name="valorEntrada">
+                                </p-inputNumber>
+                                <small class="p-d-block p-mt-1">
+                                    Valor máximo: {{ valorVeiculoNumerico | currency:'BRL' }}
+                                </small>
+                            </div>
 
-            <div class="form-group">
-                <label for="modelo">Modelo</label>
-                <input
-                    class="in-simulacao"
-                    type="text"
-                    id="modelo"
-                    pInputText
-                    [(ngModel)]="modelo"
-                    name="modelo"
-                    placeholder="Modelo*"
-                    required
-                />
-            </div>
+                            <div class="field col-12 md:col-6">
+                                <label for="parcelas">Número de Parcelas</label>
+                                <p-dropdown
+                                    id="parcelas"
+                                    [options]="opcoesParcelas"
+                                    [(ngModel)]="parcelasSelecionadas"
+                                    placeholder="Selecione as parcelas"
+                                    name="parcelas">
+                                </p-dropdown>
+                            </div>
 
-            <div class="form-group">
-                <label for="ano">Ano</label>
-                <input
-                    class="in-simulacao"
-                    type="number"
-                    min="1900" max="2030" step="1"
-                    id="ano"
-                    pInputText
-                    [(ngModel)]="ano"
-                    name="ano"
-                    placeholder="Ano*"
-                    required
-                />
-            </div>
+                            <div class="field col-12 md:col-6">
+                                <label for="taxaJuros">Taxa de Juros (% ao mês)</label>
+                                <p-inputNumber 
+                                    id="taxaJuros"
+                                    [(ngModel)]="taxaJuros"
+                                    mode="decimal" 
+                                    [min]="0"
+                                    [max]="20"
+                                    [minFractionDigits]="2"
+                                    [maxFractionDigits]="2"
+                                    placeholder="0.00"
+                                    suffix="%"
+                                    name="taxaJuros">
+                                </p-inputNumber>
+                            </div>
 
-            <div class="form-group">
-                <label for="valor-veiculo">Valor do veículo</label>
-                <input
-                    class="in-simulacao"
-                    type="number"
-                    id="valor-veiculo"
-                    pInputText
-                    [(ngModel)]="valorVeiculo"
-                    name="valor-veiculo"
-                    placeholder="Valor do veículo*"
-                    required
-                />
-            </div>
+                            <div class="field col-12 md:col-6">
+                                <label for="rendaMensal">Renda Mensal (R$)</label>
+                                <p-inputNumber 
+                                    id="rendaMensal"
+                                    [(ngModel)]="rendaMensal"
+                                    mode="currency" 
+                                    currency="BRL" 
+                                    locale="pt-BR"
+                                    [min]="0"
+                                    placeholder="Digite sua renda mensal"
+                                    name="rendaMensal">
+                                </p-inputNumber>
+                            </div>
+                        </div>
+                    </p-card>
+                </div>
 
-            <div class="form-group">
-                <label for="valor-financiado">Valor a financiar</label>
-                <input
-                    class="in-simulacao"
-                    type="number"
-                    id="valor-financiado"
-                    pInputText
-                    [(ngModel)]="valorFinanciado"
-                    name="valor-financiado"
-                    placeholder="Valor a financiar*"
-                    required
-                />
-            </div>
+                <!-- Resultado da Simulação -->
+                <div *ngIf="resultadoSimulacao && informacoesFipe" class="resultado-simulacao mt-4">
+                    <p-card header="Resultado da Simulação" styleClass="resultado-simulacao-card">
+                        <div class="grid">
+                            <div class="col-12 md:col-6">
+                                <div class="info-item">
+                                    <strong>Valor Financiado:</strong>
+                                    <span>{{ resultadoSimulacao.valorFinanciado | currency:'BRL' }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Valor da Parcela:</strong>
+                                    <span class="valor-parcela">{{ resultadoSimulacao.valorParcela | currency:'BRL' }}</span>
+                                </div>
+                            </div>
+                            <div class="col-12 md:col-6">
+                                <div class="info-item">
+                                    <strong>Total a Pagar:</strong>
+                                    <span>{{ resultadoSimulacao.totalPagar | currency:'BRL' }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Total de Juros:</strong>
+                                    <span>{{ resultadoSimulacao.totalJuros | currency:'BRL' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="analise-credito mt-3" 
+                             [class.aprovado]="resultadoSimulacao.aprovado"
+                             [class.reprovado]="!resultadoSimulacao.aprovado">
+                            <strong>Situação:</strong>
+                            <span>{{ resultadoSimulacao.aprovado ? 'APROVADO' : 'REPROVADO' }}</span>
+                            <small class="p-d-block p-mt-1">
+                                {{ resultadoSimulacao.mensagem }}
+                            </small>
+                        </div>
+                    </p-card>
+                </div>
 
-            <div class="form-group">
-                <label for="valor-entrada">Valor de entrada</label>
-                <input
-                    class="in-simulacao"
-                    type="number"
-                    id="valor-entrada"
-                    pInputText
-                    [(ngModel)]="valorEntrada"
-                    name="valor-entrafa"
-                    placeholder="Valor do veículo*"
-                    required
-                />
-            </div>
-
-            <div class="form-group">
-                <label for="parcelas">Número de parcelas</label>
-                <input
-                    class="in-simulacao"
-                    type="number"
-                    id="parcelas"
-                    pInputText
-                    [(ngModel)]="parcelas"
-                    name="parcelas"
-                    required
-                />
-            </div>
-
-
-            <!-- btn -->
-            <p-button
-                class="btn-simular"
-                label="Simular"
-                type="submit">
-            </p-button>
+                <!-- btn -->
+                <div class="flex justify-content-center mt-4">
+                    <button
+                        pButton
+                        class="btn-simular"
+                        label="Simular Financiamento"
+                        type="button"
+                        (click)="realizarSimulacao()"
+                        [disabled]="!informacoesFipe || carregando">
+                    </button>
+                </div>
             </form>
         </div>
     </div>

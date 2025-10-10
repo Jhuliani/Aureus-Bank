@@ -1,44 +1,45 @@
 .main-container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    width: 100%;
+  background: #f8fafc;
+  min-height: 100vh;
+  padding: 1rem;
 }
 
-/* Conteúdo Principal */
 .content-wrapper {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .painel {
-    background-color: rgb(255, 255, 255);
-    height: 100%;
-    width: 100%;
-    max-width: 100%;
-    display: flex;
-    flex-direction: column;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  
+  header {
+    color: rgb(0, 0, 0);
     padding: 2rem;
-    border-radius: 25px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    overflow-y: auto;
-    box-sizing: border-box;
-}
-
-/*Header dentro do painel*/
-header {
-    color: #00235D;
     text-align: center;
-    margin-bottom: 2rem;
     position: relative;
-}
 
-.header-actions {
-    position: absolute;
-    top: 0;
-    left: 0;
+    .header-actions {
+      position: absolute;
+      left: 1.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    h2 {
+      margin: 0 0 0.5rem 0;
+      font-size: 2rem;
+      font-weight: 600;
+    }
+
+    p {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 1.1rem;
+    }
+  }
 }
 
 .back-button {
@@ -56,148 +57,414 @@ header {
     border-color: #1e4a8c !important;
 }
 
-header h2 {
-    font-size: 2.2rem;
-    margin-bottom: 0.5rem;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    color: #00235D;
-}
-
-header p {
-    font-size: 1.1rem;
-    color: #5e5c5c;
-    font-weight: 300;
-}
-
-
-/* forms */
 .form-simulacao {
+  padding: 2rem;
+}
+
+.consulta-fipe-container {
+  .card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+
+    h2 {
+      color: #1e293b;
+      margin: 0 0 0.5rem 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .subtitle {
+      color: #64748b;
+      margin: 0 0 1.5rem 0;
+      font-size: 1rem;
+    }
+  }
+}
+
+.loading-container {
+  text-align: center;
+  padding: 3rem;
+  color: #64748b;
+
+  p {
+    margin-top: 1rem;
+  }
+}
+
+.error-message {
+  margin-bottom: 1rem;
+}
+
+.form-container {
+  .field {
+    margin-bottom: 1rem;
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #374151;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+::ng-deep {
+  .p-dropdown {
     width: 100%;
-    max-width: 100%;
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-    background-color: transparent;
-}
-
-/* Radio buttons com margem */
-.card.flex.justify-content-center {
-    margin-bottom: 2rem;
-}
-
-/* Espaçamento entre os radio buttons */
-.flex.flex-wrap.gap-3 {
-    gap: 1rem !important;
-}
-
-/* SelectButton - três opções na mesma linha */
-::ng-deep .p-selectbutton {
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    gap: 0.5rem !important;
-}
-
-::ng-deep .p-selectbutton .p-button {
-    flex: 1 !important;
-    min-width: 0 !important;
-    padding: 0.5rem 0.75rem !important;
-    font-size: 0.9rem !important;
-}
-
-.form-group {
-    width: 100%;
-    margin-bottom: 1.5rem;
-}
-
-.form-group label {
-    display: block;
-    font-weight: 600;
-    color: #334155;
-    font-size: 0.95rem;
-    margin-bottom: 0.4rem;
-}
-
-.in-simulacao {
-    width: 100%;
-    padding: 0.875rem 1rem;
-    border: 1px solid #cbd5e1;
+    border: 2px solid #e2e8f0;
     border-radius: 8px;
-    font-size: 1rem;
-    transition: all 0.2s ease;
-    box-sizing: border-box;
+    transition: all 0.3s ease;
+
+    &:not(.p-disabled):hover {
+      border-color: #3b82f6;
+    }
+
+    &.p-dropdown-open {
+      border-color: #3b82f6;
+    }
+
+    .p-dropdown-label {
+      padding: 0.75rem;
+      color: #374151;
+    }
+  }
+
+  .p-dropdown-panel {
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    
+    .p-dropdown-items {
+      .p-dropdown-item {
+        padding: 0.75rem 1rem;
+        border-radius: 6px;
+        margin: 0.125rem 0;
+
+        &.p-highlight {
+          background: #3b82f6;
+          color: white;
+        }
+
+        &:not(.p-highlight):hover {
+          background: #f1f5f9;
+        }
+      }
+    }
+  }
 }
 
-.in-simulacao:focus {
-    outline: none;
-    border-color: #00235D;
-    box-shadow: 0 0 0 3px rgba(0, 35, 93, 0.2);
+.loading-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  color: #64748b;
+  background: #f8fafc;
+  border-radius: 8px;
+  margin: 1rem 0;
+
+  span {
+    margin-left: 0.5rem;
+  }
 }
 
-::placeholder {
-    color: #94a3b8;
-    font-size: 0.95rem;
+.empty-message {
+  padding: 1rem;
+  text-align: center;
+  color: #64748b;
+  font-style: italic;
+}
+  .bloco-resultaado{
+    padding: 1000000px;
+  }
+// REMOVIDO: bordas e sombras do resultado da consulta
+.resultado-container {
+  margin-top: 1.5rem;
+
+
+  ::ng-deep .resultado-card .p-card {
+    box-shadow: none !important;
+    border: none !important;  
+    
+    .p-card-header {
+      background: transparent !important;
+      color: #1e293b !important;
+      padding: 0 0 1rem 0 !important;
+      font-weight: 600;
+      font-size: 1.2rem;
+    }
+  }
+
+  .info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f1f5f9;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    strong {
+      color: #374151;
+    }
+
+    span {
+      color: #1e293b;
+      font-weight: 500;
+    }
+
+    .valor-fipe {
+      color: #10b981;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+  }
 }
 
+.empty-state {
+  margin-top: 1.5rem;
+  text-align: center;
 
-::ng-deep .btn-simular .p-button {
+  .empty-state-content {
+    padding: 2rem;
+
+    .empty-state-icon {
+      font-size: 3rem;
+      color: #cbd5e1;
+      margin-bottom: 1rem;
+    }
+
+    h3 {
+      color: #64748b;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: #94a3b8;
+      margin: 0;
+    }
+  }
+}
+
+// REMOVIDO: bordas e sombras dos campos de simulação
+.campos-simulacao {
+  margin-top: 1.5rem;
+
+  ::ng-deep .p-card {
+    box-shadow: none !important;
+    border: none !important;
+    
+    .p-card-header {
+      background: transparent !important;
+      color: #1e293b !important;
+      padding: 0 0 1rem 0 !important;
+      font-weight: 600;
+      font-size: 1.2rem;
+    }
+  }
+
+  .field {
+    margin-bottom: 1rem;
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    small {
+      display: block;
+      margin-top: 0.25rem;
+      color: #64748b;
+      font-size: 0.875rem;
+    }
+  }
+}
+
+::ng-deep {
+  .p-inputnumber {
     width: 100%;
-    padding: 0.875rem;
-    background: #ff7300;
+    
+    .p-inputtext {
+      width: 100%;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 0.75rem;
+      transition: all 0.3s ease;
+
+      &:enabled:hover {
+        border-color: #3b82f6;
+      }
+
+      &:enabled:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+    }
+  }
+}
+
+// REMOVIDO: bordas e sombras do resultado da simulação
+.resultado-simulacao {
+  margin-top: 1.5rem;
+
+  ::ng-deep .resultado-simulacao-card .p-card {
+    box-shadow: none !important;
+    border: none !important;
+    
+    .p-card-header {
+      background: transparent !important;
+      color: #1e293b !important;
+      padding: 0 0 1rem 0 !important;
+      font-weight: 600;
+      font-size: 1.2rem;
+    }
+  }
+
+  .info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f1f5f9;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .valor-parcela {
+      color: #3b82f6;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+  }
+
+  .analise-credito {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+
+    &.aprovado {
+      background: rgba(16, 185, 129, 0.1);
+      border-left: 4px solid #10b981;
+      color: #065f46;
+    }
+
+    &.reprovado {
+      background: rgba(239, 68, 68, 0.1);
+      border-left: 4px solid #ef4444;
+      color: #7f1d1d;
+    }
+
+    strong {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    span {
+      font-weight: 700;
+      font-size: 1.1rem;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    small {
+      opacity: 0.8;
+    }
+  }
+}
+
+.flex.justify-content-center {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+::ng-deep {
+  .btn-simular  {
+    background-color: #ff7700; 
     border: none;
     border-radius: 8px;
+    padding: 1rem 2rem;
     font-size: 1.1rem;
     font-weight: 600;
     transition: all 0.3s ease;
-    margin-top: 0.5rem;
+
+    &:hover {
+      background-color: #ff7700c8;
+      transform: translateY(-2px);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      transform: none !important;
+    }
+  }
+
+  .p-button-outlined.p-button-secondary {
+    color: white;
+    background-color: #ff7700;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: #ff7700bd;
+      color: white;
+    }
+  }
 }
 
-::ng-deep .btn-simular .p-button:hover {
-    background: #c65900;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 35, 93, 0.3);
+.flex.justify-content-end {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
 }
 
-::ng-deep .btn-simular .p-button:active {
-    transform: translateY(0);
-}
-
-/* Responsividade */
 @media (max-width: 768px) {
-    .content-wrapper {
-        padding: 1rem;
+  .main-container {
+    padding: 0.5rem;
+  }
+
+  .painel {
+    header {
+      padding: 1.5rem 1rem;
+      
+      .header-actions {
+        position: relative;
+        left: auto;
+        top: auto;
+        transform: none;
+        margin-bottom: 1rem;
+        display: flex;
+        justify-content: flex-start;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      p {
+        font-size: 1rem;
+      }
     }
+  }
 
-    .painel {
-        padding: 1.5rem;
-        margin: 1rem;
-    }
+  .form-simulacao {
+    padding: 1rem;
+  }
 
-    header h2 {
-        font-size: 1.8rem;
-    }
+  .consulta-fipe-container .card {
+    padding: 1.5rem;
+  }
+
+  .form-container .field {
+    margin-bottom: 0.75rem;
+  }
 }
-
-/* Scrollbar personalizado está no styles.scss global */
-
-/* Animações suaves */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.form-simulacao {
-    animation: fadeIn 0.5s ease-out;
-}
-
-.form-group {
-    animation: fadeIn 0.5s ease-out;
-    animation-fill-mode: both;
-}
-
-.form-group:nth-child(1) { animation-delay: 0.1s; }
-.form-group:nth-child(2) { animation-delay: 0.2s; }
-.form-group:nth-child(3) { animation-delay: 0.3s; }
-.form-group:nth-child(4) { animation-delay: 0.4s; }
-.form-group:nth-child(5) { animation-delay: 0.5s; }
-::ng-deep .btn-simular { animation: fadeIn 0.5s ease-out; animation-delay: 0.6s; animation-fill-mode: both; }
