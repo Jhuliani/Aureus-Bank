@@ -381,12 +381,30 @@
   }
 }
 
-.flex.justify-content-center {
-  display: flex;
-  justify-content: center;
-  margin-top: 1.5rem;
+
+.flex.justify-content-center.gap-2 {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
 }
 
+.btn-secundary{
+  background-color: #ffffff !important;
+  border-color: none !important;
+  color: #083b8d !important;
+  width: 160px !important;
+  height: 40px !important;
+  padding: 0 !important;
+  min-width: 40px !important;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #ff7700bd;
+    color: white;
+  }
+}
+  
 ::ng-deep {
   .btn-simular  {
     background-color: #ff7700; 
@@ -408,17 +426,7 @@
     }
   }
 
-  .p-button-outlined.p-button-secondary {
-    color: white;
-    background-color: #ff7700;
-    border-radius: 8px;
-    transition: all 0.3s ease;
 
-    &:hover {
-      background: #ff7700bd;
-      color: white;
-    }
-  }
 }
 
 .flex.justify-content-end {

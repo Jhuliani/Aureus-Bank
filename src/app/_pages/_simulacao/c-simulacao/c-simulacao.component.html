@@ -11,8 +11,8 @@
                             pTooltip="Voltar ao Painel">
                     </button>
                 </div>
-                <h2>Simulação</h2>
-                <p>Faça sua simulação</p>
+                <h2>Simule seu financiamento agora!</h2>
+                <p>Escolha o veículo dos seus sonhos e veja as condições ideias para o seu orçamento. </p>
             </header>
 
             <!-- formulario -->
@@ -22,22 +22,20 @@
                         <h2>Consulta Tabela FIPE</h2>
                         <p class="subtitle">Consulte o valor de veículos utilizando a tabela FIPE oficial</p>
 
-                        <!-- Loading Geral -->
+                        <!-- carregando -->
                         <div *ngIf="carregando && !marcasListagem.length" class="loading-container">
                             <p-progressSpinner></p-progressSpinner>
                             <p>Carregando...</p>
                         </div>
 
-                        <!-- Mensagem de Erro -->
                         <div *ngIf="mensagens.length > 0" class="error-message p-mb-3">
                             <p-messages [(value)]="mensagens"></p-messages>
                         </div>
 
-                        <!-- Formulário de Consulta -->
+                        <!-- forms principal -->
                         <div class="form-container" *ngIf="!carregando || marcasListagem.length">
                             <div class="p-fluid grid">
                                 
-                                <!-- Tipo de Veículo -->
                                 <div class="field col-12 md:col-6 lg:col-3">
                                     <label for="tipoVeiculo">Tipo de Veículo</label>
                                     <p-dropdown
@@ -52,7 +50,6 @@
                                     </p-dropdown>
                                 </div>
 
-                                <!-- Marca -->
                                 <div class="field col-12 md:col-6 lg:col-3">
                                     <label for="marca">Marca</label>
                                     <p-dropdown
@@ -72,7 +69,6 @@
                                     </p-dropdown>
                                 </div>
 
-                                <!-- Modelo -->
                                 <div class="field col-12 md:col-6 lg:col-3">
                                     <label for="modelo">Modelo</label>
                                     <p-dropdown
@@ -92,7 +88,6 @@
                                     </p-dropdown>
                                 </div>
 
-                                <!-- Ano -->
                                 <div class="field col-12 md:col-6 lg:col-3">
                                     <label for="ano">Ano</label>
                                     <p-dropdown
@@ -114,27 +109,27 @@
 
                             </div>
 
-                            <!-- Loading durante consultas -->
+                            <!-- carregando durante consultas -->
                             <div *ngIf="carregando && marcasListagem.length" class="loading-inline">
                                 <p-progressSpinner styleClass="w-1rem h-1rem" strokeWidth="4"></p-progressSpinner>
                                 <span class="ml-2">Consultando...</span>
                             </div>
 
-                            <!-- Botão Limpar -->
+                            <!-- limpar formulario inicial -->
                             <div class="flex justify-content-end mt-3">
                                 <button 
                                     pButton 
                                     pRipple
                                     type="button" 
                                     label="Limpar Consulta" 
-                                    class="p-button-outlined p-button-secondary"
+                                    class="btn-secundary"
                                     (click)="limparConsulta()"
                                     [disabled]="carregando">
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Resultado da Consulta -->
+                        <!-- resultado da consulta a FIPE -->
                         <div *ngIf="informacoesFipe" class="resultado-container mt-4">
                             <p-card header="Resultado da Consulta FIPE" styleClass="resultado-card">
                                 <div class="grid">
@@ -163,7 +158,7 @@
                             </p-card>
                         </div>
 
-                        <!-- Estado Vazio -->
+                        <!-- empty state -->
                         <div *ngIf="!informacoesFipe && formularioValido && !carregando" class="empty-state mt-4">
                             <p-card>
                                 <div class="empty-state-content">
@@ -176,7 +171,7 @@
                     </div>
                 </div>
 
-                <!-- Campos Adicionais para Simulação -->
+                <!-- dados de simulacao -->
                 <div *ngIf="informacoesFipe" class="campos-simulacao mt-4">
                     <p-card header="Dados para Simulação">
                         <div class="grid">
@@ -242,7 +237,7 @@
                     </p-card>
                 </div>
 
-                <!-- Resultado da Simulação -->
+                <!-- resultado da simulacao -->
                 <div *ngIf="resultadoSimulacao && informacoesFipe" class="resultado-simulacao mt-4">
                     <p-card header="Resultado da Simulação" styleClass="resultado-simulacao-card">
                         <div class="grid">
@@ -280,8 +275,47 @@
                     </p-card>
                 </div>
 
-                <!-- btn -->
-                <div class="flex justify-content-center mt-4">
+         
+            <!-- botoes condicionais -->
+            <div class="flex justify-content-center gap-2 mt-4">
+                <!-- caso 1: simulacao foi aprovada -->
+                <div *ngIf="resultadoSimulacao?.aprovado" class="flex justify-content-center gap-2">
+                    <button
+                        pButton
+                        class="btn-simular"
+                        label="Solicitar financiamento"
+                        type="button"
+                        routerLink="/solicitacao">
+                    </button>
+                    <button
+                        pButton
+                        class="p-button-outlined btn-secundary"
+                        label="Voltar"
+                        type="button"
+                        routerLink="/painelcliente">
+                    </button>
+                </div>
+
+                <!-- caso 2: simulacao foi negada -->
+                <div *ngIf="resultadoSimulacao && !resultadoSimulacao.aprovado" class="flex justify-content-center gap-2">
+                    <button
+                        pButton
+                        class="btn-simular"
+                        label="Fazer nova simulação"
+                        type="button"
+                        (click)="novaSimulacao()">
+                    </button>
+                    <button
+                        pButton
+                        class="btn-secundary"
+                        label="Voltar"                    
+                        type="button"
+                        routerLink="/painelcliente">
+                    </button>
+                </div>
+
+                <!-- botao simulacao -->
+                <div *ngIf="!resultadoSimulacao" class="flex justify-content-center">
                     <button
                         pButton
                         class="btn-simular"
@@ -291,6 +325,8 @@
                         [disabled]="!informacoesFipe || carregando">
                     </button>
                 </div>
+            </div>
+
             </form>
         </div>
     </div>

@@ -8,13 +8,13 @@ import { Marcas, Modelos, Anos, InformacoesFipe, ModelosResponse } from '../../.
 import { RouterModule } from '@angular/router';
 
 // Importações do PrimeNG
-import { ProgressSpinner, ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MessagesModule } from 'primeng/messages';
-import { Card, CardModule } from 'primeng/card';
-import { Button, ButtonModule } from 'primeng/button';
-import { Ripple, RippleModule } from 'primeng/ripple';
-import { InputNumber, InputNumberModule } from 'primeng/inputnumber';
-import { Tooltip, TooltipModule } from 'primeng/tooltip';
+import { CardModule } from 'primeng/card';
+import { ButtonModule } from 'primeng/button';
+import { RippleModule } from 'primeng/ripple';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-simulacao',
@@ -37,12 +37,12 @@ import { Tooltip, TooltipModule } from 'primeng/tooltip';
 })
 export class CSimulacaoComponent implements OnInit {
 
-  // Listas para os dropdowns FIPE
+  // dropdowns FIPE
   marcasListagem: SelectItem[] = [];
   modelosListagem: SelectItem[] = [];
   anosListagem: SelectItem[] = [];
 
-  // Valores selecionados FIPE
+  // selecionados da FIPE
   tiposVeiculo: SelectItem[] = [
     { label: 'Carros', value: 'carros' },
     { label: 'Motos', value: 'motos' },
@@ -53,7 +53,7 @@ export class CSimulacaoComponent implements OnInit {
   modeloSelecionado?: string;
   anoSelecionado?: string;
 
-  // Resultado final da FIPE
+  // Resultado FIPE
   informacoesFipe?: InformacoesFipe;
   carregando: boolean = false;
   mensagens: any[] = [];
@@ -71,16 +71,17 @@ export class CSimulacaoComponent implements OnInit {
   taxaJuros: number = 1.5;
   rendaMensal: number = 0;
 
-  // Resultado da simulação
   resultadoSimulacao: any = null;
 
+  // construtor
   constructor(private fipeService: FipeService) {}
 
+  // incializador
   ngOnInit(): void {
     this.carregarMarcas();
   }
 
-  // Getters para cálculos
+  // getter pro cálculos
   get valorVeiculoNumerico(): number {
     if (!this.informacoesFipe?.Valor) return 0;
     const valor = this.informacoesFipe.Valor.replace('R$ ', '').replace('.', '').replace(',', '.');
@@ -91,7 +92,7 @@ export class CSimulacaoComponent implements OnInit {
     return !!(this.marcaSelecionada && this.modeloSelecionado && this.anoSelecionado);
   }
 
-  // Métodos FIPE (mantenha os mesmos do código anterior)
+  // metodos usados no consumo da api da FIPE
   carregarMarcas(): void {
     this.carregando = true;
     this.limparMensagens();
@@ -254,7 +255,7 @@ export class CSimulacaoComponent implements OnInit {
     this.carregarMarcas();
   }
 
-  // Métodos de simulação
+  // metodos de simulação
   realizarSimulacao(): void {
     if (!this.informacoesFipe) {
       this.mostrarErro('Complete a consulta FIPE primeiro.');
@@ -272,15 +273,15 @@ export class CSimulacaoComponent implements OnInit {
     // Cálculo da parcela (juros compostos)
     const taxaMensal = this.taxaJuros / 100;
     const valorParcela = valorFinanciado * (taxaMensal * Math.pow(1 + taxaMensal, this.parcelasSelecionadas)) / 
-                        (Math.pow(1 + taxaMensal, this.parcelasSelecionadas) - 1);
+    (Math.pow(1 + taxaMensal, this.parcelasSelecionadas) - 1);
 
     const totalPagar = valorParcela * this.parcelasSelecionadas;
     const totalJuros = totalPagar - valorFinanciado;
 
-    // Análise de crédito simples
+    // Análise de crédito inicial
     const aprovado = valorParcela <= (this.rendaMensal * 0.3); // Parcela <= 30% da renda
     const mensagem = aprovado 
-      ? 'Parabéns! Sua simulação foi aprovada.' 
+      ? 'Sua renda mensal foi aprovada na simulação inicial. \nAperte o botão abaixo e solicite seu financiamento.' 
       : 'Valor da parcela excede 30% da sua renda mensal.';
 
     this.resultadoSimulacao = {
@@ -301,4 +302,13 @@ export class CSimulacaoComponent implements OnInit {
   private limparMensagens(): void {
     this.mensagens = [];
   }
+
+  novaSimulacao() {
+    // Limpa o formulário
+    this.limparConsulta();        
+    // Rola para o topo da página
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+ 
 }
