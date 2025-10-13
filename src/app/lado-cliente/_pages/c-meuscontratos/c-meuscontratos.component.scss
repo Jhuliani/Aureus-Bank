@@ -6,14 +6,12 @@
     background-color: #00235D;
 }
 
-/* Menu Superior */
 .top-menu {
     background-color: #00235D;
     padding: 0.5rem 1rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Conteúdo Principal */
 .content-wrapper {
     flex: 1;
     padding: 2rem;
@@ -45,7 +43,6 @@
     line-height: 1.5;
 }
 
-/* Botões */
 :host ::ng-deep .p-button {
     width: 400px;
     height: 50px;
@@ -61,7 +58,66 @@
     transition: all 0.2s ease;
 }
 
-/* Responsividade */
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.status-aprovado {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-em_analise {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-rejeitado {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.table th,
+.table td {
+    padding: 16px 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    line-height: 1.5;
+}
+
+.table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #00235D;
+}
+
+.table-striped tbody tr:nth-child(odd) {
+    background-color: #f8f9fa;
+}
+
+.table tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+    padding: 16px 12px;
+    line-height: 1.5;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+    padding: 16px 12px;
+    line-height: 1.5;
+}
 @media (max-width: 768px) {
     .content-wrapper {
         padding: 1rem;

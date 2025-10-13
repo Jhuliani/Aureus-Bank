@@ -1,4 +1,4 @@
-<div class="main-login"> 
+<div class="main-login">
     <div class="esquerda-login">
         <h1>AUREUS</h1>
         <h2>O caminho mais seguro até o seu veículo.</h2>
@@ -10,31 +10,39 @@
             <div class="card-login">
                 <div class="campo-email">
                     <label for="email">Email</label>
-                    <input 
-                        type="text" 
-                        id="email" 
-                        name="email"                        
-                        pInputText [(ngModel)]="email" 
+                    <input
+                        type="text"
+                        id="email"
+                        name="email"
+                        pInputText [(ngModel)]="email"
                         placeholder="Email"
                         required
                     />
                 </div>
                 <div class="campo-senha">
                     <label for="senha">Senha</label>
-                    <p-password [(ngModel)]="senha" 
+                    <p-password [(ngModel)]="senha"
                         name="senha"
                         id="senha"
-                        [feedback]="false" 
+                        [feedback]="false"
                         placeholder="Senha"
                         required
                     />
-                </div>   
+                </div>
             </div>
 
             <div class="inferior-login">
-                <button class="btn-login">Avançar</button>
+                <button class="btn-login" (click)="fazerLogin()" [disabled]="loading()">
+                    {{ loading() ? 'Entrando...' : 'Avançar' }}
+                </button>
                 <a routerLink="/cadastro">Criar conta</a>
             </div>
+
+            @if (error()) {
+                <div class="error-message">
+                    {{ error() }}
+                </div>
+            }
         </form>
     </div>
 </div>

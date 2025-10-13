@@ -31,39 +31,37 @@
             <h1>Meus Contratos</h1>
             <p>Aqui você pode acompanhar todos os seus contratos.</p>
             <div class="card">
-                <p-table [value]="unlockedCustomers" [frozenValue]="lockedCustomers" [scrollable]="true" scrollHeight="400px" [tableStyle]="{ 'min-width': '60rem' }">
-                    <ng-template #header>
-                        <tr>
-                            <th>Name</th>
-                            <th>Country</th>
-                            <th>Company</th>
-                            <th>Representative</th>
-                            <th style="width:5rem"></th>
-                        </tr>
-                    </ng-template>
-                    <ng-template #frozenbody let-customer let-index="rowIndex">
-                        <tr class="font-bold">
-                            <td> TAUANI </td>
-                            <td> TAUANI </td>
-                            <td> TAUANI </td>
-                            <td> TAUANI </td>
-                            <td>
-                                <button pButton pRipple type="button"  size="small" text></button>
-                            </td>
-                        </tr>
-                    </ng-template>
-                    <ng-template #body let-customer let-index="rowIndex">
-                        <tr>
-                            <td>TAUANI</td>
-                            <td>TAUANI</td>
-                            <td>TAUANI</td>
-                            <td>TAUANI</td>
-                            <td>
-                                <button pButton pRipple type="button"  [disabled]="lockedCustomers.length >= 2"  size="small" text></button>
-                            </td>
-                        </tr>
-                    </ng-template>
-                </p-table>
+                <p *ngIf="loading">Carregando contratos...</p>
+
+                <div *ngIf="!loading">
+                    <!-- PrimeNG Table -->
+                    <p-table [value]="contratos" styleClass="p-datatable-striped">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Número do Contrato</th>
+                                <th>Status</th>
+                                <th>ID Cliente</th>
+                                <th>ID Veículo</th>
+                                <th>ID Financeiro</th>
+                                <th>Data Emissão</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-contrato>
+                            <tr>
+                                <td>{{ contrato.num_contrato }}</td>
+                                <td>
+                                    <span [class]="'status-badge status-' + contrato.status.toLowerCase()">
+                                        {{ contrato.status }}
+                                    </span>
+                                </td>
+                                <td>{{ contrato.id_cliente }}</td>
+                                <td>{{ contrato.id_veiculo }}</td>
+                                <td>{{ contrato.id_financeiro }}</td>
+                                <td>{{ contrato.data_emissao | date:'dd/MM/yyyy' }}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
             </div>
 
 
