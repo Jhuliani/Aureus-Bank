@@ -1,21 +1,20 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, forkJoin } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface Contrato {
-  id: string;
-  num_contrato: string;
-  data_emissao: string;
-  vigencia_ctt: string;
+  numero_contrato: string;
   status: string;
-  data: string;
   id_cliente: number;
   id_veiculo: number;
   id_financeiro: number;
-  clientes?: any;
-  veiculos?: any;
-  financeiros?: any;
+  data_emissao: string;
+}
+
+export interface ContratosResponse {
+  contratos: Contrato[];
+  total: number;
 }
 
 export interface Cliente {
@@ -51,16 +50,32 @@ export interface Financeiro {
   providedIn: 'root'
 })
 export class ContratosService {
-  private apiUrl = 'http://localhost:3001';
+  private apiUrl = `${environment.apiUrl}/cliente`;
 
   constructor(private http: HttpClient) { }
 
-  buscarTodosContratos(): Observable<Contrato[]> {
-    return this.http.get<Contrato[]>(`${this.apiUrl}/contratos`);
+  /**
+   * Busca contratos do cliente logado usando o ID do localStorage
+   */
+  buscarContratosDoCliente(idCliente: number): Observable<ContratosResponse> {
+    const token = this.obterToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.get<ContratosResponse>(`${this.apiUrl}/contratos/${idCliente}`, { headers });
   }
 
-  buscarContratosPorCliente(idCliente: number): Observable<Contrato[]> {
-    return this.http.get<Contrato[]>(`${this.apiUrl}/contratos?id_cliente=${idCliente}`);
+  /**
+   * Obtém o token de autenticação do localStorage
+   */
+  private obterToken(): string | null {
+    const authData = localStorage.getItem('auth_data');
+    if (authData) {
+      const parsed = JSON.parse(authData);
+      return parsed.access_token || null;
+    }
+    return null;
   }
-
 }

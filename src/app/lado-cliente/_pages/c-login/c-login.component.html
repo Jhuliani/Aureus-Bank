@@ -1,3 +1,5 @@
+<p-toast></p-toast>
+
 <div class="main-login">
     <div class="esquerda-login">
         <h1>AUREUS</h1>
@@ -8,17 +10,17 @@
         <h2 class="title">Olá! <br>Seja bem-vindo(a)</h2>
         <form>
             <div class="card-login">
-                <div class="campo-email">
-                    <label for="email">Email</label>
-                    <input
-                        type="text"
-                        id="email"
-                        name="email"
-                        pInputText [(ngModel)]="email"
-                        placeholder="Email"
-                        required
-                    />
-                </div>
+                    <div class="campo-login">
+                        <label for="login">Login</label>
+                        <input
+                            type="text"
+                            id="login"
+                            name="login"
+                            pInputText [(ngModel)]="login"
+                            placeholder="Login"
+                            required
+                        />
+                    </div>
                 <div class="campo-senha">
                     <label for="senha">Senha</label>
                     <p-password [(ngModel)]="senha"
@@ -37,12 +39,6 @@
                 </button>
                 <a routerLink="/cadastro">Criar conta</a>
             </div>
-
-            @if (error()) {
-                <div class="error-message">
-                    {{ error() }}
-                </div>
-            }
         </form>
     </div>
 </div>

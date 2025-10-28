@@ -29,7 +29,7 @@
     <div class="content-wrapper">
        <div class="painel">
             <h1>Meus Contratos</h1>
-            <p>Aqui você pode acompanhar todos os seus contratos.</p>
+            <p>Aqui você pode acompanhar todos os seus contratos. Total: {{ totalContratos }}</p>
             <div class="card">
                 <p *ngIf="loading">Carregando contratos...</p>
 
@@ -48,7 +48,7 @@
                         </ng-template>
                         <ng-template pTemplate="body" let-contrato>
                             <tr>
-                                <td>{{ contrato.num_contrato }}</td>
+                                <td>{{ contrato.numero_contrato }}</td>
                                 <td>
                                     <span [class]="'status-badge status-' + contrato.status.toLowerCase()">
                                         {{ contrato.status }}

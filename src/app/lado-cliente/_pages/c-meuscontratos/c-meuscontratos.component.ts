@@ -5,7 +5,7 @@ import { TabMenuModule } from 'primeng/tabmenu';
 import { MenuItem } from 'primeng/api';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
-import { ContratosService, Contrato } from '../../../services/contratos.service';
+import { ContratosService, Contrato, ContratosResponse } from '../../../services/contratos.service';
 
 @Component({
   selector: 'app-meuscontratos',
@@ -19,6 +19,7 @@ import { ContratosService, Contrato } from '../../../services/contratos.service'
 })
 export class CMeuscontratosComponent implements OnInit{
   contratos: Contrato[] = [];
+  totalContratos = 0;
   loading = false;
   usuario: any = null;
 
@@ -45,10 +46,22 @@ export class CMeuscontratosComponent implements OnInit{
   carregarContratos() {
     this.loading = true;
 
-    this.contratosService.buscarTodosContratos()
+    // Obter ID do cliente do localStorage
+    const authData = this.authService.obterDadosLogin();
+    if (!authData || !authData.id_cliente) {
+      console.error('ID do cliente não encontrado no localStorage');
+      this.loading = false;
+      return;
+    }
+
+    console.log('Buscando contratos para cliente ID:', authData.id_cliente);
+
+    this.contratosService.buscarContratosDoCliente(authData.id_cliente)
       .subscribe({
-        next: (contratos: Contrato[]) => {
-          this.contratos = contratos;
+        next: (response: ContratosResponse) => {
+          console.log('Contratos recebidos:', response);
+          this.contratos = response.contratos;
+          this.totalContratos = response.total;
           this.loading = false;
           this.cdr.detectChanges();
         },

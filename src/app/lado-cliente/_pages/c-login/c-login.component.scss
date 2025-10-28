@@ -67,7 +67,7 @@
 
 }
 
-.campo-email, .campo-senha {
+.campo-login, .campo-senha {
     width: 500px;
     margin-bottom: 1.5rem;
 
@@ -223,11 +223,22 @@
     animation: fadeIn 0.5s ease-out;
 }
 
-.campo-email, .campo-senha {
+.campo-login, .campo-senha {
     animation: fadeIn 0.5s ease-out;
     animation-fill-mode: both;
 }
 
-.campo-email { animation-delay: 0.1s; }
+.campo-login { animation-delay: 0.1s; }
 .campo-senha { animation-delay: 0.2s; }
 .inferior-login { animation: fadeIn 0.5s ease-out; animation-delay: 0.3s; animation-fill-mode: both; }
+
+
+::ng-deep .p-toast .p-toast-message {
+  border-left: 4px solid #d32f2f;     /* erro */
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.12);
+}
+::ng-deep .p-toast .p-toast-message .p-toast-message-content {
+  gap: .5rem;
+  padding: 12px 16px;
+}

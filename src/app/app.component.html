@@ -7,7 +7,11 @@
     </div>
 
     <div class="header-right">
-      <span class="language">PT-BR</span>
+      <p-menubar
+        [model]="userMenuItems"
+        [style]="{'background': 'transparent', 'border': 'none'}"
+        [autoDisplay]="false">
+      </p-menubar>
     </div>
   </header>
 

@@ -1,30 +1,60 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface Usuario {
-  id: string;
-  usuario: string;
-  email: string;
-  senha: string;
-  tipo: string;
-  ativo: boolean;
+  id_usuario?: number;
+  id_perfil?: number;
+  login: string;
+  nome?: string;
+  email?: string;
+  senha?: string;
+  data_criacao?: string;
+  ativo?: boolean;
+}
+
+export interface LoginResponse {
+  access_token: string;
+  refresh_token: string;
+  token_type: string;
+  id_cliente: number;
+  nome_cliente: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3001';
+  private apiUrl = `${environment.apiUrl}/auth`;
 
   constructor(private http: HttpClient) { }
 
-  fazerLogin(email: string, senha: string): Observable<Usuario[]> {
-    return this.http.get<Usuario[]>(`${this.apiUrl}/usuarios?email=${email}&senha=${senha}`);
+  fazerLogin(login: string, senha: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, { login, senha });
   }
 
   salvarUsuarioLocal(usuario: Usuario): void {
     localStorage.setItem('usuario', JSON.stringify(usuario));
+  }
+
+  salvarDadosLogin(loginData: LoginResponse): void {
+    localStorage.setItem('auth_data', JSON.stringify(loginData));
+  }
+
+  obterDadosLogin(): LoginResponse | null {
+    const authDataStr = localStorage.getItem('auth_data');
+    return authDataStr ? JSON.parse(authDataStr) : null;
+  }
+
+  obterToken(): string | null {
+    const authData = this.obterDadosLogin();
+    return authData ? authData.access_token : null;
+  }
+
+  obterRefreshToken(): string | null {
+    const authData = this.obterDadosLogin();
+    return authData ? authData.refresh_token : null;
   }
 
   obterUsuarioLocal(): Usuario | null {
@@ -34,9 +64,10 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem('usuario');
+    localStorage.removeItem('auth_data');
   }
 
   isLoggedIn(): boolean {
-    return this.obterUsuarioLocal() !== null;
+    return this.obterDadosLogin() !== null;
   }
 }

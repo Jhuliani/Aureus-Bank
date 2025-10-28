@@ -59,11 +59,8 @@ $orange-accent: #f97316;
   }
 
   .header-right {
-    .language {
-      color: $text-light;
-      font-size: 0.9rem;
-      font-weight: 500;
-    }
+    display: flex;
+    align-items: center;
   }
 }
 
@@ -159,6 +156,86 @@ $orange-accent: #f97316;
       &:focus {
         border-color: #3b82f6;
         box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+      }
+    }
+  }
+
+  // Estilo do menubar do usuário
+  .p-menubar {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+
+    .p-menubar-root-list {
+      .p-menuitem {
+        .p-menuitem-link {
+          color: $text-light !important;
+          background: rgba(255, 255, 255, 0.1) !important;
+          border-radius: 6px !important;
+          padding: 0.6rem 1rem !important;
+          font-weight: 500 !important;
+          transition: all 0.2s ease !important;
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.2) !important;
+            transform: translateY(-1px) !important;
+          }
+
+          .p-menuitem-text {
+            color: $text-light !important;
+          }
+
+          .p-menuitem-icon {
+            color: $text-light !important;
+            margin-right: 0.5rem !important;
+          }
+
+          .p-submenu-icon {
+            color: $text-light !important;
+            margin-left: 0.5rem !important;
+          }
+        }
+      }
+    }
+
+    .p-submenu-list {
+      background: $primary-blue !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
+      border-radius: 8px !important;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;
+      padding: 0.5rem 0 !important;
+      min-width: 120px !important;
+
+      .p-menuitem {
+        .p-menuitem-link {
+          color: $text-light !important;
+          background: transparent !important;
+          padding: 0.75rem 1rem !important;
+          font-weight: 500 !important;
+          transition: all 0.2s ease !important;
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.15) !important;
+            color: $text-light !important;
+            transform: none !important;
+          }
+
+          &:focus {
+            background: transparent !important;
+            color: $text-light !important;
+            box-shadow: none !important;
+          }
+
+          &:active {
+            background: transparent !important;
+            color: $text-light !important;
+          }
+
+          .p-menuitem-icon {
+            color: #ff6b6b !important;
+            margin-right: 0.5rem !important;
+          }
+        }
       }
     }
   }

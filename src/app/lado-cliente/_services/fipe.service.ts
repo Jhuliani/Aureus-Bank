@@ -2,13 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { Marcas, Modelos, Anos, InformacoesFipe, ModelosResponse } from '../_models/fipe.models';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FipeService {
-  private readonly fipeURL: string = 'https://parallelum.com.br/fipe/api/v1';
-  
+  private readonly fipeURL: string = environment.fipeApiUrl;
+
   constructor(private http: HttpClient) { }
 
   listarMarcas(tipoVeiculo: string):  Observable<Marcas[]> {

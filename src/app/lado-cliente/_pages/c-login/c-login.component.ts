@@ -4,6 +4,8 @@ import { PasswordModule} from 'primeng/password';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { MenubarModule } from 'primeng/menubar';
 import { InputTextModule } from 'primeng/inputtext';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../services/auth.service';
@@ -16,22 +18,22 @@ import { AuthService } from '../../../services/auth.service';
   standalone: true,
   imports: [FormsModule, PasswordModule,
     BreadcrumbModule, MenubarModule,
-    InputTextModule, CommonModule],
+    InputTextModule, CommonModule, ToastModule],
   templateUrl: './c-login.component.html',
   styleUrls: ['./c-login.component.scss'],
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class CLoginComponent {
   senha = '';
-  email: string = '';
+  login: string = '';
   loading = signal(false);
-  error = signal('');
 
   hide = signal(true);
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private messageService: MessageService
   ) {}
 
   clickEvent(event: MouseEvent) {
@@ -40,29 +42,56 @@ export class CLoginComponent {
   }
 
   fazerLogin() {
-    if (!this.email || !this.senha) {
-      this.error.set('Email e senha são obrigatórios');
+    if (!this.login || !this.senha) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'Login e senha são obrigatórios'
+      });
       return;
     }
 
     this.loading.set(true);
-    this.error.set('');
 
-    this.authService.fazerLogin(this.email, this.senha)
+    this.authService.fazerLogin(this.login, this.senha)
       .subscribe({
-        next: (usuarios: any[]) => {
-          if (usuarios && usuarios.length > 0) {
-            const usuario = usuarios[0];
+        next: (response) => {
+
+          // Verificar se a resposta contém os dados necessários
+          if (response && response.access_token && response.id_cliente) {
+            // Salvar dados de autenticação no localStorage
+            this.authService.salvarDadosLogin(response);
+
+            // Criar objeto usuário com os dados disponíveis
+            const usuario = {
+              id_cliente: response.id_cliente,
+              nome: response.nome_cliente,
+              login: this.login
+            };
             this.authService.salvarUsuarioLocal(usuario);
+
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Sucesso',
+              detail: 'Login realizado com sucesso!'
+            });
             this.router.navigate(['/inicio']);
           } else {
-            this.error.set('Email ou senha incorretos');
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erro',
+              detail: 'Login ou senha incorretos'
+            });
           }
           this.loading.set(false);
         },
         error: (err: any) => {
           console.error('Erro na requisição:', err);
-          this.error.set('Erro ao conectar com o servidor. Verifique se o JSON Server está rodando.');
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Erro ao conectar com o servidor.'
+          });
           this.loading.set(false);
         }
       });
