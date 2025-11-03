@@ -13,6 +13,8 @@ import { CSimulacaoComponent } from './lado-cliente/_pages/_simulacao/c-simulaca
 import { CSolicitacaoComponent } from './lado-cliente/_pages/_solicitacao/c-solicitacao/c-solicitacao.component';
 import { CPainelclienteComponent } from './lado-cliente/_pages/c-painelcliente/c-painelcliente.component';
 import { CSettingsComponent } from './lado-cliente/_pages/c-settings/c-settings.component';
+import { CConsultaComponent } from './lado-admin/c-consulta/c-consulta.component';
+import { CContratosComponent } from './lado-admin/c-contratos/c-contratos.component';
 
 export const routes: Routes = [
   // Redireciona raiz para login
@@ -25,6 +27,8 @@ export const routes: Routes = [
   // Rotas para o lado do admin
   { path: 'bemvindo', component: CBemvindoComponent},
   { path: 'paineladmin', component: CPaineladminComponent },
+  { path: 'consulta-contratos', component: CConsultaComponent},
+  { path: 'contratos-cliente', component: CContratosComponent},
 
   // Rotas internas (usadas pelo layout global já presente no AppComponent)
   { path: 'inicio', component: CBemvindoComponent },

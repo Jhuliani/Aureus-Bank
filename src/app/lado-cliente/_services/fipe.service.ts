@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
-import { Marcas, Modelos, Anos, InformacoesFipe, ModelosResponse } from '../_models/fipe.models';
+import { Marcas, Modelos, Anos, InformacoesFipe, ModelosResponse } from '../../_models/fipe.models';
 import { environment } from '../../../environments/environment';
 
 @Injectable({

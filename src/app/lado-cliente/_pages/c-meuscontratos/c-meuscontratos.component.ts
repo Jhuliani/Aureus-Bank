@@ -18,7 +18,7 @@ import { ContratosService, Contrato, ContratosResponse } from '../../../services
   styleUrl: './c-meuscontratos.component.scss',
 })
 export class CMeuscontratosComponent implements OnInit{
-  contratos: Contrato[] = [];
+  contratos: Contrato[] = []; // é da tabela
   totalContratos = 0;
   loading = false;
   usuario: any = null;

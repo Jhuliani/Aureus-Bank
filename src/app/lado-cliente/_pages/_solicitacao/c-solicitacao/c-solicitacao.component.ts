@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SelectItem } from 'primeng/api';
 import { FipeService } from '../../../_services/fipe.service';
-import { Marcas, Modelos, Anos, InformacoesFipe, ModelosResponse } from '../../../_models/fipe.models';
+import { Marcas, Modelos, Anos, InformacoesFipe, ModelosResponse } from '../../../../_models/fipe.models';
 import { RouterModule } from '@angular/router';
 
 // Importações do PrimeNG
