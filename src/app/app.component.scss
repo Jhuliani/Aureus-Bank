@@ -1,4 +1,4 @@
-// Cores do tema
+
 $primary-blue: #00235D;
 $white: #ffffff;
 $light-gray: #f8fafc;
@@ -6,7 +6,7 @@ $text-dark: #374151;
 $text-light: #ffffff;
 $orange-accent: #f97316;
 
-// Layout principal
+
 .app-container {
   display: grid;
   grid-template-areas:
@@ -18,7 +18,7 @@ $orange-accent: #f97316;
   background-color: $light-gray;
 }
 
-// Header
+
 .header {
   grid-area: header;
   background-color: $primary-blue;
@@ -64,7 +64,7 @@ $orange-accent: #f97316;
   }
 }
 
-// Sidebar
+
 .sidebar {
   grid-area: sidebar;
   background-color: $primary-blue;
@@ -123,7 +123,7 @@ $orange-accent: #f97316;
   }
 }
 
-// Área principal de conteúdo
+
 .main-content {
   grid-area: main;
   background-color: $primary-blue;
@@ -137,7 +137,6 @@ $orange-accent: #f97316;
   }
 }
 
-// Estilos para os componentes PrimeNG
 ::ng-deep {
   .p-inputgroup {
     .p-inputgroup-addon {
@@ -160,7 +159,7 @@ $orange-accent: #f97316;
     }
   }
 
-  // Estilo do menubar do usuário
+
   .p-menubar {
     background: transparent !important;
     border: none !important;

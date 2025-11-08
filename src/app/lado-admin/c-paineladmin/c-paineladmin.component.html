@@ -1,14 +1,93 @@
-<div class="main-painel">
-  <div class="esquerda-painel">
-    <div class="sidebar">
- 
-    </div>
-  </div>
+<div class="painel-admin">
+  <h1 class="titulo-principal">PAINEL DO ADMIN</h1>
 
-  <div class="direita-painel">
-    <div class="painel">
-      <h2>Painel admin</h2>
-      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore nisi eligendi molestias incidunt consectetur quidem sed. Delectus sunt reprehenderit nobis cupiditate, nam eaque quos asperiores? Sint magnam in beatae sed!</p>
+  <div class="main-painel">
+    <!-- Carrossel de Parcelas -->
+    <section class="carrossel-parcelas">
+      <h2 class="carrossel-titulo">PARCELAS</h2>
+      <div class="carrossel-container">
+        <div class="card-parcela">
+          <h3>PAGAR</h3>
+          <p class="valor">R$ {{ dadosParcelas?.pagar || 0 }}</p>
+        </div>
+        <div class="card-parcela">
+          <h3>EM ATRASO</h3>
+          <p class="valor">R$ {{ dadosParcelas?.emAtraso || 0 }}</p>
+        </div>
+        <div class="card-parcela">
+          <h3>A VENCER</h3>
+          <p class="valor">R$ {{ dadosParcelas?.aVencer || 0 }}</p>
+        </div>
+      </div>
+      <div class="resumo">
+        <p class="situacao">Situação: R${{ dadosParcelas?.situacaoTotal || 0 }}</p>
+        <p class="total-atraso">Total em atraso: R${{ dadosParcelas?.totalAtraso || 0 }}</p>
+      </div>
+    </section>
+
+    <!-- Cards de Informações -->
+    <div class="cards-container">
+      <div class="card-info contrato">
+        <h3>Informações do Contrato</h3>
+        <div class="info-line">
+          <span class="info-label">ID do contrato:</span>
+          <span class="info-value">{{ dadosContrato?.idContrato || 'N/A' }}</span>
+        </div>
+        <div class="info-line">
+          <span class="info-label">Data de emissão:</span>
+          <span class="info-value">{{ dadosContrato?.dataEmissao || 'N/A' }}</span>
+        </div>
+        <div class="info-line">
+          <span class="info-label">Prazo de vigência:</span>
+          <span class="info-value">{{ dadosContrato?.vigenciaInicio || 'N/A' }} - {{ dadosContrato?.vigenciaFim || 'N/A' }}</span>
+        </div>
+        <div class="info-line">
+          <span class="info-label">Status do contrato:</span>
+          <span class="info-value status-{{ dadosContrato?.statusContrato?.toLowerCase() || 'indefinido' }}">
+            {{ dadosContrato?.statusContrato || 'N/A' }}
+          </span>
+        </div>
+        <div class="info-line">
+          <span class="info-label">Produto:</span>
+          <span class="info-value">{{ dadosContrato?.produto || 'N/A' }}</span>
+        </div>
+        <div class="info-line">
+          <span class="info-label">Tipo de produto:</span>
+          <span class="info-value">{{ dadosContrato?.tipoProduto || 'N/A' }}</span>
+        </div>
+        <div class="info-line">
+          <span class="info-label">Cedente:</span>
+          <span class="info-value">{{ dadosContrato?.cedente || 'N/A' }}</span>
+        </div>
+      </div>
+
+      <div class="card-info veiculo">
+        <h3>Detalhes do Veículo</h3>
+        <div class="info-line">
+          <span class="info-label">Marca:</span>
+          <span class="info-value">{{ dadosVeiculo?.marca || 'N/A' }}</span>
+        </div>
+        <div class="info-line">
+          <span class="info-label">Modelo:</span>
+          <span class="info-value">{{ dadosVeiculo?.modelo || 'N/A' }}</span>
+        </div>
+        <div class="info-line">
+          <span class="info-label">Ano:</span>
+          <span class="info-value">{{ dadosVeiculo?.ano || 'N/A' }}</span>
+        </div>
+        <div class="info-line">
+          <span class="info-label">Placa:</span>
+          <span class="info-value">{{ dadosVeiculo?.placa || 'N/A' }}</span>
+        </div>
+        <div class="info-line">
+          <span class="info-label">Renavam:</span>
+          <span class="info-value">{{ dadosVeiculo?.renavam || 'N/A' }}</span>
+        </div>
+        <div class="info-line">
+          <span class="info-label">Chassi:</span>
+          <span class="info-value">{{ dadosVeiculo?.chassi || 'N/A' }}</span>
+        </div>
+      </div>
     </div>
   </div>
 </div>
