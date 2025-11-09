@@ -25,17 +25,12 @@ export const routes: Routes = [
 
   // Rotas para o lado do admin
   { path: 'bemvindo', component: CBemvindoComponent},
-  { path: 'paineladmin', component: CPaineladminComponent,
-    children: [
-      { path: 'consulta-contratos', component: CConsultaComponent},
-      { path: 'contratos-cliente', component: CContratosComponent},
-    ]
-  },
-
+  { path: 'paineladmin', component: CPaineladminComponent},
+  { path: 'consulta-contratos', component: CConsultaComponent},
+  { path: 'contratos-cliente', component: CContratosComponent},
+      
   // Rotas internas (usadas pelo layout global já presente no AppComponent)
-  { path: 'inicio', component: CBemvindoComponent },
-  { path: 'contratos', component: CMeuscontratosComponent },
-  { path: 'meuscontratos', component: CMeuscontratosComponent }, // Rota direta para meus contratos
+  { path: 'meus-contratos', component: CMeuscontratosComponent}, // Rota direta para meus contratos
   {
     path: 'painelcliente', component: CPainelclienteComponent,
     children: [
