@@ -77,7 +77,12 @@ export class CLoginComponent {
               summary: 'Sucesso',
               detail: 'Login realizado com sucesso!'
             });
-            this.router.navigate(['/inicio']);
+
+            if (this.authService.isAdmin()) {
+              this.router.navigate(['/bemvindo']);
+            } else {
+              this.router.navigate(['/inicio']);
+            }
           } else {
             this.messageService.add({
               severity: 'error',

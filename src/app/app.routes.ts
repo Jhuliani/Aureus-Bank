@@ -16,40 +16,80 @@ import { CConsultaComponent } from './lado-admin/c-consulta/c-consulta.component
 import { CContratosComponent } from './lado-admin/c-contratos/c-contratos.component';
 import { CPaineladminComponent } from './lado-admin/c-paineladmin/c-paineladmin.component';
 
+// Guards
+import { authGuard } from './guards/auth.guard';
+import { adminGuard } from './guards/admin.guard';
+import { clienteGuard } from './guards/cliente.guard';
+
 export const routes: Routes = [
   // Redireciona raiz para login
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 
-  // Rotas públicas (fora do layout principal)
+  // Rotas públicas (fora do layout principal) - sem guard
   { path: 'login', component: CLoginComponent },
   { path: 'cadastro', component: CCadastroComponent },
 
-  // Rotas para o lado do admin
-  { path: 'bemvindo', component: CBemvindoComponent},
-  { path: 'paineladmin', component: CPaineladminComponent,
+  // Rotas para o lado do admin - requerem autenticação e perfil admin
+  { 
+    path: 'bemvindo', 
+    component: CBemvindoComponent,
+    canActivate: [adminGuard]
+  },
+  { 
+    path: 'paineladmin', 
+    component: CPaineladminComponent,
+    canActivate: [adminGuard],
     children: [
       { path: 'consulta-contratos', component: CConsultaComponent},
       { path: 'contratos-cliente', component: CContratosComponent},
     ]
   },
 
-  // Rotas internas (usadas pelo layout global já presente no AppComponent)
-  { path: 'inicio', component: CBemvindoComponent },
-  { path: 'contratos', component: CMeuscontratosComponent },
-  { path: 'meuscontratos', component: CMeuscontratosComponent }, // Rota direta para meus contratos
-  { path: 'meuscontratos/:id', component: CVisualizarContratosComponent }, // Detalhes do contrato
+  // Rota interna compartilhada - requer apenas autenticação
+  { 
+    path: 'inicio', 
+    component: CBemvindoComponent,
+    canActivate: [authGuard]
+  },
+
+  // Rotas do cliente - requerem autenticação e perfil cliente
+  { 
+    path: 'contratos', 
+    component: CMeuscontratosComponent,
+    canActivate: [clienteGuard]
+  },
+  { 
+    path: 'meuscontratos', 
+    component: CMeuscontratosComponent,
+    canActivate: [clienteGuard]
+  },
+  { 
+    path: 'meuscontratos/:id', 
+    component: CVisualizarContratosComponent,
+    canActivate: [clienteGuard]
+  },
   {
-    path: 'painelcliente', component: CPainelclienteComponent,
+    path: 'painelcliente', 
+    component: CPainelclienteComponent,
+    canActivate: [clienteGuard],
     children: [
       { path: 'simulacao', component: CSimulacaoComponent },
       { path: 'solicitacao', component: CSolicitacaoComponent },
     ]
   },
-  { path: 'simulacao', redirectTo: 'painelcliente/simulacao' },
-  { path: 'solicitacao', redirectTo: 'painelcliente/solicitacao' },
-  { path: 'settings', component: CSettingsComponent },
-
-
+  { 
+    path: 'simulacao', 
+    redirectTo: 'painelcliente/simulacao'
+  },
+  { 
+    path: 'solicitacao', 
+    redirectTo: 'painelcliente/solicitacao'
+  },
+  { 
+    path: 'settings', 
+    component: CSettingsComponent,
+    canActivate: [clienteGuard]
+  },
 
   // Rota curinga (404 opcional)
   { path: '**', redirectTo: 'login' },
