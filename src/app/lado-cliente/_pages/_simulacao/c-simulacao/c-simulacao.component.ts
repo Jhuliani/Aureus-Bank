@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { DropdownModule } from 'primeng/dropdown';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SelectItem } from 'primeng/api';
 import { FipeService } from '../../../_services/fipe.service';
 import { Marcas, Modelos, Anos, InformacoesFipe, ModelosResponse } from '../../../../_models/fipe.models';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
+import { SimulacaoService } from '../../../../services/simulacao.service';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 // Importações do PrimeNG
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
@@ -20,9 +23,10 @@ import { TooltipModule } from 'primeng/tooltip';
   selector: 'app-simulacao',
   standalone: true,
   imports: [
-    DropdownModule, 
-    CommonModule, 
+    DropdownModule,
+    CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     RouterModule,
     ProgressSpinnerModule,
     MessagesModule,
@@ -30,285 +34,384 @@ import { TooltipModule } from 'primeng/tooltip';
     ButtonModule,
     RippleModule,
     InputNumberModule,
-    TooltipModule
+    TooltipModule,
+    ToastModule
   ],
   templateUrl: './c-simulacao.component.html',
   styleUrls: ['./c-simulacao.component.scss']
 })
 export class CSimulacaoComponent implements OnInit {
 
-  // dropdowns FIPE
-  marcasListagem: SelectItem[] = [];
-  modelosListagem: SelectItem[] = [];
-  anosListagem: SelectItem[] = [];
+  listaMarcas: SelectItem[] = [];
+  listaModelos: SelectItem[] = [];
+  listaAnos: SelectItem[] = [];
 
-  // selecionados da FIPE
-  tiposVeiculo: SelectItem[] = [
+  listaTiposVeiculo: SelectItem[] = [
     { label: 'Carros', value: 'carros' },
     { label: 'Motos', value: 'motos' },
     { label: 'Caminhões', value: 'caminhoes' }
   ];
+
   tipoVeiculo: string = 'carros';
-  marcaSelecionada?: string;
-  modeloSelecionado?: string;
-  anoSelecionado?: string;
+  marcaEscolhida?: string;
+  modeloEscolhido?: string;
+  anoEscolhido?: string;
+  dadosFipe?: InformacoesFipe;
 
-  // Resultado FIPE
-  informacoesFipe?: InformacoesFipe;
-  carregando: boolean = false;
-  mensagens: any[] = [];
+  formularioSimulacao!: FormGroup;
 
-  // Campos de simulação
-  valorEntrada: number = 0;
-  opcoesParcelas: SelectItem[] = [
+  listaParcelas: SelectItem[] = [
     { label: '12x', value: 12 },
     { label: '24x', value: 24 },
     { label: '36x', value: 36 },
     { label: '48x', value: 48 },
     { label: '60x', value: 60 }
   ];
-  parcelasSelecionadas: number = 36;
-  taxaJuros: number = 1.5;
-  rendaMensal: number = 0;
 
   resultadoSimulacao: any = null;
+  estaCarregando: boolean = false;
 
-  // construtor
-  constructor(private fipeService: FipeService) {}
+  constructor(
+    private servicoFipe: FipeService,
+    private construtorFormulario: FormBuilder,
+    private roteador: Router,
+    private servicoSimulacao: SimulacaoService,
+    private servicoMensagem: MessageService
+  ) {
+    this.criarFormulario();
+  }
 
-  // incializador
   ngOnInit(): void {
     this.carregarMarcas();
   }
 
-  // getter pro cálculos
-  get valorVeiculoNumerico(): number {
-    if (!this.informacoesFipe?.Valor) return 0;
-    const valor = this.informacoesFipe.Valor.replace('R$ ', '').replace('.', '').replace(',', '.');
-    return parseFloat(valor) || 0;
-  }
+  private criarFormulario(): void {
+    const taxaInicial = this.obterTaxaJuros(36);
 
-  get formularioValido(): boolean {
-    return !!(this.marcaSelecionada && this.modeloSelecionado && this.anoSelecionado);
-  }
+    this.formularioSimulacao = this.construtorFormulario.group({
+      valorEntrada: [null, [Validators.required, Validators.min(0)]],
+      parcelasSelecionadas: [36, [Validators.required]],
+      taxaJuros: [{value: taxaInicial, disabled: true}],
+      rendaMensal: [null, [Validators.required, Validators.min(0.01)]]
+    });
 
-  // metodos usados no consumo da api da FIPE
-  carregarMarcas(): void {
-    this.carregando = true;
-    this.limparMensagens();
-    
-    this.fipeService.listarMarcas(this.tipoVeiculo).subscribe({
-      next: (marcas: Marcas[]) => {
-        this.marcasListagem = marcas.map(m => ({ 
-          label: m.nome, 
-          value: m.codigo 
-        }));
-        this.carregando = false;
-      },
-      error: (err) => {
-        console.error('Erro ao carregar marcas:', err);
-        this.mostrarErro('Erro ao carregar marcas. Tente novamente.');
-        this.marcasListagem = [];
-        this.carregando = false;
+    this.formularioSimulacao.get('parcelasSelecionadas')?.valueChanges.subscribe((parcelas: number) => {
+      if (parcelas) {
+        const novaTaxa = this.obterTaxaJuros(parcelas);
+        this.formularioSimulacao.get('taxaJuros')?.setValue(novaTaxa, {emitEvent: false});
       }
     });
   }
 
-  onMarcaChange(): void {
-    if (!this.marcaSelecionada) {
-      this.modelosListagem = [];
-      this.anosListagem = [];
-      this.modeloSelecionado = undefined;
-      this.anoSelecionado = undefined;
-      this.informacoesFipe = undefined;
-      this.resultadoSimulacao = null;
+  atualizarValorMaximoEntrada(): void {
+    const valorMaximo = this.valorNumericoDoVeiculo;
+    const campoValorEntrada = this.formularioSimulacao.get('valorEntrada');
+
+    if (campoValorEntrada && valorMaximo > 0) {
+      campoValorEntrada.setValidators([
+        Validators.required,
+        Validators.min(0),
+        Validators.max(valorMaximo)
+      ]);
+      campoValorEntrada.updateValueAndValidity();
+    }
+  }
+
+  get valorNumericoDoVeiculo(): number {
+    if (!this.dadosFipe?.Valor) return 0;
+    const valor = this.dadosFipe.Valor.replace('R$ ', '').replace('.', '').replace(',', '.');
+    return parseFloat(valor) || 0;
+  }
+
+  get formularioEstaValido(): boolean {
+    return !!(this.marcaEscolhida && this.modeloEscolhido && this.anoEscolhido);
+  }
+
+  private obterTaxaJuros(parcelas: number): number {
+    switch (parcelas) {
+      case 12: return 1.5;
+      case 24: return 2.5;
+      case 36: return 3.5;
+      case 48: return 4.5;
+      case 60: return 5.5;
+      default: return 3.5;
+    }
+  }
+
+  carregarMarcas(): void {
+    this.estaCarregando = true;
+
+    this.servicoFipe.listarMarcas(this.tipoVeiculo).subscribe({
+      next: (marcas: Marcas[]) => {
+        this.listaMarcas = marcas.map(m => ({
+          label: m.nome,
+          value: m.codigo
+        }));
+        this.estaCarregando = false;
+      },
+      error: (erro) => {
+        console.error('Erro ao carregar marcas:', erro);
+        this.mostrarErro('Erro ao carregar marcas. Tente novamente.');
+        this.listaMarcas = [];
+        this.estaCarregando = false;
+      }
+    });
+  }
+
+  aoMudarTipoVeiculo(): void {
+    this.limparDadosFipe();
+    this.carregarMarcas();
+  }
+
+  aoMudarMarca(): void {
+    if (!this.marcaEscolhida) {
+      this.limparDadosFipe();
       return;
     }
 
-    this.carregando = true;
-    this.limparMensagens();
-    this.modelosListagem = [];
-    this.anosListagem = [];
-    this.modeloSelecionado = undefined;
-    this.anoSelecionado = undefined;
-    this.informacoesFipe = undefined;
-    this.resultadoSimulacao = null;
+    this.estaCarregando = true;
+    this.limparDadosFipe();
 
-    this.fipeService.listarModelos(this.tipoVeiculo, this.marcaSelecionada).subscribe({
-      next: (response: ModelosResponse) => {
-        if (response && response.modelos && response.modelos.length > 0) {
-          this.modelosListagem = response.modelos.map(m => ({
+    this.servicoFipe.listarModelos(this.tipoVeiculo, this.marcaEscolhida).subscribe({
+      next: (resposta: ModelosResponse) => {
+        if (resposta && resposta.modelos && resposta.modelos.length > 0) {
+          this.listaModelos = resposta.modelos.map(m => ({
             label: m.nome,
             value: m.codigo
           }));
         } else {
           this.mostrarErro('Nenhum modelo encontrado para esta marca.');
-          this.modelosListagem = [];
+          this.listaModelos = [];
         }
-        this.carregando = false;
+        this.estaCarregando = false;
       },
-      error: (err) => {
-        console.error('Erro ao carregar modelos:', err);
+      error: (erro) => {
+        console.error('Erro ao carregar modelos:', erro);
         this.mostrarErro('Erro ao carregar modelos. Tente novamente.');
-        this.modelosListagem = [];
-        this.carregando = false;
+        this.listaModelos = [];
+        this.estaCarregando = false;
       }
     });
   }
 
-  onModeloChange(): void {
-    if (!this.marcaSelecionada || !this.modeloSelecionado) {
-      this.anosListagem = [];
-      this.anoSelecionado = undefined;
-      this.informacoesFipe = undefined;
+  aoMudarModelo(): void {
+    setTimeout(() => {
+      if (!this.marcaEscolhida || !this.modeloEscolhido) {
+        return;
+      }
+
+      if (this.modeloEscolhido === 'undefined' || this.modeloEscolhido === 'null') {
+        return;
+      }
+
+      this.estaCarregando = true;
+
+      this.listaAnos = [];
+      this.anoEscolhido = undefined;
+      this.dadosFipe = undefined;
       this.resultadoSimulacao = null;
-      return;
-    }
 
-    this.carregando = true;
-    this.limparMensagens();
-    this.anosListagem = [];
-    this.anoSelecionado = undefined;
-    this.informacoesFipe = undefined;
-    this.resultadoSimulacao = null;
-
-    this.fipeService.listarAnos(this.tipoVeiculo, this.marcaSelecionada, this.modeloSelecionado).subscribe({
-      next: (anos: Anos[]) => {
-        if (anos && anos.length > 0) {
-          this.anosListagem = anos.map(a => ({ 
-            label: a.nome, 
-            value: a.codigo 
-          }));
-        } else {
-          this.mostrarErro('Nenhum ano encontrado para este modelo.');
-          this.anosListagem = [];
+      this.servicoFipe.listarAnos(this.tipoVeiculo, this.marcaEscolhida, this.modeloEscolhido).subscribe({
+        next: (anos: Anos[]) => {
+          if (anos && anos.length > 0) {
+            this.listaAnos = anos.map(a => ({
+              label: a.nome,
+              value: a.codigo
+            }));
+          } else {
+            this.mostrarErro('Nenhum ano encontrado para este modelo.');
+            this.listaAnos = [];
+          }
+          this.estaCarregando = false;
+        },
+        error: (erro) => {
+          console.error('Erro ao carregar anos:', erro);
+          this.mostrarErro('Erro ao carregar anos. Tente novamente.');
+          this.listaAnos = [];
+          this.estaCarregando = false;
         }
-        this.carregando = false;
-      },
-      error: (err) => {
-        console.error('Erro ao carregar anos:', err);
-        this.mostrarErro('Erro ao carregar anos. Tente novamente.');
-        this.anosListagem = [];
-        this.carregando = false;
-      }
-    });
+      });
+    }, 0);
   }
 
-  onAnoChange(): void {
-    if (!this.marcaSelecionada || !this.modeloSelecionado || !this.anoSelecionado) {
-      this.informacoesFipe = undefined;
+  aoMudarAno(): void {
+    if (!this.marcaEscolhida || !this.modeloEscolhido || !this.anoEscolhido ||
+        this.modeloEscolhido === 'undefined' || this.modeloEscolhido === 'null' ||
+        this.anoEscolhido === 'undefined' || this.anoEscolhido === 'null') {
+      this.dadosFipe = undefined;
       this.resultadoSimulacao = null;
       return;
     }
 
-    this.carregando = true;
-    this.limparMensagens();
-    this.informacoesFipe = undefined;
+    this.estaCarregando = true;
+    this.dadosFipe = undefined;
     this.resultadoSimulacao = null;
 
-    this.fipeService.listarInformacoes(
+    this.servicoFipe.listarInformacoes(
       this.tipoVeiculo,
-      this.marcaSelecionada,
-      this.modeloSelecionado,
-      this.anoSelecionado
+      this.marcaEscolhida,
+      this.modeloEscolhido,
+      this.anoEscolhido
     ).subscribe({
       next: (info: InformacoesFipe) => {
-        this.informacoesFipe = info;
-        this.carregando = false;
+        this.dadosFipe = info;
+        this.atualizarValorMaximoEntrada();
+        this.estaCarregando = false;
       },
-      error: (err) => {
-        console.error('Erro ao carregar informações da FIPE:', err);
+      error: (erro) => {
+        console.error('Erro ao carregar informações da FIPE:', erro);
         this.mostrarErro('Erro ao carregar informações da FIPE. Tente novamente.');
-        this.carregando = false;
+        this.estaCarregando = false;
       }
     });
-  }
-
-  onTipoVeiculoChange(): void {
-    this.marcasListagem = [];
-    this.modelosListagem = [];
-    this.anosListagem = [];
-    this.marcaSelecionada = undefined;
-    this.modeloSelecionado = undefined;
-    this.anoSelecionado = undefined;
-    this.informacoesFipe = undefined;
-    this.resultadoSimulacao = null;
-    this.limparMensagens();
-
-    this.carregarMarcas();
   }
 
   limparConsulta(): void {
     this.tipoVeiculo = 'carros';
-    this.marcasListagem = [];
-    this.modelosListagem = [];
-    this.anosListagem = [];
-    this.marcaSelecionada = undefined;
-    this.modeloSelecionado = undefined;
-    this.anoSelecionado = undefined;
-    this.informacoesFipe = undefined;
-    this.resultadoSimulacao = null;
-    this.valorEntrada = 0;
-    this.rendaMensal = 0;
-    this.limparMensagens();
-
+    this.limparDadosFipe();
+    this.formularioSimulacao.reset({
+      valorEntrada: null,
+      parcelasSelecionadas: 36,
+      rendaMensal: null
+    });
     this.carregarMarcas();
   }
 
-  // metodos de simulação
-  realizarSimulacao(): void {
-    if (!this.informacoesFipe) {
+  private limparDadosFipe(): void {
+    this.listaModelos = [];
+    this.listaAnos = [];
+    this.modeloEscolhido = undefined;
+    this.anoEscolhido = undefined;
+    this.dadosFipe = undefined;
+    this.resultadoSimulacao = null;
+  }
+
+  calcularSimulacao(): void {
+    if (!this.dadosFipe) {
       this.mostrarErro('Complete a consulta FIPE primeiro.');
       return;
     }
 
-    const valorVeiculo = this.valorVeiculoNumerico;
-    const valorFinanciado = valorVeiculo - this.valorEntrada;
+    this.formularioSimulacao.markAllAsTouched();
+
+    if (this.formularioSimulacao.invalid) {
+      this.mostrarErroValidacao();
+      return;
+    }
+
+    const valorEntrada = this.formularioSimulacao.get('valorEntrada')?.value;
+    const rendaMensal = this.formularioSimulacao.get('rendaMensal')?.value;
+    const numeroParcelas = this.formularioSimulacao.get('parcelasSelecionadas')?.value || 36;
+    const taxaJuros = this.formularioSimulacao.get('taxaJuros')?.value || 3.5;
+
+    const valorVeiculo = this.valorNumericoDoVeiculo;
+    const valorFinanciado = valorVeiculo - valorEntrada;
 
     if (valorFinanciado <= 0) {
       this.mostrarErro('O valor da entrada deve ser menor que o valor do veículo.');
       return;
     }
 
-    // Cálculo da parcela (juros compostos)
-    const taxaMensal = this.taxaJuros / 100;
-    const valorParcela = valorFinanciado * (taxaMensal * Math.pow(1 + taxaMensal, this.parcelasSelecionadas)) / 
-    (Math.pow(1 + taxaMensal, this.parcelasSelecionadas) - 1);
-
-    const totalPagar = valorParcela * this.parcelasSelecionadas;
-    const totalJuros = totalPagar - valorFinanciado;
-
-    // Análise de crédito inicial
-    const aprovado = valorParcela <= (this.rendaMensal * 0.3); // Parcela <= 30% da renda
-    const mensagem = aprovado 
-      ? 'Sua renda mensal foi aprovada na simulação inicial. \nAperte o botão abaixo e solicite seu financiamento.' 
-      : 'Valor da parcela excede 30% da sua renda mensal.';
+    const resultado = this.calcularFinanciamento(valorFinanciado, taxaJuros, numeroParcelas);
+    const aprovado = resultado.valorParcela <= (rendaMensal * 0.3);
 
     this.resultadoSimulacao = {
+      ...resultado,
+      aprovado: aprovado,
+      mensagem: aprovado
+        ? 'Sua renda mensal foi aprovada na simulação inicial. \nAperte o botão abaixo e solicite seu financiamento.'
+        : 'Valor da parcela excede 30% da sua renda mensal.'
+    };
+
+    if (aprovado) {
+      this.salvarDadosParaSolicitacao();
+    }
+  }
+
+  private calcularFinanciamento(valorFinanciado: number, taxaJuros: number, numeroParcelas: number): any {
+    const taxaMensal = taxaJuros / 100;
+    const valorParcela = valorFinanciado * (taxaMensal * Math.pow(1 + taxaMensal, numeroParcelas)) /
+      (Math.pow(1 + taxaMensal, numeroParcelas) - 1);
+    const totalPagar = valorParcela * numeroParcelas;
+    const totalJuros = totalPagar - valorFinanciado;
+
+    return {
       valorFinanciado,
       valorParcela,
       totalPagar,
-      totalJuros,
-      aprovado,
-      mensagem
+      totalJuros
     };
   }
 
-  // Métodos auxiliares
-  private mostrarErro(mensagem: string): void {
-    this.mensagens = [{ severity: 'error', summary: 'Erro', detail: mensagem }];
+  private mostrarErroValidacao(): void {
+    if (this.formularioSimulacao.get('valorEntrada')?.invalid) {
+      this.mostrarErro('Informe o valor de entrada válido.');
+    } else if (this.formularioSimulacao.get('rendaMensal')?.invalid) {
+      this.mostrarErro('Informe sua renda mensal válida.');
+    } else {
+      this.mostrarErro('Preencha todos os campos obrigatórios.');
+    }
   }
 
-  private limparMensagens(): void {
-    this.mensagens = [];
+  irParaSolicitacao(): void {
+    this.salvarDadosParaSolicitacao();
+    this.roteador.navigate(['/painelcliente/solicitacao']);
   }
 
-  novaSimulacao() {
-    // Limpa o formulário
-    this.limparConsulta();        
-    // Rola para o topo da página
+  novaSimulacao(): void {
+    this.limparConsulta();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
- 
+  private salvarDadosParaSolicitacao(): void {
+    const valorEntrada = this.formularioSimulacao.get('valorEntrada')?.value;
+    const rendaMensal = this.formularioSimulacao.get('rendaMensal')?.value;
+    const numeroParcelas = this.formularioSimulacao.get('parcelasSelecionadas')?.value || 36;
+    const taxaJuros = this.formularioSimulacao.get('taxaJuros')?.value || 3.5;
+
+    if (!this.marcaEscolhida || !this.modeloEscolhido || !this.anoEscolhido || !this.dadosFipe) {
+      console.error('Erro ao salvar dados: informações incompletas', {
+        marcaEscolhida: this.marcaEscolhida,
+        modeloEscolhido: this.modeloEscolhido,
+        anoEscolhido: this.anoEscolhido,
+        dadosFipe: this.dadosFipe
+      });
+      return;
+    }
+
+    const dadosParaSalvar = {
+      informacoesFipe: this.dadosFipe,
+      tipoVeiculo: this.tipoVeiculo,
+      marcaSelecionada: this.marcaEscolhida,
+      modeloSelecionado: this.modeloEscolhido,
+      anoSelecionado: this.anoEscolhido,
+      valorEntrada: valorEntrada,
+      parcelasSelecionadas: numeroParcelas,
+      taxaJuros: taxaJuros,
+      rendaMensal: rendaMensal,
+      resultadoSimulacao: this.resultadoSimulacao
+    };
+
+    console.log('Salvando dados para solicitação:', dadosParaSalvar);
+    this.servicoSimulacao.salvarDadosSimulacao(dadosParaSalvar);
+  }
+
+  private mostrarErro(mensagem: string): void {
+    this.servicoMensagem.add({
+      severity: 'error',
+      summary: 'Erro',
+      detail: mensagem,
+      life: 10000
+    });
+  }
+
+  private mostrarSucesso(mensagem: string): void {
+    this.servicoMensagem.add({
+      severity: 'success',
+      summary: 'Sucesso',
+      detail: mensagem,
+      life: 10000
+    });
+  }
 }
+

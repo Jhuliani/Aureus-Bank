@@ -14,7 +14,7 @@
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  
+
   header {
     color: rgb(0, 0, 0);
     padding: 2rem;
@@ -137,7 +137,7 @@
     border: 2px solid #e2e8f0;
     border-radius: 8px;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    
+
     .p-dropdown-items {
       .p-dropdown-item {
         padding: 0.75rem 1rem;
@@ -188,8 +188,9 @@
 
   ::ng-deep .resultado-card .p-card {
     box-shadow: none !important;
-    border: none !important;  
-    
+    border: none !important;
+    padding: 10px !important;
+
     .p-card-header {
       background: transparent !important;
       color: #1e293b !important;
@@ -203,7 +204,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.75rem 0;
+    padding: 0.45rem 0.75rem;
     border-bottom: 1px solid #f1f5f9;
 
     &:last-child {
@@ -259,7 +260,7 @@
   ::ng-deep .p-card {
     box-shadow: none !important;
     border: none !important;
-    
+
     .p-card-header {
       background: transparent !important;
       color: #1e293b !important;
@@ -291,7 +292,7 @@
 ::ng-deep {
   .p-inputnumber {
     width: 100%;
-    
+
     .p-inputtext {
       width: 100%;
       border: 2px solid #e2e8f0;
@@ -318,7 +319,7 @@
   ::ng-deep .resultado-simulacao-card .p-card {
     box-shadow: none !important;
     border: none !important;
-    
+
     .p-card-header {
       background: transparent !important;
       color: #1e293b !important;
@@ -404,10 +405,10 @@
     color: white;
   }
 }
-  
+
 ::ng-deep {
   .btn-simular  {
-    background-color: #ff7700; 
+    background-color: #ff7700;
     border: none;
     border-radius: 8px;
     padding: 1rem 2rem;
@@ -443,7 +444,7 @@
   .painel {
     header {
       padding: 1.5rem 1rem;
-      
+
       .header-actions {
         position: relative;
         left: auto;

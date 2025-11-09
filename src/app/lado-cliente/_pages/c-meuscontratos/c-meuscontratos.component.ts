@@ -21,7 +21,6 @@ export class CMeuscontratosComponent implements OnInit{
   contratos: Contrato[] = []; // é da tabela
   totalContratos = 0;
   loading = false;
-  usuario: any = null;
 
   menuSuperior: MenuItem[] | undefined;
 
@@ -33,9 +32,8 @@ export class CMeuscontratosComponent implements OnInit{
   ) {}
 
   ngOnInit() {
-    // Verificar se usuário está logado
-    this.usuario = this.authService.obterUsuarioLocal();
-    if (!this.usuario) {
+    // Verificar se usuário está logado usando auth_data (token)
+    if (!this.authService.isLoggedIn()) {
       this.router.navigate(['/login']);
       return;
     }

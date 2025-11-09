@@ -18,6 +18,10 @@ $orange-accent: #f97316;
   background-color: $light-gray;
 }
 
+::ng-deep .p-menuitem-content{
+  border-radius: 5px;
+}
+
 
 .header {
   grid-area: header;
@@ -161,7 +165,7 @@ $orange-accent: #f97316;
 
 
   .p-menubar {
-    background: transparent !important;
+    // background: transparent !important;
     border: none !important;
     padding: 0 !important;
 
@@ -176,21 +180,21 @@ $orange-accent: #f97316;
           transition: all 0.2s ease !important;
 
           &:hover {
-            background: rgba(255, 255, 255, 0.2) !important;
+            // background: rgba(255, 255, 255, 0.2) !important;
             transform: translateY(-1px) !important;
           }
 
           .p-menuitem-text {
-            color: $text-light !important;
+            // color: $text-light !important;
           }
 
           .p-menuitem-icon {
-            color: $text-light !important;
+            // color: $text-light !important;
             margin-right: 0.5rem !important;
           }
 
           .p-submenu-icon {
-            color: $text-light !important;
+            // color: $text-light !important;
             margin-left: 0.5rem !important;
           }
         }
@@ -198,35 +202,34 @@ $orange-accent: #f97316;
     }
 
     .p-submenu-list {
-      background: $primary-blue !important;
+      // background: $primary-blue !important;
       border: 1px solid rgba(255, 255, 255, 0.2) !important;
       border-radius: 8px !important;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;
-      padding: 0.5rem 0 !important;
-      min-width: 120px !important;
+      width: 100px !important;
 
       .p-menuitem {
         .p-menuitem-link {
           color: $text-light !important;
           background: transparent !important;
-          padding: 0.75rem 1rem !important;
+          // padding: 0.75rem 1rem !important;
           font-weight: 500 !important;
           transition: all 0.2s ease !important;
 
           &:hover {
-            background: rgba(255, 255, 255, 0.15) !important;
+            // background: rgba(255, 255, 255, 0.15) !important;
             color: $text-light !important;
-            transform: none !important;
+            // transform: none !important;
           }
 
           &:focus {
-            background: transparent !important;
+            // background: transparent !important;
             color: $text-light !important;
-            box-shadow: none !important;
+            // box-shadow: none !important;
           }
 
           &:active {
-            background: transparent !important;
+            // background: transparent !important;
             color: $text-light !important;
           }
 

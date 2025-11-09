@@ -9,7 +9,6 @@
     <div class="header-right">
       <p-menubar
         [model]="userMenuItems"
-        [style]="{'background': 'transparent', 'border': 'none'}"
         [autoDisplay]="false">
       </p-menubar>
     </div>
@@ -46,7 +45,6 @@
   </aside>
 
 
-  <!-- Main Content Area -->
   <main class="main-content">
     <div class="content-card">
       <router-outlet></router-outlet>
@@ -54,5 +52,4 @@
   </main>
 </div>
 
-<!-- Modo tela cheia (sem layout) -->
 <router-outlet *ngIf="!showLayout"></router-outlet>

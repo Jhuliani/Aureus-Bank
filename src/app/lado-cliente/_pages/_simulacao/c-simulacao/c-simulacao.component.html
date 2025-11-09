@@ -1,3 +1,4 @@
+<p-toast></p-toast>
 <div class="main-container">
     <div class="content-wrapper">
         <div class="painel">
@@ -15,36 +16,30 @@
                 <p>Escolha o veículo dos seus sonhos e veja as condições ideias para o seu orçamento. </p>
             </header>
 
-            <!-- formulario -->
-            <form class="form-simulacao">
+            <div class="form-simulacao">
                 <div class="consulta-fipe-container">
                     <div class="card">
                         <h2>Consulta Tabela FIPE</h2>
                         <p class="subtitle">Consulte o valor de veículos utilizando a tabela FIPE oficial</p>
 
-                        <!-- carregando -->
-                        <div *ngIf="carregando && !marcasListagem.length" class="loading-container">
+                        <div *ngIf="estaCarregando && !listaMarcas.length" class="loading-container">
                             <p-progressSpinner></p-progressSpinner>
                             <p>Carregando...</p>
                         </div>
 
-                        <div *ngIf="mensagens.length > 0" class="error-message p-mb-3">
-                            <p-messages [(value)]="mensagens"></p-messages>
-                        </div>
 
-                        <!-- forms principal -->
-                        <div class="form-container" *ngIf="!carregando || marcasListagem.length">
+                        <div class="form-container" *ngIf="!estaCarregando || listaMarcas.length">
                             <div class="p-fluid grid">
-                                
+
                                 <div class="field col-12 md:col-6 lg:col-3">
                                     <label for="tipoVeiculo">Tipo de Veículo</label>
                                     <p-dropdown
                                         id="tipoVeiculo"
-                                        [options]="tiposVeiculo"
+                                        [options]="listaTiposVeiculo"
                                         [(ngModel)]="tipoVeiculo"
-                                        (onChange)="onTipoVeiculoChange()"
+                                        (onChange)="aoMudarTipoVeiculo()"
                                         placeholder="Selecione o tipo"
-                                        [disabled]="carregando"
+                                        [disabled]="estaCarregando"
                                         appendTo="body"
                                         name="tipoVeiculo">
                                     </p-dropdown>
@@ -54,16 +49,16 @@
                                     <label for="marca">Marca</label>
                                     <p-dropdown
                                         id="marca"
-                                        [options]="marcasListagem"
-                                        [(ngModel)]="marcaSelecionada"
-                                        (onChange)="onMarcaChange()"
+                                        [options]="listaMarcas"
+                                        [(ngModel)]="marcaEscolhida"
+                                        (onChange)="aoMudarMarca()"
                                         placeholder="Selecione a marca"
-                                        [disabled]="!marcasListagem.length || carregando"
+                                        [disabled]="!listaMarcas.length || estaCarregando"
                                         appendTo="body"
                                         name="marca">
                                         <ng-template pTemplate="empty">
                                             <div class="empty-message">
-                                                {{ carregando ? 'Carregando...' : 'Nenhuma marca encontrada' }}
+                                                {{ estaCarregando ? 'Carregando...' : 'Nenhuma marca encontrada' }}
                                             </div>
                                         </ng-template>
                                     </p-dropdown>
@@ -73,16 +68,16 @@
                                     <label for="modelo">Modelo</label>
                                     <p-dropdown
                                         id="modelo"
-                                        [options]="modelosListagem"
-                                        [(ngModel)]="modeloSelecionado"
-                                        (onChange)="onModeloChange()"
+                                        [options]="listaModelos"
+                                        [(ngModel)]="modeloEscolhido"
+                                        (onChange)="aoMudarModelo()"
                                         placeholder="Selecione o modelo"
-                                        [disabled]="!modelosListagem.length || carregando"
+                                        [disabled]="!listaModelos.length || estaCarregando"
                                         appendTo="body"
                                         name="modelo">
                                         <ng-template pTemplate="empty">
                                             <div class="empty-message">
-                                                {{ !marcaSelecionada ? 'Selecione uma marca' : (carregando ? 'Carregando...' : 'Nenhum modelo encontrado') }}
+                                                {{ !marcaEscolhida ? 'Selecione uma marca' : (estaCarregando ? 'Carregando...' : 'Nenhum modelo encontrado') }}
                                             </div>
                                         </ng-template>
                                     </p-dropdown>
@@ -92,16 +87,16 @@
                                     <label for="ano">Ano</label>
                                     <p-dropdown
                                         id="ano"
-                                        [options]="anosListagem"
-                                        [(ngModel)]="anoSelecionado"
-                                        (onChange)="onAnoChange()"
+                                        [options]="listaAnos"
+                                        [(ngModel)]="anoEscolhido"
+                                        (onChange)="aoMudarAno()"
                                         placeholder="Selecione o ano"
-                                        [disabled]="!anosListagem.length || carregando"
+                                        [disabled]="!listaAnos.length || estaCarregando"
                                         appendTo="body"
                                         name="ano">
                                         <ng-template pTemplate="empty">
                                             <div class="empty-message">
-                                                {{ !modeloSelecionado ? 'Selecione um modelo' : (carregando ? 'Carregando...' : 'Nenhum ano encontrado') }}
+                                                {{ !modeloEscolhido ? 'Selecione um modelo' : (estaCarregando ? 'Carregando...' : 'Nenhum ano encontrado') }}
                                             </div>
                                         </ng-template>
                                     </p-dropdown>
@@ -109,57 +104,53 @@
 
                             </div>
 
-                            <!-- carregando durante consultas -->
-                            <div *ngIf="carregando && marcasListagem.length" class="loading-inline">
+                            <div *ngIf="estaCarregando && listaMarcas.length" class="loading-inline">
                                 <p-progressSpinner styleClass="w-1rem h-1rem" strokeWidth="4"></p-progressSpinner>
                                 <span class="ml-2">Consultando...</span>
                             </div>
 
-                            <!-- limpar formulario inicial -->
                             <div class="flex justify-content-end mt-3">
-                                <button 
-                                    pButton 
+                                <button
+                                    pButton
                                     pRipple
-                                    type="button" 
-                                    label="Limpar Consulta" 
+                                    type="button"
+                                    label="Limpar Consulta"
                                     class="btn-secundary"
                                     (click)="limparConsulta()"
-                                    [disabled]="carregando">
+                                    [disabled]="estaCarregando">
                                 </button>
                             </div>
                         </div>
 
-                        <!-- resultado da consulta a FIPE -->
-                        <div *ngIf="informacoesFipe" class="resultado-container mt-4">
-                            <p-card header="Resultado da Consulta FIPE" styleClass="resultado-card">
+                        <div *ngIf="dadosFipe" class="resultado-container mt-4">
+                            <p-card header="Resultado da Consulta FIPE" styleClass="resultado-card" [style]="{'padding': '10px'}">
                                 <div class="grid">
                                     <div class="col-12 md:col-6">
                                         <div class="info-item">
                                             <strong>Valor do Veículo:</strong>
-                                            <span class="valor-fipe">{{ informacoesFipe.Valor }}</span>
+                                            <span class="valor-fipe">{{ dadosFipe.Valor }}</span>
                                         </div>
 
                                     </div>
                                     <div class="col-12 md:col-6">
                                         <div class="info-item">
                                             <strong>Combustível:</strong>
-                                            <span>{{ informacoesFipe.Combustivel }}</span>
+                                            <span>{{ dadosFipe.Combustivel }}</span>
                                         </div>
                                         <div class="info-item">
                                             <strong>Código FIPE:</strong>
-                                            <span>{{ informacoesFipe.CodigoFipe }}</span>
+                                            <span>{{ dadosFipe.CodigoFipe }}</span>
                                         </div>
                                         <div class="info-item">
                                             <strong>Mês Referência:</strong>
-                                            <span>{{ informacoesFipe.MesReferencia }}</span>
+                                            <span>{{ dadosFipe.MesReferencia }}</span>
                                         </div>
                                     </div>
                                 </div>
                             </p-card>
                         </div>
 
-                        <!-- empty state -->
-                        <div *ngIf="!informacoesFipe && formularioValido && !carregando" class="empty-state mt-4">
+                        <div *ngIf="!dadosFipe && formularioEstaValido && !estaCarregando" class="empty-state mt-4">
                             <p-card>
                                 <div class="empty-state-content">
                                     <i class="pi pi-info-circle empty-state-icon"></i>
@@ -171,74 +162,86 @@
                     </div>
                 </div>
 
-                <!-- dados de simulacao -->
-                <div *ngIf="informacoesFipe" class="campos-simulacao mt-4">
+                <div *ngIf="dadosFipe" class="campos-simulacao mt-4">
                     <p-card header="Dados para Simulação">
-                        <div class="grid">
-                            <div class="field col-12 md:col-6">
-                                <label for="valorEntrada">Valor de Entrada (R$)</label>
-                                <p-inputNumber 
-                                    id="valorEntrada"
-                                    [(ngModel)]="valorEntrada"
-                                    mode="currency" 
-                                    currency="BRL" 
-                                    locale="pt-BR"
-                                    [min]="0"
-                                    [max]="valorVeiculoNumerico"
-                                    placeholder="Digite o valor da entrada"
-                                    name="valorEntrada">
-                                </p-inputNumber>
-                                <small class="p-d-block p-mt-1">
-                                    Valor máximo: {{ valorVeiculoNumerico | currency:'BRL' }}
-                                </small>
-                            </div>
+                        <form [formGroup]="formularioSimulacao">
+                            <div class="grid">
+                                <div class="field col-12 md:col-6">
+                                    <label for="valorEntrada">Valor de Entrada (R$)</label>
+                                    <p-inputNumber
+                                        id="valorEntrada"
+                                        formControlName="valorEntrada"
+                                        mode="currency"
+                                        currency="BRL"
+                                        locale="pt-BR"
+                                        [min]="0"
+                                        [max]="valorNumericoDoVeiculo"
+                                        [allowEmpty]="true"
+                                        [useGrouping]="true"
+                                        placeholder="Digite o valor da entrada">
+                                    </p-inputNumber>
+                                    <small class="p-d-block p-mt-1">
+                                        Valor máximo: {{ valorNumericoDoVeiculo | currency:'BRL' }}
+                                    </small>
+                                    <small *ngIf="formularioSimulacao.get('valorEntrada')?.invalid && formularioSimulacao.get('valorEntrada')?.touched"
+                                           class="p-error p-d-block p-mt-1">
+                                        <span *ngIf="formularioSimulacao.get('valorEntrada')?.errors?.['required']">Campo obrigatório</span>
+                                        <span *ngIf="formularioSimulacao.get('valorEntrada')?.errors?.['max']">Valor excede o máximo permitido</span>
+                                        <span *ngIf="formularioSimulacao.get('valorEntrada')?.errors?.['min']">Valor deve ser maior ou igual a zero</span>
+                                    </small>
+                                </div>
 
-                            <div class="field col-12 md:col-6">
-                                <label for="parcelas">Número de Parcelas</label>
-                                <p-dropdown
-                                    id="parcelas"
-                                    [options]="opcoesParcelas"
-                                    [(ngModel)]="parcelasSelecionadas"
-                                    placeholder="Selecione as parcelas"
-                                    name="parcelas">
-                                </p-dropdown>
-                            </div>
+                                <div class="field col-12 md:col-6">
+                                    <label for="parcelas">Número de Parcelas</label>
+                                    <p-dropdown
+                                        id="parcelas"
+                                        [options]="listaParcelas"
+                                        formControlName="parcelasSelecionadas"
+                                        placeholder="Selecione as parcelas">
+                                    </p-dropdown>
+                                </div>
 
-                            <div class="field col-12 md:col-6">
-                                <label for="taxaJuros">Taxa de Juros (% ao mês)</label>
-                                <p-inputNumber 
-                                    id="taxaJuros"
-                                    [(ngModel)]="taxaJuros"
-                                    mode="decimal" 
-                                    [min]="0"
-                                    [max]="20"
-                                    [minFractionDigits]="2"
-                                    [maxFractionDigits]="2"
-                                    placeholder="0.00"
-                                    suffix="%"
-                                    name="taxaJuros">
-                                </p-inputNumber>
-                            </div>
+                                <div class="field col-12 md:col-6">
+                                    <label for="taxaJuros">Taxa de Juros (% ao mês)</label>
+                                    <p-inputNumber
+                                        id="taxaJuros"
+                                        formControlName="taxaJuros"
+                                        mode="decimal"
+                                        [readonly]="true"
+                                        [minFractionDigits]="2"
+                                        [maxFractionDigits]="2"
+                                        suffix="%">
+                                    </p-inputNumber>
+                                    <small class="p-d-block p-mt-1" style="color: #64748b;">
+                                        Taxa automática baseada no número de parcelas
+                                    </small>
+                                </div>
 
-                            <div class="field col-12 md:col-6">
-                                <label for="rendaMensal">Renda Mensal (R$)</label>
-                                <p-inputNumber 
-                                    id="rendaMensal"
-                                    [(ngModel)]="rendaMensal"
-                                    mode="currency" 
-                                    currency="BRL" 
-                                    locale="pt-BR"
-                                    [min]="0"
-                                    placeholder="Digite sua renda mensal"
-                                    name="rendaMensal">
-                                </p-inputNumber>
+                                <div class="field col-12 md:col-6">
+                                    <label for="rendaMensal">Renda Mensal (R$)</label>
+                                    <p-inputNumber
+                                        id="rendaMensal"
+                                        formControlName="rendaMensal"
+                                        mode="currency"
+                                        currency="BRL"
+                                        locale="pt-BR"
+                                        [min]="0"
+                                        [allowEmpty]="true"
+                                        [useGrouping]="true"
+                                        placeholder="Digite sua renda mensal">
+                                    </p-inputNumber>
+                                    <small *ngIf="formularioSimulacao.get('rendaMensal')?.invalid && formularioSimulacao.get('rendaMensal')?.touched"
+                                           class="p-error p-d-block p-mt-1">
+                                        <span *ngIf="formularioSimulacao.get('rendaMensal')?.errors?.['required']">Campo obrigatório</span>
+                                        <span *ngIf="formularioSimulacao.get('rendaMensal')?.errors?.['min']">Valor deve ser maior que zero</span>
+                                    </small>
+                                </div>
                             </div>
-                        </div>
+                        </form>
                     </p-card>
                 </div>
 
-                <!-- resultado da simulacao -->
-                <div *ngIf="resultadoSimulacao && informacoesFipe" class="resultado-simulacao mt-4">
+                <div *ngIf="resultadoSimulacao && dadosFipe" class="resultado-simulacao mt-4">
                     <p-card header="Resultado da Simulação" styleClass="resultado-simulacao-card">
                         <div class="grid">
                             <div class="col-12 md:col-6">
@@ -262,8 +265,8 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="analise-credito mt-3" 
+
+                        <div class="analise-credito mt-3"
                              [class.aprovado]="resultadoSimulacao.aprovado"
                              [class.reprovado]="!resultadoSimulacao.aprovado">
                             <strong>Situação:</strong>
@@ -275,8 +278,7 @@
                     </p-card>
                 </div>
 
-         
-            <!-- botoes condicionais -->
+
             <div class="flex justify-content-center gap-2 mt-4">
                 <!-- caso 1: simulacao foi aprovada -->
                 <div *ngIf="resultadoSimulacao?.aprovado" class="flex justify-content-center gap-2">
@@ -285,7 +287,7 @@
                         class="btn-simular"
                         label="Solicitar financiamento"
                         type="button"
-                        routerLink="/solicitacao">
+                        (click)="irParaSolicitacao()">
                     </button>
                     <button
                         pButton
@@ -296,7 +298,6 @@
                     </button>
                 </div>
 
-                <!-- caso 2: simulacao foi negada -->
                 <div *ngIf="resultadoSimulacao && !resultadoSimulacao.aprovado" class="flex justify-content-center gap-2">
                     <button
                         pButton
@@ -308,26 +309,24 @@
                     <button
                         pButton
                         class="btn-secundary"
-                        label="Voltar"                    
+                        label="Voltar"
                         type="button"
                         routerLink="/painelcliente">
                     </button>
                 </div>
 
-                <!-- botao simulacao -->
                 <div *ngIf="!resultadoSimulacao" class="flex justify-content-center">
                     <button
                         pButton
                         class="btn-simular"
                         label="Simular Financiamento"
                         type="button"
-                        (click)="realizarSimulacao()"
-                        [disabled]="!informacoesFipe || carregando">
+                        [disabled]="!dadosFipe || formularioSimulacao.invalid || estaCarregando"
+                        (click)="calcularSimulacao()">
                     </button>
                 </div>
             </div>
-
-            </form>
         </div>
+    </div>
     </div>
 </div>

@@ -1,13 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { DropdownModule } from 'primeng/dropdown';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SelectItem } from 'primeng/api';
 import { FipeService } from '../../../_services/fipe.service';
 import { Marcas, Modelos, Anos, InformacoesFipe, ModelosResponse } from '../../../../_models/fipe.models';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
+import { SimulacaoService } from '../../../../services/simulacao.service';
+import { InputTextModule } from 'primeng/inputtext';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
-// Importações do PrimeNG
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MessagesModule } from 'primeng/messages';
 import { CardModule } from 'primeng/card';
@@ -15,15 +18,16 @@ import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { TooltipModule } from 'primeng/tooltip';
-
+import { SolicitacaoService } from '../../../../services/solicitacao.service';
 
 @Component({
   selector: 'app-c-solicitacao',
   standalone: true,
   imports: [
-    DropdownModule, 
-    CommonModule, 
+    DropdownModule,
+    CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     RouterModule,
     ProgressSpinnerModule,
     MessagesModule,
@@ -31,260 +35,419 @@ import { TooltipModule } from 'primeng/tooltip';
     ButtonModule,
     RippleModule,
     InputNumberModule,
-    TooltipModule
+    TooltipModule,
+    InputTextModule,
+    ToastModule
   ],
   templateUrl: './c-solicitacao.component.html',
   styleUrl: './c-solicitacao.component.scss'
 })
 export class CSolicitacaoComponent implements OnInit {
 
+  listaMarcas: SelectItem[] = [];
+  listaModelos: SelectItem[] = [];
+  listaAnos: SelectItem[] = [];
 
-  // dropdowns FIPE
-  marcasListagem: SelectItem[] = [];
-  modelosListagem: SelectItem[] = [];
-  anosListagem: SelectItem[] = [];
-
-  // selecionados da FIPE
-  tiposVeiculo: SelectItem[] = [
+  listaTiposVeiculo: SelectItem[] = [
     { label: 'Carros', value: 'carros' },
     { label: 'Motos', value: 'motos' },
     { label: 'Caminhões', value: 'caminhoes' }
   ];
+
   tipoVeiculo: string = 'carros';
-  marcaSelecionada?: string;
-  modeloSelecionado?: string;
-  anoSelecionado?: string;
+  marcaEscolhida?: string;
+  modeloEscolhido?: string;
+  anoEscolhido?: string;
+  dadosFipe?: InformacoesFipe;
 
-  // Resultado FIPE
-  informacoesFipe?: InformacoesFipe;
-  carregando: boolean = false;
-  mensagens: any[] = [];
-
-  // Campos de simulação
-  valorEntrada: number = 0;
-  opcoesParcelas: SelectItem[] = [
+  valorEntrada: number | null = null;
+  listaParcelas: SelectItem[] = [
     { label: '12x', value: 12 },
     { label: '24x', value: 24 },
     { label: '36x', value: 36 },
     { label: '48x', value: 48 },
     { label: '60x', value: 60 }
   ];
-  parcelasSelecionadas: number = 36;
+  numeroParcelas: number = 36;
   taxaJuros: number = 1.5;
-  rendaMensal: number = 0;
-
+  rendaMensal: number | null = null;
   resultadoSimulacao: any = null;
 
-  // construtor
-  constructor(private fipeService: FipeService) {}
+  formularioVeiculo!: FormGroup;
 
-  // incializador
+  listaCores: SelectItem[] = [
+    { label: 'Branco', value: 'Branco' },
+    { label: 'Preto', value: 'Preto' },
+    { label: 'Prata', value: 'Prata' },
+    { label: 'Cinza', value: 'Cinza' },
+    { label: 'Vermelho', value: 'Vermelho' },
+    { label: 'Azul', value: 'Azul' },
+    { label: 'Verde', value: 'Verde' },
+    { label: 'Amarelo', value: 'Amarelo' },
+    { label: 'Laranja', value: 'Laranja' },
+    { label: 'Marrom', value: 'Marrom' },
+    { label: 'Bege', value: 'Bege' },
+    { label: 'Dourado', value: 'Dourado' },
+    { label: 'Roxo', value: 'Roxo' },
+    { label: 'Rosa', value: 'Rosa' },
+    { label: 'Outra', value: 'Outra' }
+  ];
+
+  veioDaSimulacao: boolean = false;
+  estaCarregando: boolean = false;
+  estaEnviando: boolean = false;
+
+  constructor(
+    private servicoFipe: FipeService,
+    private servicoSimulacao: SimulacaoService,
+    private construtorFormulario: FormBuilder,
+    private roteador: Router,
+    private servicoMensagem: MessageService,
+    private servicoSolicitacao: SolicitacaoService
+  ) {
+    this.criarFormulario();
+  }
+
   ngOnInit(): void {
-    this.carregarMarcas();
+    const dadosSimulacao = this.servicoSimulacao.obterDadosSimulacao();
+
+    if (dadosSimulacao && dadosSimulacao.informacoesFipe) {
+      this.preencherDadosDaSimulacao(dadosSimulacao);
+
+      // Só carrega listagens se os dados essenciais estiverem presentes
+      if (this.marcaEscolhida && this.modeloEscolhido) {
+        this.carregarListagensParaPreenchimento();
+      } else {
+        console.error('Não é possível carregar listagens: dados essenciais faltando');
+        this.estaCarregando = false;
+      }
+    } else {
+      this.carregarMarcas();
+    }
   }
 
-  // getter pro cálculos
-  get valorVeiculoNumerico(): number {
-    if (!this.informacoesFipe?.Valor) return 0;
-    const valor = this.informacoesFipe.Valor.replace('R$ ', '').replace('.', '').replace(',', '.');
-    return parseFloat(valor) || 0;
+  private criarFormulario(): void {
+    this.formularioVeiculo = this.construtorFormulario.group({
+      placa: ['', [Validators.required, Validators.minLength(7), Validators.maxLength(8)]],
+      numChassi: ['', [Validators.required, Validators.minLength(17), Validators.maxLength(17)]],
+      numRenavam: ['', [Validators.required, Validators.minLength(9), Validators.maxLength(11)]],
+      cor: [null]
+    });
   }
 
-  get formularioValido(): boolean {
-    return !!(this.marcaSelecionada && this.modeloSelecionado && this.anoSelecionado);
+  private preencherDadosDaSimulacao(dados: any): void {
+    console.log('Preenchendo dados da simulação:', dados);
+
+    this.veioDaSimulacao = true;
+    this.tipoVeiculo = dados.tipoVeiculo || 'carros';
+    this.marcaEscolhida = dados.marcaSelecionada;
+    this.modeloEscolhido = dados.modeloSelecionado;
+    this.anoEscolhido = dados.anoSelecionado;
+    this.dadosFipe = dados.informacoesFipe;
+    this.valorEntrada = dados.valorEntrada || null;
+    this.numeroParcelas = dados.parcelasSelecionadas || 36;
+    this.taxaJuros = dados.taxaJuros || 1.5;
+    this.rendaMensal = dados.rendaMensal || null;
+    this.resultadoSimulacao = dados.resultadoSimulacao;
+
+    if (!this.marcaEscolhida || !this.modeloEscolhido) {
+      console.error('Dados da simulação incompletos:', {
+        marcaEscolhida: this.marcaEscolhida,
+        modeloEscolhido: this.modeloEscolhido,
+        dadosRecebidos: dados
+      });
+      this.mostrarErro('Dados da simulação incompletos. Por favor, faça uma nova simulação.');
+      this.estaCarregando = false;
+      return;
+    }
+
+    console.log('Dados preenchidos com sucesso:', {
+      tipoVeiculo: this.tipoVeiculo,
+      marcaEscolhida: this.marcaEscolhida,
+      modeloEscolhido: this.modeloEscolhido,
+      anoEscolhido: this.anoEscolhido
+    });
   }
 
-  // metodos usados no consumo da api da FIPE
-  carregarMarcas(): void {
-    this.carregando = true;
-    this.limparMensagens();
-    
-    this.fipeService.listarMarcas(this.tipoVeiculo).subscribe({
+  private carregarListagensParaPreenchimento(): void {
+    this.estaCarregando = true;
+
+    this.servicoFipe.listarMarcas(this.tipoVeiculo).subscribe({
       next: (marcas: Marcas[]) => {
-        this.marcasListagem = marcas.map(m => ({ 
-          label: m.nome, 
-          value: m.codigo 
+        this.listaMarcas = marcas.map(m => ({
+          label: m.nome,
+          value: m.codigo
         }));
-        this.carregando = false;
+
+        if (this.marcaEscolhida) {
+          this.carregarModelosParaPreenchimento();
+        } else {
+          this.estaCarregando = false;
+        }
       },
-      error: (err) => {
-        console.error('Erro ao carregar marcas:', err);
-        this.mostrarErro('Erro ao carregar marcas. Tente novamente.');
-        this.marcasListagem = [];
-        this.carregando = false;
+      error: () => this.estaCarregando = false
+    });
+  }
+
+  private carregarModelosParaPreenchimento(): void {
+    if (!this.marcaEscolhida) {
+      this.estaCarregando = false;
+      return;
+    }
+
+    this.servicoFipe.listarModelos(this.tipoVeiculo, this.marcaEscolhida).subscribe({
+      next: (resposta: ModelosResponse) => {
+        if (resposta && resposta.modelos) {
+          this.listaModelos = resposta.modelos.map(m => ({
+            label: m.nome,
+            value: m.codigo
+          }));
+
+          if (this.modeloEscolhido && this.modeloEscolhido !== 'undefined' && this.modeloEscolhido !== 'null') {
+            this.carregarAnosParaPreenchimento();
+          } else {
+            this.estaCarregando = false;
+          }
+        } else {
+          this.estaCarregando = false;
+        }
+      },
+      error: (erro) => {
+        console.error('Erro ao carregar modelos para preenchimento:', erro);
+        this.estaCarregando = false;
       }
     });
   }
 
-  onMarcaChange(): void {
-    if (!this.marcaSelecionada) {
-      this.modelosListagem = [];
-      this.anosListagem = [];
-      this.modeloSelecionado = undefined;
-      this.anoSelecionado = undefined;
-      this.informacoesFipe = undefined;
-      this.resultadoSimulacao = null;
+  private carregarAnosParaPreenchimento(): void {
+    if (!this.marcaEscolhida || !this.modeloEscolhido) {
+      console.warn('Não é possível carregar anos: marca ou modelo não definido', {
+        marcaEscolhida: this.marcaEscolhida,
+        modeloEscolhido: this.modeloEscolhido
+      });
+      this.estaCarregando = false;
       return;
     }
 
-    this.carregando = true;
-    this.limparMensagens();
-    this.modelosListagem = [];
-    this.anosListagem = [];
-    this.modeloSelecionado = undefined;
-    this.anoSelecionado = undefined;
-    this.informacoesFipe = undefined;
-    this.resultadoSimulacao = null;
+    if (this.modeloEscolhido === 'undefined' || this.modeloEscolhido === 'null' ||
+        this.marcaEscolhida === 'undefined' || this.marcaEscolhida === 'null') {
+      console.warn('Valores inválidos detectados:', {
+        marcaEscolhida: this.marcaEscolhida,
+        modeloEscolhido: this.modeloEscolhido
+      });
+      this.estaCarregando = false;
+      return;
+    }
 
-    this.fipeService.listarModelos(this.tipoVeiculo, this.marcaSelecionada).subscribe({
-      next: (response: ModelosResponse) => {
-        if (response && response.modelos && response.modelos.length > 0) {
-          this.modelosListagem = response.modelos.map(m => ({
+    console.log('Carregando anos com:', {
+      tipoVeiculo: this.tipoVeiculo,
+      marcaEscolhida: this.marcaEscolhida,
+      modeloEscolhido: this.modeloEscolhido
+    });
+
+    this.servicoFipe.listarAnos(this.tipoVeiculo, this.marcaEscolhida, this.modeloEscolhido).subscribe({
+      next: (anos: Anos[]) => {
+        if (anos && anos.length > 0) {
+          this.listaAnos = anos.map(a => ({
+            label: a.nome,
+            value: a.codigo
+          }));
+        } else {
+          console.warn('Nenhum ano retornado pela API');
+        }
+        this.estaCarregando = false;
+      },
+      error: (erro) => {
+        console.error('Erro ao carregar anos para preenchimento:', erro);
+        console.error('Parâmetros usados:', {
+          tipoVeiculo: this.tipoVeiculo,
+          marcaEscolhida: this.marcaEscolhida,
+          modeloEscolhido: this.modeloEscolhido
+        });
+        this.mostrarErro('Erro ao carregar anos. Verifique se o modelo foi selecionado corretamente.');
+        this.estaCarregando = false;
+      }
+    });
+  }
+
+  get valorNumericoDoVeiculo(): number {
+    if (!this.dadosFipe?.Valor) return 0;
+    const valor = this.dadosFipe.Valor.replace('R$ ', '').replace('.', '').replace(',', '.');
+    return parseFloat(valor) || 0;
+  }
+
+  get formularioEstaValido(): boolean {
+    return !!(this.marcaEscolhida && this.modeloEscolhido && this.anoEscolhido);
+  }
+
+  carregarMarcas(): void {
+    this.estaCarregando = true;
+
+    this.servicoFipe.listarMarcas(this.tipoVeiculo).subscribe({
+      next: (marcas: Marcas[]) => {
+        this.listaMarcas = marcas.map(m => ({
+          label: m.nome,
+          value: m.codigo
+        }));
+        this.estaCarregando = false;
+      },
+      error: (erro) => {
+        console.error('Erro ao carregar marcas:', erro);
+        this.mostrarErro('Erro ao carregar marcas. Tente novamente.');
+        this.listaMarcas = [];
+        this.estaCarregando = false;
+      }
+    });
+  }
+
+  aoMudarTipoVeiculo(): void {
+    this.limparDadosFipe();
+    this.carregarMarcas();
+  }
+
+  aoMudarMarca(): void {
+    if (!this.marcaEscolhida) {
+      this.limparDadosFipe();
+      return;
+    }
+
+    this.estaCarregando = true;
+    this.limparDadosFipe();
+
+    this.servicoFipe.listarModelos(this.tipoVeiculo, this.marcaEscolhida).subscribe({
+      next: (resposta: ModelosResponse) => {
+        if (resposta && resposta.modelos && resposta.modelos.length > 0) {
+          this.listaModelos = resposta.modelos.map(m => ({
             label: m.nome,
             value: m.codigo
           }));
         } else {
           this.mostrarErro('Nenhum modelo encontrado para esta marca.');
-          this.modelosListagem = [];
+          this.listaModelos = [];
         }
-        this.carregando = false;
+        this.estaCarregando = false;
       },
-      error: (err) => {
-        console.error('Erro ao carregar modelos:', err);
+      error: (erro) => {
+        console.error('Erro ao carregar modelos:', erro);
         this.mostrarErro('Erro ao carregar modelos. Tente novamente.');
-        this.modelosListagem = [];
-        this.carregando = false;
+        this.listaModelos = [];
+        this.estaCarregando = false;
       }
     });
   }
 
-  onModeloChange(): void {
-    if (!this.marcaSelecionada || !this.modeloSelecionado) {
-      this.anosListagem = [];
-      this.anoSelecionado = undefined;
-      this.informacoesFipe = undefined;
+  aoMudarModelo(): void {
+    setTimeout(() => {
+      if (!this.marcaEscolhida || !this.modeloEscolhido) {
+        return;
+      }
+
+      if (this.modeloEscolhido === 'undefined' || this.modeloEscolhido === 'null') {
+        return;
+      }
+
+      this.estaCarregando = true;
+
+      this.listaAnos = [];
+      this.anoEscolhido = undefined;
+      this.dadosFipe = undefined;
       this.resultadoSimulacao = null;
-      return;
-    }
 
-    this.carregando = true;
-    this.limparMensagens();
-    this.anosListagem = [];
-    this.anoSelecionado = undefined;
-    this.informacoesFipe = undefined;
-    this.resultadoSimulacao = null;
-
-    this.fipeService.listarAnos(this.tipoVeiculo, this.marcaSelecionada, this.modeloSelecionado).subscribe({
-      next: (anos: Anos[]) => {
-        if (anos && anos.length > 0) {
-          this.anosListagem = anos.map(a => ({ 
-            label: a.nome, 
-            value: a.codigo 
-          }));
-        } else {
-          this.mostrarErro('Nenhum ano encontrado para este modelo.');
-          this.anosListagem = [];
+      this.servicoFipe.listarAnos(this.tipoVeiculo, this.marcaEscolhida, this.modeloEscolhido).subscribe({
+        next: (anos: Anos[]) => {
+          if (anos && anos.length > 0) {
+            this.listaAnos = anos.map(a => ({
+              label: a.nome,
+              value: a.codigo
+            }));
+          } else {
+            this.mostrarErro('Nenhum ano encontrado para este modelo.');
+            this.listaAnos = [];
+          }
+          this.estaCarregando = false;
+        },
+        error: (erro) => {
+          console.error('Erro ao carregar anos:', erro);
+          this.mostrarErro('Erro ao carregar anos. Tente novamente.');
+          this.listaAnos = [];
+          this.estaCarregando = false;
         }
-        this.carregando = false;
-      },
-      error: (err) => {
-        console.error('Erro ao carregar anos:', err);
-        this.mostrarErro('Erro ao carregar anos. Tente novamente.');
-        this.anosListagem = [];
-        this.carregando = false;
-      }
-    });
+      });
+    }, 0);
   }
 
-  onAnoChange(): void {
-    if (!this.marcaSelecionada || !this.modeloSelecionado || !this.anoSelecionado) {
-      this.informacoesFipe = undefined;
+  aoMudarAno(): void {
+    if (!this.marcaEscolhida || !this.modeloEscolhido || !this.anoEscolhido ||
+        this.modeloEscolhido === 'undefined' || this.modeloEscolhido === 'null' ||
+        this.anoEscolhido === 'undefined' || this.anoEscolhido === 'null') {
+      this.dadosFipe = undefined;
       this.resultadoSimulacao = null;
       return;
     }
 
-    this.carregando = true;
-    this.limparMensagens();
-    this.informacoesFipe = undefined;
+    this.estaCarregando = true;
+    this.dadosFipe = undefined;
     this.resultadoSimulacao = null;
 
-    this.fipeService.listarInformacoes(
+    this.servicoFipe.listarInformacoes(
       this.tipoVeiculo,
-      this.marcaSelecionada,
-      this.modeloSelecionado,
-      this.anoSelecionado
+      this.marcaEscolhida,
+      this.modeloEscolhido,
+      this.anoEscolhido
     ).subscribe({
       next: (info: InformacoesFipe) => {
-        this.informacoesFipe = info;
-        this.carregando = false;
+        this.dadosFipe = info;
+        this.estaCarregando = false;
       },
-      error: (err) => {
-        console.error('Erro ao carregar informações da FIPE:', err);
+      error: (erro) => {
+        console.error('Erro ao carregar informações da FIPE:', erro);
         this.mostrarErro('Erro ao carregar informações da FIPE. Tente novamente.');
-        this.carregando = false;
+        this.estaCarregando = false;
       }
     });
-  }
-
-  onTipoVeiculoChange(): void {
-    this.marcasListagem = [];
-    this.modelosListagem = [];
-    this.anosListagem = [];
-    this.marcaSelecionada = undefined;
-    this.modeloSelecionado = undefined;
-    this.anoSelecionado = undefined;
-    this.informacoesFipe = undefined;
-    this.resultadoSimulacao = null;
-    this.limparMensagens();
-
-    this.carregarMarcas();
   }
 
   limparConsulta(): void {
     this.tipoVeiculo = 'carros';
-    this.marcasListagem = [];
-    this.modelosListagem = [];
-    this.anosListagem = [];
-    this.marcaSelecionada = undefined;
-    this.modeloSelecionado = undefined;
-    this.anoSelecionado = undefined;
-    this.informacoesFipe = undefined;
-    this.resultadoSimulacao = null;
-    this.valorEntrada = 0;
-    this.rendaMensal = 0;
-    this.limparMensagens();
-
+    this.limparDadosFipe();
+    this.valorEntrada = null;
+    this.rendaMensal = null;
     this.carregarMarcas();
   }
 
-  // metodos de simulação
-  realizarSimulacao(): void {
-    if (!this.informacoesFipe) {
+  private limparDadosFipe(): void {
+    this.listaModelos = [];
+    this.listaAnos = [];
+    this.modeloEscolhido = undefined;
+    this.anoEscolhido = undefined;
+    this.dadosFipe = undefined;
+    this.resultadoSimulacao = null;
+  }
+
+  calcularSimulacao(): void {
+    if (!this.dadosFipe) {
       this.mostrarErro('Complete a consulta FIPE primeiro.');
       return;
     }
 
-    const valorVeiculo = this.valorVeiculoNumerico;
-    const valorFinanciado = valorVeiculo - this.valorEntrada;
+    const valorEntrada = this.valorEntrada || 0;
+    const rendaMensal = this.rendaMensal || 0;
+
+    const valorVeiculo = this.valorNumericoDoVeiculo;
+    const valorFinanciado = valorVeiculo - valorEntrada;
 
     if (valorFinanciado <= 0) {
       this.mostrarErro('O valor da entrada deve ser menor que o valor do veículo.');
       return;
     }
 
-    // Cálculo da parcela (juros compostos)
     const taxaMensal = this.taxaJuros / 100;
-    const valorParcela = valorFinanciado * (taxaMensal * Math.pow(1 + taxaMensal, this.parcelasSelecionadas)) / 
-    (Math.pow(1 + taxaMensal, this.parcelasSelecionadas) - 1);
+    const valorParcela = valorFinanciado * (taxaMensal * Math.pow(1 + taxaMensal, this.numeroParcelas)) /
+      (Math.pow(1 + taxaMensal, this.numeroParcelas) - 1);
 
-    const totalPagar = valorParcela * this.parcelasSelecionadas;
+    const totalPagar = valorParcela * this.numeroParcelas;
     const totalJuros = totalPagar - valorFinanciado;
-
-    // Análise de crédito inicial
-    const aprovado = valorParcela <= (this.rendaMensal * 0.3); // Parcela <= 30% da renda
-    const mensagem = aprovado 
-      ? 'Sua renda mensal foi aprovada na simulação inicial. \nAperte o botão abaixo e solicite seu financiamento.' 
-      : 'Valor da parcela excede 30% da sua renda mensal.';
+    const aprovado = valorParcela <= (rendaMensal * 0.3);
 
     this.resultadoSimulacao = {
       valorFinanciado,
@@ -292,25 +455,135 @@ export class CSolicitacaoComponent implements OnInit {
       totalPagar,
       totalJuros,
       aprovado,
-      mensagem
+      mensagem: aprovado
+        ? 'Sua renda mensal foi aprovada na simulação inicial. \nAperte o botão abaixo e solicite seu financiamento.'
+        : 'Valor da parcela excede 30% da sua renda mensal.'
     };
   }
 
-  // Métodos auxiliares
-  private mostrarErro(mensagem: string): void {
-    this.mensagens = [{ severity: 'error', summary: 'Erro', detail: mensagem }];
-  }
-
-  private limparMensagens(): void {
-    this.mensagens = [];
-  }
-
-  novaSimulacao() {
-    // Limpa o formulário
-    this.limparConsulta();        
-    // Rola para o topo da página
+  novaSimulacao(): void {
+    this.limparConsulta();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
- 
+  enviarSolicitacao(): void {
+    if (!this.validarFormulario()) return;
+    if (!this.validarDadosFipe()) return;
+
+    this.estaEnviando = true;
+
+    const dadosCompletos = this.prepararDadosParaEnvio();
+    console.log('Dados do formulário que serão enviados ao backend:', dadosCompletos);
+
+    this.servicoSolicitacao.enviarSolicitacao(dadosCompletos).subscribe({
+      next: () => {
+        this.estaEnviando = false;
+        this.mostrarSucesso('Solicitação enviada com sucesso! Acompanhe o andamento em Meus Contratos.');
+        this.servicoSimulacao.limparDadosSimulacao();
+        setTimeout(() => {
+          this.roteador.navigate(['/painelcliente']);
+        }, 500);
+      },
+      error: (erro) => {
+        console.error('Erro ao enviar solicitação:', erro);
+        this.mostrarErro('Erro ao enviar solicitação. Tente novamente.');
+        this.estaEnviando = false;
+      }
+    });
+
+  }
+
+  private validarFormulario(): boolean {
+    this.formularioVeiculo.markAllAsTouched();
+
+    if (this.formularioVeiculo.invalid) {
+      if (this.formularioVeiculo.get('placa')?.invalid) {
+        this.mostrarErro('Placa é obrigatória e deve ter entre 7 e 8 caracteres.');
+      } else if (this.formularioVeiculo.get('numChassi')?.invalid) {
+        this.mostrarErro('Número do chassi é obrigatório e deve ter 17 caracteres.');
+      } else if (this.formularioVeiculo.get('numRenavam')?.invalid) {
+        this.mostrarErro('Número do RENAVAM é obrigatório e deve ter entre 9 e 11 caracteres.');
+      } else {
+        this.mostrarErro('Preencha todos os campos obrigatórios corretamente.');
+      }
+      return false;
+    }
+    return true;
+  }
+
+  private validarDadosFipe(): boolean {
+    if (!this.dadosFipe) {
+      this.mostrarErro('Dados do veículo não encontrados.');
+      return false;
+    }
+    return true;
+  }
+
+  private prepararDadosParaEnvio(): any {
+    const placa = this.formularioVeiculo.get('placa')?.value || '';
+    const numChassi = this.formularioVeiculo.get('numChassi')?.value || '';
+    const numRenavam = this.formularioVeiculo.get('numRenavam')?.value || '';
+    const cor = this.formularioVeiculo.get('cor')?.value || null;
+
+    const authData = localStorage.getItem('auth_data');
+    const idCliente = authData ? JSON.parse(authData).id_cliente : null;
+
+    const marcaNome = this.listaMarcas.find(m => m.value === this.marcaEscolhida)?.label || '';
+    const modeloNome = this.listaModelos.find(m => m.value === this.modeloEscolhido)?.label || '';
+    const valorVeiculo = this.valorNumericoDoVeiculo;
+
+    return {
+      id_cliente: idCliente,
+      informacoesFipe: {
+        Valor: this.dadosFipe?.Valor,
+        Combustivel: this.dadosFipe?.Combustivel,
+        CodigoFipe: this.dadosFipe?.CodigoFipe,
+        MesReferencia: this.dadosFipe?.MesReferencia
+      },
+      tipoVeiculo: this.tipoVeiculo,
+      marcaSelecionada: this.marcaEscolhida,
+      marcaNome: marcaNome,
+      modeloSelecionado: this.modeloEscolhido,
+      modeloNome: modeloNome,
+      anoSelecionado: this.anoEscolhido,
+      veiculo: {
+        placa: placa,
+        numChassi: numChassi,
+        numRenavam: numRenavam,
+        cor: cor
+      },
+      financeiro: {
+        valorVeiculo: valorVeiculo,
+        valorEntrada: this.valorEntrada || 0,
+        parcelasSelecionadas: this.numeroParcelas,
+        taxaJuros: this.taxaJuros,
+        rendaMensal: this.rendaMensal || 0,
+        valorFinanciado: this.resultadoSimulacao?.valorFinanciado,
+        valorParcela: this.resultadoSimulacao?.valorParcela,
+        totalPagar: this.resultadoSimulacao?.totalPagar,
+        totalJuros: this.resultadoSimulacao?.totalJuros
+      },
+      resultadoSimulacao: this.resultadoSimulacao,
+      veioDaSimulacao: this.veioDaSimulacao
+    };
+  }
+
+  private mostrarErro(mensagem: string): void {
+    this.servicoMensagem.add({
+      severity: 'error',
+      summary: 'Erro',
+      detail: mensagem,
+      life: 5000
+    });
+  }
+
+  private mostrarSucesso(mensagem: string): void {
+    this.servicoMensagem.add({
+      severity: 'success',
+      summary: 'Sucesso',
+      detail: mensagem,
+      life: 5000
+    });
+  }
 }
+

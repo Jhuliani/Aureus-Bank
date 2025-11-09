@@ -35,6 +35,14 @@ export class FipeService {
   }
 
   listarAnos(tipoVeiculo: string, marcaCode: string, modeloCode: string): Observable<Anos[]> {
+    // Validação para evitar requisições inválidas
+    if (!tipoVeiculo || !marcaCode || !modeloCode || 
+        modeloCode === 'undefined' || modeloCode === 'null' ||
+        marcaCode === 'undefined' || marcaCode === 'null') {
+      console.error('Parâmetros inválidos para listarAnos:', { tipoVeiculo, marcaCode, modeloCode });
+      return throwError(() => new Error('Parâmetros inválidos para buscar anos'));
+    }
+
     const url = `${this.fipeURL}/${tipoVeiculo}/marcas/${marcaCode}/modelos/${modeloCode}/anos`;
     console.log('Buscando anos:', url);
     return this.http.get<Anos[]>(url).pipe(
