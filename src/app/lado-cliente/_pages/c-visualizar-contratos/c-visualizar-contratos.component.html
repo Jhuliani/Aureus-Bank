@@ -1,0 +1,214 @@
+<p-toast></p-toast>
+<div class="main-container">
+    <div class="content-wrapper">
+        <div class="painel">
+            <header>
+                <div class="header-actions">
+                    <button pButton
+                            type="button"
+                            icon="pi pi-arrow-left"
+                            class="p-button-outlined p-button-sm back-button"
+                            routerLink="/meuscontratos"
+                            pTooltip="Voltar para Meus Contratos">
+                    </button>
+                </div>
+                <h2>Detalhes do Contrato</h2>
+                <p>Visualize todas as informações do seu contrato de financiamento</p>
+            </header>
+
+            <div *ngIf="estaCarregando" class="loading-container">
+                <p-progressSpinner></p-progressSpinner>
+                <p>Carregando detalhes do contrato...</p>
+            </div>
+
+            <div *ngIf="!estaCarregando && contrato" class="conteudo-contrato">
+                <!-- Breadcrumb -->
+                <div class="breadcrumb">
+                    <a routerLink="/painelcliente">Painel</a>
+                    <span class="separator">></span>
+                    <a routerLink="/meuscontratos">Meus Contratos</a>
+                    <span class="separator">></span>
+                    <span class="current">Contrato {{ contrato.numero_contrato }}</span>
+                </div>
+
+                <!-- Dados do Contrato -->
+                <div class="secao mt-4">
+                    <p-card header="Informações do Contrato">
+                        <div class="grid">
+                            <div class="col-12 md:col-6">
+                                <div class="info-item">
+                                    <strong>Número do Contrato:</strong>
+                                    <span>{{ contrato.numero_contrato }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Status:</strong>
+                                    <span [class]="'status-badge status-' + contrato.status.toLowerCase()">
+                                        {{ contrato.status }}
+                                    </span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Data de Emissão:</strong>
+                                    <span>{{ contrato.data_emissao | date:'dd/MM/yyyy' }}</span>
+                                </div>
+                            </div>
+                            <div class="col-12 md:col-6">
+                                <div class="info-item" *ngIf="contrato.vigencia_fim">
+                                    <strong>Vigência até:</strong>
+                                    <span>{{ contrato.vigencia_fim | date:'dd/MM/yyyy' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </p-card>
+                </div>
+
+                <!-- Dados do Veículo -->
+                <div class="secao mt-4">
+                    <p-card header="Informações do Veículo">
+                        <div class="grid">
+                            <div class="col-12 md:col-6">
+                                <div class="info-item">
+                                    <strong>Marca:</strong>
+                                    <span>{{ contrato.veiculo.marca }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Modelo:</strong>
+                                    <span>{{ contrato.veiculo.modelo }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Ano Fabricação/Modelo:</strong>
+                                    <span>{{ contrato.veiculo.ano_fabricacao }}/{{ contrato.veiculo.ano_modelo }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Cor:</strong>
+                                    <span>{{ contrato.veiculo.cor || 'Não informado' }}</span>
+                                </div>
+                            </div>
+                            <div class="col-12 md:col-6">
+                                <div class="info-item">
+                                    <strong>Placa:</strong>
+                                    <span>{{ contrato.veiculo.placa || 'Não informado' }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Chassi:</strong>
+                                    <span>{{ contrato.veiculo.num_chassi }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>RENAVAM:</strong>
+                                    <span>{{ contrato.veiculo.num_renavam }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Valor do Veículo:</strong>
+                                    <span class="valor-destaque">{{ contrato.veiculo.valor | currency:'BRL' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </p-card>
+                </div>
+
+                <!-- Dados Financeiros -->
+                <div class="secao mt-4">
+                    <p-card header="Informações Financeiras">
+                        <div class="grid">
+                            <div class="col-12 md:col-6">
+                                <div class="info-item">
+                                    <strong>Valor Total:</strong>
+                                    <span class="valor-destaque">{{ contrato.financeiro.valor_total | currency:'BRL' }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Valor de Entrada:</strong>
+                                    <span>{{ contrato.financeiro.valor_entrada | currency:'BRL' }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Taxa de Juros:</strong>
+                                    <span>{{ contrato.financeiro.taxa_juros || 0 }}% ao mês</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Quantidade de Parcelas:</strong>
+                                    <span>{{ contrato.financeiro.qtde_parcelas }}x</span>
+                                </div>
+                            </div>
+                            <div class="col-12 md:col-6">
+                                <div class="info-item">
+                                    <strong>Status do Pagamento:</strong>
+                                    <span [class]="'status-badge status-' + contrato.financeiro.status_pagamento.toLowerCase().replace('_', '-')">
+                                        {{ contrato.financeiro.status_pagamento }}
+                                    </span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Primeiro Vencimento:</strong>
+                                    <span>{{ contrato.financeiro.data_primeiro_vencimento | date:'dd/MM/yyyy' }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Total Pago:</strong>
+                                    <span class="valor-destaque verde">{{ totalPago | currency:'BRL' }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <strong>Total Restante:</strong>
+                                    <span class="valor-destaque">{{ totalRestante | currency:'BRL' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </p-card>
+                </div>
+
+                <!-- Resumo das Parcelas -->
+                <div class="secao mt-4">
+                    <p-card header="Resumo das Parcelas">
+                        <div class="grid resumo-parcelas">
+                            <div class="col-12 md:col-4">
+                                <div class="resumo-card">
+                                    <div class="resumo-numero">{{ parcelasPagas }}</div>
+                                    <div class="resumo-label">Parcelas Pagas</div>
+                                </div>
+                            </div>
+                            <div class="col-12 md:col-4">
+                                <div class="resumo-card">
+                                    <div class="resumo-numero">{{ parcelasPendentes }}</div>
+                                    <div class="resumo-label">Parcelas Pendentes</div>
+                                </div>
+                            </div>
+                            <div class="col-12 md:col-4">
+                                <div class="resumo-card">
+                                    <div class="resumo-numero">{{ contrato.financeiro.qtde_parcelas }}</div>
+                                    <div class="resumo-label">Total de Parcelas</div>
+                                </div>
+                            </div>
+                        </div>
+                    </p-card>
+                </div>
+
+                <!-- Tabela de Parcelas -->
+                <div class="secao mt-4">
+                    <p-card header="Parcelas">
+                        <p-table [value]="contrato.financeiro.parcelas" styleClass="p-datatable-striped">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>Nº Parcela</th>
+                                    <th>Valor</th>
+                                    <th>Vencimento</th>
+                                    <th>Data Pagamento</th>
+                                    <th>Valor Pago</th>
+                                    <th>Status</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-parcela>
+                                <tr>
+                                    <td>{{ parcela.numero_parcela }}</td>
+                                    <td>{{ parcela.valor_parcela | currency:'BRL' }}</td>
+                                    <td>{{ parcela.data_vencimento | date:'dd/MM/yyyy' }}</td>
+                                    <td>{{ parcela.data_pagamento ? (parcela.data_pagamento | date:'dd/MM/yyyy') : '-' }}</td>
+                                    <td>{{ parcela.valor_pago ? (parcela.valor_pago | currency:'BRL') : '-' }}</td>
+                                    <td>
+                                        <span [class]="'status-badge status-' + parcela.status.toLowerCase()">
+                                            {{ parcela.status }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </p-card>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -71,5 +71,8 @@ export class CMeuscontratosComponent implements OnInit{
       });
   }
 
+  visualizarContrato(idContrato: number): void {
+    this.router.navigate(['/meuscontratos', idContrato]);
+  }
 
 }

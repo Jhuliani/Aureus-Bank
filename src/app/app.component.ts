@@ -48,6 +48,17 @@ export class AppComponent {
     this.initializeUserMenu();
   }
 
+  obterRotaPainel(): string {
+    if (this.authService.isAdmin()) {
+      return '/paineladmin';
+    }
+    return '/painelcliente';
+  }
+
+  mostrarMeusContratos(): boolean {
+    return this.authService.isCliente();
+  }
+
   private initializeUserMenu() {
     this.userMenuItems = [
       {

@@ -65,6 +65,8 @@ export class CLoginComponent {
             // Criar objeto usuário com os dados disponíveis
             const usuario = {
               id_cliente: response.id_cliente,
+              id_perfil: response.id_perfil,
+              id_usuario: response.id_usuario,
               nome: response.nome_cliente,
               login: this.login
             };

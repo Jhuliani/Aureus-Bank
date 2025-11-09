@@ -20,6 +20,8 @@ export interface LoginResponse {
   token_type: string;
   id_cliente: number;
   nome_cliente: string;
+  id_perfil?: number;
+  id_usuario?: number;
 }
 
 @Injectable({
@@ -69,5 +71,27 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     return this.obterDadosLogin() !== null;
+  }
+
+  obterIdPerfil(): number | null {
+    const usuario = this.obterUsuarioLocal();
+    if (usuario && usuario.id_perfil) {
+      return usuario.id_perfil;
+    }
+    
+    const authData = this.obterDadosLogin();
+    if (authData && authData.id_perfil) {
+      return authData.id_perfil;
+    }
+    
+    return null;
+  }
+
+  isAdmin(): boolean {
+    return this.obterIdPerfil() === 2;
+  }
+
+  isCliente(): boolean {
+    return this.obterIdPerfil() === 1;
   }
 }

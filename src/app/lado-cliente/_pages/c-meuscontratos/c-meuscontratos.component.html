@@ -8,30 +8,24 @@
                 <p *ngIf="loading">Carregando contratos...</p>
 
                 <div *ngIf="!loading">
-                    
+
                     <!-- PrimeNG Table -->
-                    <p-table [value]="contratos" styleClass="p-datatable-striped">
+                    <p-table [value]="contratos" styleClass="p-datatable-striped" [rowHover]="true">
                         <ng-template pTemplate="header">
                             <tr>
                                 <th>Número do Contrato</th>
                                 <th>Status</th>
-                                <th>ID Cliente</th>
-                                <th>ID Veículo</th>
-                                <th>ID Financeiro</th>
                                 <th>Data Emissão</th>
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="body" let-contrato>
-                            <tr>
+                            <tr style="cursor: pointer;" (click)="visualizarContrato(contrato.id_contrato)">
                                 <td>{{ contrato.numero_contrato }}</td>
                                 <td>
                                     <span [class]="'status-badge status-' + contrato.status.toLowerCase()">
                                         {{ contrato.status }}
                                     </span>
                                 </td>
-                                <td>{{ contrato.id_cliente }}</td>
-                                <td>{{ contrato.id_veiculo }}</td>
-                                <td>{{ contrato.id_financeiro }}</td>
                                 <td>{{ contrato.data_emissao | date:'dd/MM/yyyy' }}</td>
                             </tr>
                         </ng-template>

@@ -7,6 +7,7 @@ import { CCadastroComponent } from './lado-cliente/_pages/c-cadastro/c-cadastro.
 // Páginas "internas" (com sidebar)
 import { CBemvindoComponent } from './lado-admin/c-bemvindo/c-bemvindo.component';
 import { CMeuscontratosComponent } from './lado-cliente/_pages/c-meuscontratos/c-meuscontratos.component';
+import { CVisualizarContratosComponent } from './lado-cliente/_pages/c-visualizar-contratos/c-visualizar-contratos.component';
 import { CSimulacaoComponent } from './lado-cliente/_pages/_simulacao/c-simulacao/c-simulacao.component';
 import { CSolicitacaoComponent } from './lado-cliente/_pages/_solicitacao/c-solicitacao/c-solicitacao.component';
 import { CPainelclienteComponent } from './lado-cliente/_pages/c-painelcliente/c-painelcliente.component';
@@ -25,12 +26,18 @@ export const routes: Routes = [
 
   // Rotas para o lado do admin
   { path: 'bemvindo', component: CBemvindoComponent},
-  { path: 'paineladmin', component: CPaineladminComponent},
-  { path: 'consulta-contratos', component: CConsultaComponent},
-  { path: 'contratos-cliente', component: CContratosComponent},
-      
+  { path: 'paineladmin', component: CPaineladminComponent,
+    children: [
+      { path: 'consulta-contratos', component: CConsultaComponent},
+      { path: 'contratos-cliente', component: CContratosComponent},
+    ]
+  },
+
   // Rotas internas (usadas pelo layout global já presente no AppComponent)
-  { path: 'meus-contratos', component: CMeuscontratosComponent}, // Rota direta para meus contratos
+  { path: 'inicio', component: CBemvindoComponent },
+  { path: 'contratos', component: CMeuscontratosComponent },
+  { path: 'meuscontratos', component: CMeuscontratosComponent }, // Rota direta para meus contratos
+  { path: 'meuscontratos/:id', component: CVisualizarContratosComponent }, // Detalhes do contrato
   {
     path: 'painelcliente', component: CPainelclienteComponent,
     children: [
