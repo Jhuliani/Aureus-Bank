@@ -11,7 +11,7 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { CadastroService, DadosCadastro } from '../../../services/cadastro.service';
+import { CadastroService, DadosCadastro } from '../../services/cadastro.service';
 
 @Component({
   selector: 'app-c-cadastro',

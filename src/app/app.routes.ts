@@ -1,17 +1,17 @@
 import { Routes } from '@angular/router';
 
 // Páginas "públicas" (sem sidebar)
-import { CLoginComponent } from './lado-cliente/_pages/c-login/c-login.component';
-import { CCadastroComponent } from './lado-cliente/_pages/c-cadastro/c-cadastro.component';
+import { CLoginComponent } from './lado-cliente/c-login/c-login.component';
+import { CCadastroComponent } from './lado-cliente/c-cadastro/c-cadastro.component';
 
 // Páginas "internas" (com sidebar)
 import { CBemvindoComponent } from './lado-admin/c-bemvindo/c-bemvindo.component';
-import { CMeuscontratosComponent } from './lado-cliente/_pages/c-meuscontratos/c-meuscontratos.component';
-import { CVisualizarContratosComponent } from './lado-cliente/_pages/c-visualizar-contratos/c-visualizar-contratos.component';
-import { CSimulacaoComponent } from './lado-cliente/_pages/_simulacao/c-simulacao/c-simulacao.component';
-import { CSolicitacaoComponent } from './lado-cliente/_pages/_solicitacao/c-solicitacao/c-solicitacao.component';
-import { CPainelclienteComponent } from './lado-cliente/_pages/c-painelcliente/c-painelcliente.component';
-import { CSettingsComponent } from './lado-cliente/_pages/c-settings/c-settings.component';
+import { CMeuscontratosComponent } from './lado-cliente/c-meuscontratos/c-meuscontratos.component';
+import { CVisualizarContratosComponent } from './lado-cliente/c-visualizar-contratos/c-visualizar-contratos.component';
+import { CSimulacaoComponent } from './lado-cliente/c-simulacao/c-simulacao.component';
+import { CSolicitacaoComponent } from './lado-cliente/c-solicitacao/c-solicitacao.component';
+import { CPainelclienteComponent } from './lado-cliente/c-painelcliente/c-painelcliente.component';
+import { CSettingsComponent } from './lado-cliente/c-settings/c-settings.component';
 import { CConsultaComponent } from './lado-admin/c-consulta/c-consulta.component';
 import { CContratosComponent } from './lado-admin/c-contratos/c-contratos.component';
 import { CPaineladminComponent } from './lado-admin/c-paineladmin/c-paineladmin.component';
@@ -30,13 +30,13 @@ export const routes: Routes = [
   { path: 'cadastro', component: CCadastroComponent },
 
   // Rotas para o lado do admin - requerem autenticação e perfil admin
-  { 
-    path: 'bemvindo', 
+  {
+    path: 'bemvindo',
     component: CBemvindoComponent,
     canActivate: [adminGuard]
   },
-  { 
-    path: 'paineladmin', 
+  {
+    path: 'paineladmin',
     component: CPaineladminComponent,
     canActivate: [adminGuard],
     children: [
@@ -46,30 +46,30 @@ export const routes: Routes = [
   },
 
   // Rota interna compartilhada - requer apenas autenticação
-  { 
-    path: 'inicio', 
+  {
+    path: 'inicio',
     component: CBemvindoComponent,
     canActivate: [authGuard]
   },
 
   // Rotas do cliente - requerem autenticação e perfil cliente
-  { 
-    path: 'contratos', 
+  {
+    path: 'contratos',
     component: CMeuscontratosComponent,
     canActivate: [clienteGuard]
   },
-  { 
-    path: 'meuscontratos', 
+  {
+    path: 'meuscontratos',
     component: CMeuscontratosComponent,
     canActivate: [clienteGuard]
   },
-  { 
-    path: 'meuscontratos/:id', 
+  {
+    path: 'meuscontratos/:id',
     component: CVisualizarContratosComponent,
     canActivate: [clienteGuard]
   },
   {
-    path: 'painelcliente', 
+    path: 'painelcliente',
     component: CPainelclienteComponent,
     canActivate: [clienteGuard],
     children: [
@@ -77,16 +77,16 @@ export const routes: Routes = [
       { path: 'solicitacao', component: CSolicitacaoComponent },
     ]
   },
-  { 
-    path: 'simulacao', 
+  {
+    path: 'simulacao',
     redirectTo: 'painelcliente/simulacao'
   },
-  { 
-    path: 'solicitacao', 
+  {
+    path: 'solicitacao',
     redirectTo: 'painelcliente/solicitacao'
   },
-  { 
-    path: 'settings', 
+  {
+    path: 'settings',
     component: CSettingsComponent,
     canActivate: [clienteGuard]
   },

@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
-import { Marcas, Modelos, Anos, InformacoesFipe, ModelosResponse } from '../../_models/fipe.models';
-import { environment } from '../../../environments/environment';
+import { Marcas, Modelos, Anos, InformacoesFipe, ModelosResponse } from '../_models/fipe.models';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -36,7 +36,7 @@ export class FipeService {
 
   listarAnos(tipoVeiculo: string, marcaCode: string, modeloCode: string): Observable<Anos[]> {
     // Validação para evitar requisições inválidas
-    if (!tipoVeiculo || !marcaCode || !modeloCode || 
+    if (!tipoVeiculo || !marcaCode || !modeloCode ||
         modeloCode === 'undefined' || modeloCode === 'null' ||
         marcaCode === 'undefined' || marcaCode === 'null') {
       console.error('Parâmetros inválidos para listarAnos:', { tipoVeiculo, marcaCode, modeloCode });

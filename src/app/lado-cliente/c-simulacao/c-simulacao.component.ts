@@ -3,10 +3,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SelectItem } from 'primeng/api';
-import { FipeService } from '../../../_services/fipe.service';
-import { Marcas, Modelos, Anos, InformacoesFipe, ModelosResponse } from '../../../../_models/fipe.models';
 import { RouterModule, Router } from '@angular/router';
-import { SimulacaoService } from '../../../../services/simulacao.service';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 
@@ -18,6 +15,9 @@ import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { TooltipModule } from 'primeng/tooltip';
+import { Anos, InformacoesFipe, Marcas, ModelosResponse } from '../../_models/fipe.models';
+import { FipeService } from '../../services/fipe.service';
+import { SimulacaoService } from '../../services/simulacao.service';
 
 @Component({
   selector: 'app-simulacao',

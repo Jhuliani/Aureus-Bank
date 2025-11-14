@@ -4,8 +4,8 @@ import { CommonModule } from '@angular/common';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { MenuItem } from 'primeng/api';
 import { Router } from '@angular/router';
-import { AuthService } from '../../../services/auth.service';
-import { ContratosService, Contrato, ContratosResponse } from '../../../services/contratos.service';
+import { AuthService } from '../../services/auth.service';
+import { Contrato, ContratosResponse, ContratosService } from '../../services/contratos.service';
 
 @Component({
   selector: 'app-meuscontratos',

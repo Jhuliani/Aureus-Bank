@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { ContratosService, ContratoCompleto } from '../../../services/contratos.service';
-import { AuthService } from '../../../services/auth.service';
+import { ContratosService, ContratoCompleto, Parcela } from '../../services/contratos.service';
+import { AuthService } from '../../services/auth.service';
 import { MessageService } from 'primeng/api';
 
 // PrimeNG
@@ -76,19 +76,19 @@ export class CVisualizarContratosComponent implements OnInit {
 
   get parcelasPagas(): number {
     if (!this.contrato?.financeiro?.parcelas) return 0;
-    return this.contrato.financeiro.parcelas.filter(p => p.status === 'paga' || p.status === 'pago').length;
+    return this.contrato.financeiro.parcelas.filter((p: Parcela) => p.status === 'paga' || p.status === 'pago').length;
   }
 
   get parcelasPendentes(): number {
     if (!this.contrato?.financeiro?.parcelas) return 0;
-    return this.contrato.financeiro.parcelas.filter(p => p.status === 'pendente').length;
+    return this.contrato.financeiro.parcelas.filter((p: Parcela) => p.status === 'pendente').length;
   }
 
   get totalPago(): number {
     if (!this.contrato?.financeiro?.parcelas) return 0;
     return this.contrato.financeiro.parcelas
-      .filter(p => p.valor_pago)
-      .reduce((sum, p) => sum + (p.valor_pago || 0), 0);
+      .filter((p: Parcela) => p.valor_pago)
+      .reduce((sum: number, p: Parcela) => sum + (p.valor_pago || 0), 0);
   }
 
   get totalRestante(): number {
