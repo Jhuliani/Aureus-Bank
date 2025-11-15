@@ -11,6 +11,20 @@ Antes de começar, certifique-se de ter instalado:
 - **Angular CLI** (versão 17.3.17 ou superior)
 - **Git** - [Download](https://git-scm.com/)
 
+### Instalando o Angular CLI
+
+Se você ainda não tem o Angular CLI instalado globalmente, execute:
+
+```bash
+npm install -g @angular/cli@17.3.17
+```
+
+Para verificar se a instalação foi bem-sucedida:
+
+```bash
+ng version
+```
+
 ## Instalação
 
 ### 1. Clone o repositório
