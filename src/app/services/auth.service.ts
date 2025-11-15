@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface Usuario {
@@ -45,8 +45,15 @@ export class AuthService {
   }
 
   obterDadosLogin(): LoginResponse | null {
-    const authDataStr = localStorage.getItem('auth_data');
-    return authDataStr ? JSON.parse(authDataStr) : null;
+    try {
+      const authDataStr = localStorage.getItem('auth_data');
+      if (!authDataStr) return null;
+      return JSON.parse(authDataStr);
+    } catch (error) {
+      console.error('Erro ao ler dados de autenticação:', error);
+      this.logout();
+      return null;
+    }
   }
 
   obterToken(): string | null {
@@ -60,8 +67,15 @@ export class AuthService {
   }
 
   obterUsuarioLocal(): Usuario | null {
-    const usuarioStr = localStorage.getItem('usuario');
-    return usuarioStr ? JSON.parse(usuarioStr) : null;
+    try {
+      const usuarioStr = localStorage.getItem('usuario');
+      if (!usuarioStr) return null;
+      return JSON.parse(usuarioStr);
+    } catch (error) {
+      console.error('Erro ao ler dados do usuário:', error);
+      localStorage.removeItem('usuario');
+      return null;
+    }
   }
 
   logout(): void {
@@ -70,7 +84,35 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    return this.obterDadosLogin() !== null;
+    const dadosLogin = this.obterDadosLogin();
+    if (!dadosLogin || !dadosLogin.access_token) {
+      return false;
+    }
+    return this.verificarTokenValido(dadosLogin.access_token);
+  }
+
+  verificarTokenValido(token: string): boolean {
+    try {
+      const partes = token.split('.');
+      if (partes.length !== 3) return false;
+
+      const payload = JSON.parse(atob(partes[1]));
+      const expiracao = payload.exp * 1000;
+      const agora = Date.now();
+
+      return expiracao > agora;
+    } catch (error) {
+      console.error('Erro ao verificar token:', error);
+      return false;
+    }
+  }
+
+  renovarToken(): Observable<LoginResponse> {
+    const refreshToken = this.obterRefreshToken();
+    if (!refreshToken) {
+      return throwError(() => new Error('Refresh token não encontrado'));
+    }
+    return this.http.post<LoginResponse>(`${this.apiUrl}/refresh`, { refresh_token: refreshToken });
   }
 
   obterIdPerfil(): number | null {

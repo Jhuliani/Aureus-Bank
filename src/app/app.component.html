@@ -1,20 +1,19 @@
 
-<div class="app-container" *ngIf="showLayout">
+<div class="app-container" *ngIf="mostrarLayout">
 
   <header class="header">
     <div class="header-left">
-      <a class="logo" routerLink="/inicio">AUREUS</a>
+      <a class="logo" [routerLink]="obterRotaInicio()">AUREUS</a>
     </div>
 
     <div class="header-right">
       <p-menubar
-        [model]="userMenuItems"
+        [model]="itensMenuUsuario"
         [autoDisplay]="false">
       </p-menubar>
     </div>
   </header>
 
-  <!-- Sidebar -->
   <aside class="sidebar">
     <nav class="nav-menu">
       <a class="nav-item"
@@ -31,17 +30,19 @@
          routerLink="/meuscontratos"
          routerLinkActive="active">
         <div class="nav-indicator"></div>
-        <i class="pi pi-envelope nav-icon"></i>
+        <i class="pi pi-file nav-icon"></i>
         <span class="nav-text">Meus contratos</span>
       </a>
 
-      <!-- <a class="nav-item settings"
-         routerLink="/settings"
+      <a class="nav-item"
+         *ngIf="mostrarContratosAdmin()"
+         routerLink="/admin/contratos"
          routerLinkActive="active">
         <div class="nav-indicator"></div>
-        <i class="pi pi-cog nav-icon"></i>
-        <span class="nav-text">Settings</span>
-      </a> -->
+        <i class="pi pi-file nav-icon"></i>
+        <span class="nav-text">Contratos</span>
+      </a>
+
     </nav>
   </aside>
 
@@ -53,4 +54,4 @@
   </main>
 </div>
 
-<router-outlet *ngIf="!showLayout"></router-outlet>
+<router-outlet *ngIf="!mostrarLayout"></router-outlet>

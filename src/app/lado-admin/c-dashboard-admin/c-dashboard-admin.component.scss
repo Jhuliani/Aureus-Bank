@@ -1,0 +1,179 @@
+.main-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    background-color: #00235D;
+}
+
+.content-wrapper {
+    flex: 1;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.painel {
+    background-color: rgb(255, 255, 255);
+    height: 100%;
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    border-radius: 25px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.painel > h1 {
+    margin-bottom: 0.5rem;
+    color: #00235D;
+    font-size: 2rem;
+}
+
+.painel > p {
+    margin-bottom: 2rem;
+    color: #5e5c5c;
+    line-height: 1.5;
+}
+
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+}
+
+.metricas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.metrica-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+    cursor: pointer;
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    &.solicitacoes {
+        border-top: 4px solid #ff7f00;
+
+        .metrica-icon {
+            background: rgba(255, 127, 0, 0.1);
+            color: #ff7f00;
+        }
+    }
+
+    &.contratos {
+        border-top: 4px solid #4299e1;
+
+        .metrica-icon {
+            background: rgba(66, 153, 225, 0.1);
+            color: #4299e1;
+        }
+    }
+
+    &.valor-total {
+        border-top: 4px solid #38a169;
+
+        .metrica-icon {
+            background: rgba(56, 161, 105, 0.1);
+            color: #38a169;
+        }
+    }
+
+    &.parcelas-atraso {
+        border-top: 4px solid #e53e3e;
+
+        .metrica-icon {
+            background: rgba(229, 62, 62, 0.1);
+            color: #e53e3e;
+        }
+    }
+}
+
+.metrica-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    flex-shrink: 0;
+}
+
+.metrica-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    h3 {
+        margin: 0;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #718096;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .metrica-value {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+        color: #2d3748;
+        line-height: 1.2;
+    }
+
+    .metrica-subvalue {
+        margin: 0;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #718096;
+    }
+
+    .metrica-link {
+        font-size: 0.85rem;
+        color: #4299e1;
+        font-weight: 500;
+        margin-top: 0.25rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .content-wrapper {
+        padding: 1rem;
+    }
+
+    .painel {
+        padding: 1.5rem;
+    }
+
+    .metricas-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .metrica-card {
+        padding: 1.25rem;
+    }
+
+    .metrica-value {
+        font-size: 1.5rem !important;
+    }
+}
+

@@ -14,7 +14,6 @@ export class FipeService {
 
   listarMarcas(tipoVeiculo: string):  Observable<Marcas[]> {
     const url = `${this.fipeURL}/${tipoVeiculo}/marcas`;
-    console.log('Buscando marcas: ', url);
     return this.http.get<Marcas[]>(url).pipe(
       catchError(error => {
         console.error('Erro no serviço ao buscar marcas:', error);
@@ -25,7 +24,6 @@ export class FipeService {
 
   listarModelos(tipoVeiculo: string, marcaCode: string): Observable<ModelosResponse> {
     const url = `${this.fipeURL}/${tipoVeiculo}/marcas/${marcaCode}/modelos`;
-    console.log('Buscando modelos:', url);
     return this.http.get<ModelosResponse>(url).pipe(
       catchError(error => {
         console.error('Erro no serviço ao buscar modelos:', error);
@@ -35,7 +33,6 @@ export class FipeService {
   }
 
   listarAnos(tipoVeiculo: string, marcaCode: string, modeloCode: string): Observable<Anos[]> {
-    // Validação para evitar requisições inválidas
     if (!tipoVeiculo || !marcaCode || !modeloCode ||
         modeloCode === 'undefined' || modeloCode === 'null' ||
         marcaCode === 'undefined' || marcaCode === 'null') {
@@ -44,7 +41,6 @@ export class FipeService {
     }
 
     const url = `${this.fipeURL}/${tipoVeiculo}/marcas/${marcaCode}/modelos/${modeloCode}/anos`;
-    console.log('Buscando anos:', url);
     return this.http.get<Anos[]>(url).pipe(
       catchError(error => {
         console.error('Erro no serviço ao buscar anos:', error);
@@ -55,7 +51,6 @@ export class FipeService {
 
   listarInformacoes(tipoVeiculo: string, marcaCode: string, modeloCode: string, anoCode: string): Observable<InformacoesFipe> {
     const url = `${this.fipeURL}/${tipoVeiculo}/marcas/${marcaCode}/modelos/${modeloCode}/anos/${anoCode}`;
-    console.log('Buscando informações FIPE:', url);
     return this.http.get<InformacoesFipe>(url).pipe(
       catchError(error => {
         console.error('Erro no serviço ao buscar informações FIPE:', error);

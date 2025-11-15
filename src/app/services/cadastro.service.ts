@@ -6,13 +6,11 @@ import { throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface DadosCadastro {
-  // Dados pessoais
   nome: string;
   cpf: string;
   telefone: string;
   renda: number;
 
-  // Endereço
   logradouro: string;
   numero: string;
   bairro: string;
@@ -20,7 +18,6 @@ export interface DadosCadastro {
   estado: string;
   cep: string;
 
-  // Dados de acesso
   usuario: string;
   email: string;
   senha: string;
@@ -35,10 +32,6 @@ export class CadastroService {
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * Trunca a senha para máximo 72 bytes (limite do bcrypt)
-   * Mantém a senha como string, mas respeita o limite de bytes
-   */
   private truncarSenhaPorBytes(senha: string, maxBytes: number = 72): string {
     const encoder = new TextEncoder();
     const bytes = encoder.encode(senha);
@@ -52,16 +45,11 @@ export class CadastroService {
     return decoder.decode(truncatedBytes);
   }
 
-  /**
-   * Realiza o cadastro completo do cliente
-   * UMA ÚNICA REQUISIÇÃO com transação atômica no backend
-   */
+
   cadastrarCliente(dados: DadosCadastro): Observable<any> {
-    // Preparar dados para o endpoint único
     const dadosCompletos = {
-      // Dados pessoais
       nome: dados.nome,
-      cpf: dados.cpf.replace(/\D/g, ''), // Remove formatação
+      cpf: dados.cpf.replace(/\D/g, ''),
       email: dados.email,
       telefone: dados.telefone,
       renda: dados.renda,
@@ -74,12 +62,10 @@ export class CadastroService {
       estado: dados.estado.toUpperCase(),
       cep: dados.cep,
 
-      // Usuário
       login: dados.usuario,
-      senha: this.truncarSenhaPorBytes(dados.senha) // Truncar por bytes (limite bcrypt)
+      senha: this.truncarSenhaPorBytes(dados.senha)
     };
 
-    console.log('📤 Enviando dados completos para cadastro:', dadosCompletos);
 
     return this.http.post(`${this.baseUrl}/cadastro-completo`, dadosCompletos).pipe(
       catchError((error) => {
@@ -108,10 +94,6 @@ export class CadastroService {
   }
 
 
-
-  /**
-   * Consulta CEP no ViaCEP
-   */
   consultarCEP(cep: string): Observable<any> {
     const cepLimpo = cep.replace(/\D/g, '');
     return this.http.get(`${environment.viaCepUrl}/${cepLimpo}/json/`);

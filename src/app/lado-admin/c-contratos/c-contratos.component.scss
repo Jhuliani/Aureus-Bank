@@ -60,6 +60,11 @@
     text-transform: uppercase;
 }
 
+.status-ativo {
+    background-color: #d4edda;
+    color: #155724;
+}
+
 .status-aprovado {
     background-color: #d4edda;
     color: #155724;
@@ -71,6 +76,11 @@
 }
 
 .status-rejeitado {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.status-cancelado {
     background-color: #f8d7da;
     color: #721c24;
 }
@@ -111,6 +121,18 @@
 :host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
     padding: 16px 12px;
     line-height: 1.5;
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #00235D;
+}
+
+:host ::ng-deep .p-datatable-striped .p-datatable-tbody > tr:nth-child(odd) {
+    background-color: #f8f9fa;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr:hover {
+    background-color: #e9ecef;
+    cursor: pointer;
 }
 @media (max-width: 768px) {
     .content-wrapper {

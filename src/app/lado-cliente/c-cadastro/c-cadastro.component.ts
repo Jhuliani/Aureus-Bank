@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, signal, OnInit} from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -27,14 +27,13 @@ import { CadastroService, DadosCadastro } from '../../services/cadastro.service'
     CommonModule
   ],
   templateUrl: './c-cadastro.component.html',
-  styleUrls: ['./c-cadastro.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['./c-cadastro.component.scss']
 })
 export class CCadastroComponent implements OnInit {
   cadastroForm!: FormGroup;
-  loading = signal(false);
+  carregando = false;
   cepEncontrado = true;
-  consultandoCEP = signal(false);
+  consultandoCep = false;
 
   constructor(
     private fb: FormBuilder,
@@ -79,18 +78,15 @@ export class CCadastroComponent implements OnInit {
       return;
     }
 
-    this.loading.set(true);
+    this.carregando = true;
 
-    // Preparar dados para o service
     const formValue = this.cadastroForm.value;
     const dadosCadastro: DadosCadastro = {
-      // Dados pessoais
       nome: formValue.nome,
       cpf: formValue.cpf,
       telefone: formValue.telefone,
       renda: formValue.renda,
 
-      // Endereço
       logradouro: formValue.logradouro,
       numero: formValue.numero,
       bairro: formValue.bairro,
@@ -98,13 +94,11 @@ export class CCadastroComponent implements OnInit {
       estado: formValue.estado,
       cep: formValue.cep,
 
-      // Dados de acesso
       usuario: formValue.usuario,
       email: formValue.email,
       senha: formValue.senha
     };
 
-    // Usar o service para cadastrar
     this.cadastroService.cadastrarCliente(dadosCadastro).subscribe({
       next: () => {
         this.messageService.add({
@@ -112,7 +106,7 @@ export class CCadastroComponent implements OnInit {
           summary: 'Sucesso',
           detail: 'Cadastro realizado com sucesso!'
         });
-        this.loading.set(false);
+        this.carregando = false;
         this.router.navigate(['/login']);
       },
       error: (err) => {
@@ -122,7 +116,7 @@ export class CCadastroComponent implements OnInit {
           summary: 'Erro',
           detail: 'Erro ao realizar cadastro. Tente novamente.'
         });
-        this.loading.set(false);
+        this.carregando = false;
       }
     });
   }
@@ -134,14 +128,12 @@ export class CCadastroComponent implements OnInit {
     });
   }
 
-  // Validadores customizados
   validarCPF(control: AbstractControl): ValidationErrors | null {
     if (!control.value) return null;
 
     const cpf = control.value.replace(/\D/g, '');
     if (cpf.length !== 11) return { cpfInvalido: true };
 
-    // Validação básica de CPF
     if (/^(\d)\1{10}$/.test(cpf)) return { cpfInvalido: true };
 
     let soma = 0;
@@ -167,7 +159,6 @@ export class CCadastroComponent implements OnInit {
     const email = control.get('email')?.value;
     const emailConfirm = control.get('emailConfirm')?.value;
 
-    // Só valida se ambos os campos têm valor
     if (!email || !emailConfirm) {
       return null;
     }
@@ -182,7 +173,6 @@ export class CCadastroComponent implements OnInit {
     const senha = control.get('senha')?.value;
     const senhaConfirm = control.get('senhaConfirm')?.value;
 
-    // Só valida se ambos os campos têm valor
     if (!senha || !senhaConfirm) {
       return null;
     }
@@ -208,15 +198,15 @@ export class CCadastroComponent implements OnInit {
 
     if (cepLimpo.length !== 8) {
       this.cepEncontrado = true;
-      this.consultandoCEP.set(false);
+      this.consultandoCep = false;
       return;
     }
 
-    this.consultandoCEP.set(true);
+    this.consultandoCep = true;
 
     this.cadastroService.consultarCEP(cep).subscribe({
       next: (dados: any) => {
-        this.consultandoCEP.set(false);
+        this.consultandoCep = false;
         if (dados.erro) {
           this.cepEncontrado = false;
           this.limparCamposEndereco();
@@ -231,7 +221,7 @@ export class CCadastroComponent implements OnInit {
         }
       },
       error: (err) => {
-        this.consultandoCEP.set(false);
+        this.consultandoCep = false;
         this.cepEncontrado = false;
         this.limparCamposEndereco();
         this.messageService.add({
@@ -261,18 +251,17 @@ export class CCadastroComponent implements OnInit {
     });
   }
 
-  // comportamento do input da senha
-  hide = signal(true);
-  clickEvent(event: MouseEvent) {
-    this.hide.set(!this.hide());
+  ocultarSenha = true;
+
+  alternarVisibilidadeSenha(event: MouseEvent) {
+    this.ocultarSenha = !this.ocultarSenha;
     event.stopPropagation();
   }
 
-  // OnInit
-  items: MenuItem[] | undefined;
+  itensMenu: MenuItem[] | undefined;
 
   ngOnInit() {
-    this.items = [];
+    this.itensMenu = [];
   }
 
 }

@@ -21,9 +21,9 @@ import { filter } from 'rxjs/operators';
 
 
 export class CPainelclienteComponent implements OnInit {
-    showBreadcrumb = false;
-    hasChildRoute = false;
-    currentPage = '';
+    mostrarBreadcrumb = false;
+    temRotaFilha = false;
+    paginaAtual = '';
 
     constructor(private router: Router) {}
 
@@ -32,26 +32,25 @@ export class CPainelclienteComponent implements OnInit {
         this.router.events
             .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
             .subscribe((event) => {
-                this.updateBreadcrumb(event.url);
+                this.atualizarBreadcrumb(event.url);
             });
 
-        // Verifica rota inicial
-        this.updateBreadcrumb(this.router.url);
+        this.atualizarBreadcrumb(this.router.url);
     }
 
-    private updateBreadcrumb(url: string) {
+    private atualizarBreadcrumb(url: string) {
         if (url.includes('/painelcliente/simulacao')) {
-            this.showBreadcrumb = true;
-            this.hasChildRoute = true;
-            this.currentPage = 'Simulação';
+            this.mostrarBreadcrumb = true;
+            this.temRotaFilha = true;
+            this.paginaAtual = 'Simulação';
         } else if (url.includes('/painelcliente/solicitacao')) {
-            this.showBreadcrumb = true;
-            this.hasChildRoute = true;
-            this.currentPage = 'Solicitação';
+            this.mostrarBreadcrumb = true;
+            this.temRotaFilha = true;
+            this.paginaAtual = 'Solicitação';
         } else if (url === '/painelcliente') {
-            this.showBreadcrumb = false;
-            this.hasChildRoute = false;
-            this.currentPage = '';
+            this.mostrarBreadcrumb = false;
+            this.temRotaFilha = false;
+            this.paginaAtual = '';
         }
     }
 }

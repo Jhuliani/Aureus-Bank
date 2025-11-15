@@ -34,8 +34,8 @@
             </div>
 
             <div class="inferior-login">
-                <button class="btn-login" (click)="fazerLogin()" [disabled]="loading()">
-                    {{ loading() ? 'Entrando...' : 'Avançar' }}
+                <button class="btn-login" (click)="fazerLogin()" [disabled]="carregando">
+                    {{ carregando ? 'Entrando...' : 'Avançar' }}
                 </button>
                 <a routerLink="/cadastro">Criar conta</a>
             </div>

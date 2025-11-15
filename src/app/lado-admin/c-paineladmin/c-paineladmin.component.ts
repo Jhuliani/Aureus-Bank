@@ -1,63 +1,63 @@
-import { Component } from '@angular/core';
-import { Parcelas, Contrato, Veiculo } from '../../_models/db.models';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { TableModule } from 'primeng/table';
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+import { AdminService, SolicitacaoLista } from '../../services/admin.service';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-c-paineladmin',
   standalone: true,
-  imports: [],
+  imports: [CommonModule, TableModule, ToastModule],
+  providers: [MessageService],
   templateUrl: './c-paineladmin.component.html',
   styleUrl: './c-paineladmin.component.scss'
 })
-export class CPaineladminComponent {
- // Dados que serão populados pelo backend
-  dadosParcelas: Parcelas | null = null;
-  dadosContrato: Contrato | null = null;
-  dadosVeiculo: Veiculo | null = null;
+export class CPaineladminComponent implements OnInit {
+  solicitacoes: SolicitacaoLista[] = [];
+  totalSolicitacoes = 0;
+  carregando = false;
 
-  // Loading state
-  carregando = true;
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private adminService: AdminService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit() {
-    // Aqui você fará a chamada para o backend
-    this.carregarDados();
+    if (!this.authService.isLoggedIn()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    this.carregarSolicitacoes();
   }
 
-  carregarDados() {
-    // Simulando chamada assíncrona ao backend
+  carregarSolicitacoes() {
     this.carregando = true;
-    
-    // Exemplo de como os dados serão atribuídos quando vierem do backend
-    setTimeout(() => {
-      // Dados mock - substituir pela chamada real ao backend
-      this.dadosParcelas = {
-        pagar: 1500.00,
-        emAtraso: 2300.50,
-        aVencer: 3500.75,
-        situacaoTotal: 7300.25,
-        totalAtraso: 2300.50
-      };
 
-      this.dadosContrato = {
-        idContrato: '2139323223',
-        dataEmissao: '20/09/2023',
-        vigenciaInicio: '20/09/2023',
-        vigenciaFim: '20/09/2043',
-        statusContrato: 'EM_ATRASO',
-        produto: 'VEÍCULO LEVE',
-        tipoProduto: 'CARRO',
-        cedente: 'AUREUSBank S/A'
-      };
+    this.adminService.listarSolicitacoes().subscribe({
+      next: (response) => {
+        this.solicitacoes = response.solicitacoes;
+        this.totalSolicitacoes = response.total;
+        this.carregando = false;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar solicitações:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Erro ao carregar solicitações. Tente novamente.'
+        });
+        this.carregando = false;
+      }
+    });
+  }
 
-      this.dadosVeiculo = {
-        marca: 'Toyota',
-        modelo: 'Corolla XEi 2.0',
-        ano: '2022/2023',
-        placa: 'ABC-1D23',
-        renavam: '01234567890',
-        chassi: '9BRBLWHE0NP123456'
-      };
-
-      this.carregando = false;
-    }, 1000);
+  visualizarSolicitacao(idContrato: number): void {
+    this.router.navigate(['/paineladmin/solicitacao', idContrato]);
   }
 }

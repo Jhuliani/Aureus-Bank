@@ -1,97 +1,45 @@
 <div class="main-container">
-  <div class="content-wrapper">
-    <div class="main-painel">
-      <!-- Carrossel de Parcelas -->
-      <section class="carrossel-parcelas">
-        <h2 class="carrossel-titulo">PARCELAS</h2>
-        <div class="carrossel-container">
-          <div class="card-parcela pagar">
-            <h3>PAGAR</h3>
-            <p class="valor">R$ {{ dadosParcelas?.pagar || 0 }}</p>
-          </div>
-          <div class="card-parcela atraso">
-            <h3>EM ATRASO</h3>
-            <p class="valor">R$ {{ dadosParcelas?.emAtraso || 0 }}</p>
-          </div>
-          <div class="card-parcela vencer">
-            <h3>A VENCER</h3>
-            <p class="valor">R$ {{ dadosParcelas?.aVencer || 0 }}</p>
-          </div>
-        </div>
-        <div class="resumo">
-          <p class="situacao">Situação: R${{ dadosParcelas?.situacaoTotal || 0 }}</p>
-          <p class="total-atraso">Total em atraso: R${{ dadosParcelas?.totalAtraso || 0 }}</p>
-        </div>
-      </section>
+    <div class="content-wrapper">
+       <div class="painel">
+            <h1>Solicitações em Aberto</h1>
+            <p>Aqui você pode acompanhar todas as solicitações de financiamento pendentes. Total: {{ totalSolicitacoes }}</p>
+            <div class="card">
+                <p *ngIf="carregando">Carregando solicitações...</p>
 
-      <!-- Cards de Informações em formato de tabela -->
-      <div class="cards-container">
-        <div class="card-info contrato">
-          <h3>Informações do Contrato</h3>
-          <div class="info-container">
-            <div class="info-line">
-              <span class="info-label">ID do contrato:</span>
-              <span class="info-value">{{ dadosContrato?.idContrato || 'N/A' }}</span>
+                <div *ngIf="!carregando">
+                    <p-table [value]="solicitacoes" styleClass="p-datatable-striped" [rowHover]="true">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Veículo</th>
+                                <th>Valor do Veículo</th>
+                                <th>Entrada</th>
+                                <th>Parcelas</th>
+                                <th>Status</th>
+                                <th>Data Solicitação</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-solicitacao>
+                            <tr style="cursor: pointer;" (click)="visualizarSolicitacao(solicitacao.id_contrato)">
+                                <td>{{ solicitacao.nome_cliente }}</td>
+                                <td>{{ solicitacao.marca_veiculo }} {{ solicitacao.modelo_veiculo }}</td>
+                                <td>R$ {{ solicitacao.valor_veiculo | number:'1.2-2' }}</td>
+                                <td>R$ {{ solicitacao.valor_entrada | number:'1.2-2' }}</td>
+                                <td>{{ solicitacao.qtde_parcelas }}x</td>
+                                <td>
+                                    <span [class]="'status-badge status-' + solicitacao.status.toLowerCase().replace('_', '-')">
+                                        {{ solicitacao.status }}
+                                    </span>
+                                </td>
+                                <td>{{ solicitacao.data_emissao | date:'dd/MM/yyyy' }}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
             </div>
-            <div class="info-line">
-              <span class="info-label">Data de emissão:</span>
-              <span class="info-value">{{ dadosContrato?.dataEmissao || 'N/A' }}</span>
-            </div>
-            <div class="info-line">
-              <span class="info-label">Prazo de vigência:</span>
-              <span class="info-value">{{ dadosContrato?.vigenciaInicio || 'N/A' }} - {{ dadosContrato?.vigenciaFim || 'N/A' }}</span>
-            </div>
-            <div class="info-line">
-              <span class="info-label">Status do contrato:</span>
-              <span class="info-value status-{{ dadosContrato?.statusContrato?.toLowerCase() || 'indefinido' }}">
-                {{ dadosContrato?.statusContrato || 'N/A' }}
-              </span>
-            </div>
-            <div class="info-line">
-              <span class="info-label">Produto:</span>
-              <span class="info-value">{{ dadosContrato?.produto || 'N/A' }}</span>
-            </div>
-            <div class="info-line">
-              <span class="info-label">Tipo de produto:</span>
-              <span class="info-value">{{ dadosContrato?.tipoProduto || 'N/A' }}</span>
-            </div>
-            <div class="info-line">
-              <span class="info-label">Cedente:</span>
-              <span class="info-value">{{ dadosContrato?.cedente || 'N/A' }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="card-info veiculo">
-          <h3>Detalhes do Veículo</h3>
-          <div class="info-container">
-            <div class="info-line">
-              <span class="info-label">Marca:</span>
-              <span class="info-value">{{ dadosVeiculo?.marca || 'N/A' }}</span>
-            </div>
-            <div class="info-line">
-              <span class="info-label">Modelo:</span>
-              <span class="info-value">{{ dadosVeiculo?.modelo || 'N/A' }}</span>
-            </div>
-            <div class="info-line">
-              <span class="info-label">Ano:</span>
-              <span class="info-value">{{ dadosVeiculo?.ano || 'N/A' }}</span>
-            </div>
-            <div class="info-line">
-              <span class="info-label">Placa:</span>
-              <span class="info-value">{{ dadosVeiculo?.placa || 'N/A' }}</span>
-            </div>
-            <div class="info-line">
-              <span class="info-label">Renavam:</span>
-              <span class="info-value">{{ dadosVeiculo?.renavam || 'N/A' }}</span>
-            </div>
-            <div class="info-line">
-              <span class="info-label">Chassi:</span>
-              <span class="info-value">{{ dadosVeiculo?.chassi || 'N/A' }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
+       </div>
     </div>
-  </div>
 </div>
+
+<p-toast></p-toast>
+

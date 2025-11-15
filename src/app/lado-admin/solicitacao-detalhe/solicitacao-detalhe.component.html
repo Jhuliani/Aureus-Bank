@@ -1,0 +1,190 @@
+<div class="main-container">
+  <div class="content-wrapper">
+    <div class="painel">
+      <header>
+        <div class="header-actions">
+          <button pButton
+                  type="button"
+                  icon="pi pi-arrow-left"
+                  class="p-button-outlined p-button-sm back-button"
+                  routerLink="/paineladmin"
+                  pTooltip="Voltar para Painel Admin">
+          </button>
+        </div>
+        <h2>Detalhes da Solicitação</h2>
+        <p>Visualize todas as informações da solicitação de financiamento</p>
+      </header>
+
+      <div *ngIf="carregando" class="loading-container">
+        <p-progressSpinner></p-progressSpinner>
+        <p>Carregando detalhes da solicitação...</p>
+      </div>
+
+      <div *ngIf="!carregando && solicitacao" class="conteudo-solicitacao">
+        <div class="breadcrumb">
+          <a routerLink="/paineladmin">Painel Admin</a>
+          <span class="separator">></span>
+          <span class="current">Solicitação #{{ solicitacao.id_contrato }}</span>
+        </div>
+
+        <div class="secao">
+          <p-card header="Informações do Cliente">
+            <div class="grid">
+              <div class="col-12 md:col-6">
+                <div class="info-item">
+                  <strong>ID Cliente:</strong>
+                  <span>{{ solicitacao.id_cliente }}</span>
+                </div>
+                <div class="info-item">
+                  <strong>Nome:</strong>
+                  <span>{{ solicitacao.nome_cliente || 'N/A' }}</span>
+                </div>
+              </div>
+              <div class="col-12 md:col-6">
+                <div class="info-item" *ngIf="solicitacao.cpf_cliente">
+                  <strong>CPF:</strong>
+                  <span>{{ solicitacao.cpf_cliente }}</span>
+                </div>
+                <div class="info-item" *ngIf="solicitacao.email_cliente">
+                  <strong>Email:</strong>
+                  <span>{{ solicitacao.email_cliente }}</span>
+                </div>
+                <div class="info-item" *ngIf="solicitacao.telefone_cliente">
+                  <strong>Telefone:</strong>
+                  <span>{{ solicitacao.telefone_cliente }}</span>
+                </div>
+              </div>
+              <div class="col-12 md:col-6">
+                <div class="info-item" *ngIf="solicitacao.data_emissao">
+                  <strong>Data da Solicitação:</strong>
+                  <span>{{ solicitacao.data_emissao | date:'dd/MM/yyyy' }}</span>
+                </div>
+                <div class="info-item" *ngIf="solicitacao.status">
+                  <strong>Status:</strong>
+                  <span [class]="'status-badge status-' + solicitacao.status.toLowerCase().replace('_', '-')">
+                    {{ solicitacao.status }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </p-card>
+        </div>
+
+
+        <div class="secao">
+          <p-card header="Informações do Veículo">
+            <div class="grid">
+              <div class="col-12 md:col-6">
+                <div class="info-item">
+                  <strong>Marca:</strong>
+                  <span>{{ solicitacao.veiculo.marca }}</span>
+                </div>
+                <div class="info-item">
+                  <strong>Modelo:</strong>
+                  <span>{{ solicitacao.veiculo.modelo }}</span>
+                </div>
+                <div class="info-item">
+                  <strong>Ano Fabricação:</strong>
+                  <span>{{ solicitacao.veiculo.ano_fabricacao }}</span>
+                </div>
+                <div class="info-item">
+                  <strong>Ano Modelo:</strong>
+                  <span>{{ solicitacao.veiculo.ano_modelo }}</span>
+                </div>
+              </div>
+              <div class="col-12 md:col-6">
+                <div class="info-item" *ngIf="solicitacao.veiculo.placa">
+                  <strong>Placa:</strong>
+                  <span>{{ solicitacao.veiculo.placa }}</span>
+                </div>
+                <div class="info-item">
+                  <strong>Chassi:</strong>
+                  <span>{{ solicitacao.veiculo.num_chassi }}</span>
+                </div>
+                <div class="info-item">
+                  <strong>RENAVAM:</strong>
+                  <span>{{ solicitacao.veiculo.num_renavam }}</span>
+                </div>
+                <div class="info-item" *ngIf="solicitacao.veiculo.cor">
+                  <strong>Cor:</strong>
+                  <span>{{ solicitacao.veiculo.cor }}</span>
+                </div>
+                <div class="info-item">
+                  <strong>Valor:</strong>
+                  <span>{{ solicitacao.veiculo.valor | currency:'BRL' }}</span>
+                </div>
+              </div>
+            </div>
+          </p-card>
+        </div>
+
+        <div class="secao">
+          <p-card header="Informações Financeiras">
+            <div class="grid">
+              <div class="col-12 md:col-6">
+                <div class="info-item">
+                  <strong>Valor Total:</strong>
+                  <span class="valor-destaque">{{ solicitacao.financeiro.valor_total | currency:'BRL' }}</span>
+                </div>
+                <div class="info-item">
+                  <strong>Valor de Entrada:</strong>
+                  <span>{{ solicitacao.financeiro.valor_entrada | currency:'BRL' }}</span>
+                </div>
+                <div class="info-item">
+                  <strong>Número de Parcelas:</strong>
+                  <span>{{ solicitacao.financeiro.qtde_parcelas }}x</span>
+                </div>
+                <div class="info-item" *ngIf="solicitacao.financeiro.parcelas && solicitacao.financeiro.parcelas.length > 0">
+                  <strong>Valor da Parcela:</strong>
+                  <span class="valor-destaque">{{ solicitacao.financeiro.parcelas[0].valor_parcela | currency:'BRL' }}</span>
+                </div>
+                <div class="info-item">
+                  <strong>Data Primeiro Vencimento:</strong>
+                  <span>{{ solicitacao.financeiro.data_primeiro_vencimento | date:'dd/MM/yyyy' }}</span>
+                </div>
+              </div>
+              <div class="col-12 md:col-6">
+                <div class="info-item" *ngIf="solicitacao.financeiro.taxa_juros">
+                  <strong>Taxa de Juros:</strong>
+                  <span>{{ solicitacao.financeiro.taxa_juros }}% ao mês</span>
+                </div>
+                <div class="info-item">
+                  <strong>Status Pagamento:</strong>
+                  <span>{{ solicitacao.financeiro.status_pagamento }}</span>
+                </div>
+                <div class="info-item">
+                  <strong>Data Criação:</strong>
+                  <span>{{ solicitacao.financeiro.data_criacao | date:'dd/MM/yyyy' }}</span>
+                </div>
+              </div>
+            </div>
+          </p-card>
+        </div>
+
+        <div class="actions-container">
+          <button
+            pButton
+            type="button"
+            label="Aprovar Solicitação"
+            icon="pi pi-check"
+            (click)="aprovarSolicitacao()"
+            [disabled]="processando || solicitacao.status !== 'pendente'"
+            class="p-button-success">
+          </button>
+          <button
+            pButton
+            type="button"
+            label="Recusar Solicitação"
+            icon="pi pi-times"
+            (click)="recusarSolicitacao()"
+            [disabled]="processando || solicitacao.status !== 'pendente'"
+            class="p-button-danger">
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-toast></p-toast>
+

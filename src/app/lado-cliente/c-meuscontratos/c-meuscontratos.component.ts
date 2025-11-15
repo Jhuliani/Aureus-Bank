@@ -18,9 +18,9 @@ import { Contrato, ContratosResponse, ContratosService } from '../../services/co
   styleUrl: './c-meuscontratos.component.scss',
 })
 export class CMeuscontratosComponent implements OnInit{
-  contratos: Contrato[] = []; // é da tabela
+  contratos: Contrato[] = [];
   totalContratos = 0;
-  loading = false;
+  carregando = false;
 
   menuSuperior: MenuItem[] | undefined;
 
@@ -32,7 +32,6 @@ export class CMeuscontratosComponent implements OnInit{
   ) {}
 
   ngOnInit() {
-    // Verificar se usuário está logado usando auth_data (token)
     if (!this.authService.isLoggedIn()) {
       this.router.navigate(['/login']);
       return;
@@ -42,30 +41,26 @@ export class CMeuscontratosComponent implements OnInit{
   }
 
   carregarContratos() {
-    this.loading = true;
+    this.carregando = true;
 
-    // Obter ID do cliente do localStorage
     const authData = this.authService.obterDadosLogin();
     if (!authData || !authData.id_cliente) {
       console.error('ID do cliente não encontrado no localStorage');
-      this.loading = false;
+      this.carregando = false;
       return;
     }
-
-    console.log('Buscando contratos para cliente ID:', authData.id_cliente);
 
     this.contratosService.buscarContratosDoCliente(authData.id_cliente)
       .subscribe({
         next: (response: ContratosResponse) => {
-          console.log('Contratos recebidos:', response);
           this.contratos = response.contratos;
           this.totalContratos = response.total;
-          this.loading = false;
+          this.carregando = false;
           this.cdr.detectChanges();
         },
         error: (err: any) => {
           console.error('Erro ao carregar contratos:', err);
-          this.loading = false;
+          this.carregando = false;
           this.cdr.detectChanges();
         }
       });

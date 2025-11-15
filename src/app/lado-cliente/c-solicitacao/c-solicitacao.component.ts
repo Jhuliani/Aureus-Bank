@@ -19,6 +19,7 @@ import { Anos, InformacoesFipe, Marcas, ModelosResponse } from '../../_models/fi
 import { FipeService } from '../../services/fipe.service';
 import { SimulacaoService } from '../../services/simulacao.service';
 import { SolicitacaoService } from '../../services/solicitacao.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-c-solicitacao',
@@ -94,32 +95,32 @@ export class CSolicitacaoComponent implements OnInit {
   ];
 
   veioDaSimulacao: boolean = false;
-  estaCarregando: boolean = false;
-  estaEnviando: boolean = false;
+  carregando: boolean = false;
+  enviando: boolean = false;
 
   constructor(
-    private servicoFipe: FipeService,
-    private servicoSimulacao: SimulacaoService,
+    private serviceFipe: FipeService,
+    private serviceSimulacao: SimulacaoService,
     private construtorFormulario: FormBuilder,
     private roteador: Router,
-    private servicoMensagem: MessageService,
-    private servicoSolicitacao: SolicitacaoService
+    private serviceMensagem: MessageService,
+    private serviceSolicitacao: SolicitacaoService,
+    private serviceAuth: AuthService
   ) {
     this.criarFormulario();
   }
 
   ngOnInit(): void {
-    const dadosSimulacao = this.servicoSimulacao.obterDadosSimulacao();
+    const dadosSimulacao = this.serviceSimulacao.obterDadosSimulacao();
 
     if (dadosSimulacao && dadosSimulacao.informacoesFipe) {
       this.preencherDadosDaSimulacao(dadosSimulacao);
 
-      // Só carrega listagens se os dados essenciais estiverem presentes
       if (this.marcaEscolhida && this.modeloEscolhido) {
         this.carregarListagensParaPreenchimento();
       } else {
         console.error('Não é possível carregar listagens: dados essenciais faltando');
-        this.estaCarregando = false;
+        this.carregando = false;
       }
     } else {
       this.carregarMarcas();
@@ -136,7 +137,6 @@ export class CSolicitacaoComponent implements OnInit {
   }
 
   private preencherDadosDaSimulacao(dados: any): void {
-    console.log('Preenchendo dados da simulação:', dados);
 
     this.veioDaSimulacao = true;
     this.tipoVeiculo = dados.tipoVeiculo || 'carros';
@@ -157,22 +157,16 @@ export class CSolicitacaoComponent implements OnInit {
         dadosRecebidos: dados
       });
       this.mostrarErro('Dados da simulação incompletos. Por favor, faça uma nova simulação.');
-      this.estaCarregando = false;
+      this.carregando = false;
       return;
     }
 
-    console.log('Dados preenchidos com sucesso:', {
-      tipoVeiculo: this.tipoVeiculo,
-      marcaEscolhida: this.marcaEscolhida,
-      modeloEscolhido: this.modeloEscolhido,
-      anoEscolhido: this.anoEscolhido
-    });
   }
 
   private carregarListagensParaPreenchimento(): void {
-    this.estaCarregando = true;
+    this.carregando = true;
 
-    this.servicoFipe.listarMarcas(this.tipoVeiculo).subscribe({
+    this.serviceFipe.listarMarcas(this.tipoVeiculo).subscribe({
       next: (marcas: Marcas[]) => {
         this.listaMarcas = marcas.map(m => ({
           label: m.nome,
@@ -182,20 +176,20 @@ export class CSolicitacaoComponent implements OnInit {
         if (this.marcaEscolhida) {
           this.carregarModelosParaPreenchimento();
         } else {
-          this.estaCarregando = false;
+          this.carregando = false;
         }
       },
-      error: () => this.estaCarregando = false
+      error: () => this.carregando = false
     });
   }
 
   private carregarModelosParaPreenchimento(): void {
     if (!this.marcaEscolhida) {
-      this.estaCarregando = false;
+      this.carregando = false;
       return;
     }
 
-    this.servicoFipe.listarModelos(this.tipoVeiculo, this.marcaEscolhida).subscribe({
+    this.serviceFipe.listarModelos(this.tipoVeiculo, this.marcaEscolhida).subscribe({
       next: (resposta: ModelosResponse) => {
         if (resposta && resposta.modelos) {
           this.listaModelos = resposta.modelos.map(m => ({
@@ -206,15 +200,15 @@ export class CSolicitacaoComponent implements OnInit {
           if (this.modeloEscolhido && this.modeloEscolhido !== 'undefined' && this.modeloEscolhido !== 'null') {
             this.carregarAnosParaPreenchimento();
           } else {
-            this.estaCarregando = false;
+            this.carregando = false;
           }
         } else {
-          this.estaCarregando = false;
+          this.carregando = false;
         }
       },
       error: (erro) => {
         console.error('Erro ao carregar modelos para preenchimento:', erro);
-        this.estaCarregando = false;
+        this.carregando = false;
       }
     });
   }
@@ -225,27 +219,22 @@ export class CSolicitacaoComponent implements OnInit {
         marcaEscolhida: this.marcaEscolhida,
         modeloEscolhido: this.modeloEscolhido
       });
-      this.estaCarregando = false;
+      this.carregando = false;
       return;
     }
 
     if (this.modeloEscolhido === 'undefined' || this.modeloEscolhido === 'null' ||
         this.marcaEscolhida === 'undefined' || this.marcaEscolhida === 'null') {
-      console.warn('Valores inválidos detectados:', {
-        marcaEscolhida: this.marcaEscolhida,
-        modeloEscolhido: this.modeloEscolhido
-      });
-      this.estaCarregando = false;
-      return;
+        console.warn('Valores inválidos detectados:', {
+          marcaEscolhida: this.marcaEscolhida,
+          modeloEscolhido: this.modeloEscolhido
+        });
+        this.carregando = false;
+        return;
     }
 
-    console.log('Carregando anos com:', {
-      tipoVeiculo: this.tipoVeiculo,
-      marcaEscolhida: this.marcaEscolhida,
-      modeloEscolhido: this.modeloEscolhido
-    });
 
-    this.servicoFipe.listarAnos(this.tipoVeiculo, this.marcaEscolhida, this.modeloEscolhido).subscribe({
+    this.serviceFipe.listarAnos(this.tipoVeiculo, this.marcaEscolhida, this.modeloEscolhido).subscribe({
       next: (anos: Anos[]) => {
         if (anos && anos.length > 0) {
           this.listaAnos = anos.map(a => ({
@@ -255,7 +244,7 @@ export class CSolicitacaoComponent implements OnInit {
         } else {
           console.warn('Nenhum ano retornado pela API');
         }
-        this.estaCarregando = false;
+        this.carregando = false;
       },
       error: (erro) => {
         console.error('Erro ao carregar anos para preenchimento:', erro);
@@ -265,7 +254,7 @@ export class CSolicitacaoComponent implements OnInit {
           modeloEscolhido: this.modeloEscolhido
         });
         this.mostrarErro('Erro ao carregar anos. Verifique se o modelo foi selecionado corretamente.');
-        this.estaCarregando = false;
+        this.carregando = false;
       }
     });
   }
@@ -281,21 +270,21 @@ export class CSolicitacaoComponent implements OnInit {
   }
 
   carregarMarcas(): void {
-    this.estaCarregando = true;
+    this.carregando = true;
 
-    this.servicoFipe.listarMarcas(this.tipoVeiculo).subscribe({
+    this.serviceFipe.listarMarcas(this.tipoVeiculo).subscribe({
       next: (marcas: Marcas[]) => {
         this.listaMarcas = marcas.map(m => ({
           label: m.nome,
           value: m.codigo
         }));
-        this.estaCarregando = false;
+        this.carregando = false;
       },
       error: (erro) => {
         console.error('Erro ao carregar marcas:', erro);
         this.mostrarErro('Erro ao carregar marcas. Tente novamente.');
         this.listaMarcas = [];
-        this.estaCarregando = false;
+        this.carregando = false;
       }
     });
   }
@@ -311,10 +300,10 @@ export class CSolicitacaoComponent implements OnInit {
       return;
     }
 
-    this.estaCarregando = true;
+    this.carregando = true;
     this.limparDadosFipe();
 
-    this.servicoFipe.listarModelos(this.tipoVeiculo, this.marcaEscolhida).subscribe({
+    this.serviceFipe.listarModelos(this.tipoVeiculo, this.marcaEscolhida).subscribe({
       next: (resposta: ModelosResponse) => {
         if (resposta && resposta.modelos && resposta.modelos.length > 0) {
           this.listaModelos = resposta.modelos.map(m => ({
@@ -325,55 +314,53 @@ export class CSolicitacaoComponent implements OnInit {
           this.mostrarErro('Nenhum modelo encontrado para esta marca.');
           this.listaModelos = [];
         }
-        this.estaCarregando = false;
+        this.carregando = false;
       },
       error: (erro) => {
         console.error('Erro ao carregar modelos:', erro);
         this.mostrarErro('Erro ao carregar modelos. Tente novamente.');
         this.listaModelos = [];
-        this.estaCarregando = false;
+        this.carregando = false;
       }
     });
   }
 
   aoMudarModelo(): void {
-    setTimeout(() => {
-      if (!this.marcaEscolhida || !this.modeloEscolhido) {
-        return;
-      }
+    if (!this.marcaEscolhida || !this.modeloEscolhido) {
+      return;
+    }
 
-      if (this.modeloEscolhido === 'undefined' || this.modeloEscolhido === 'null') {
-        return;
-      }
+    if (this.modeloEscolhido === 'undefined' || this.modeloEscolhido === 'null') {
+      return;
+    }
 
-      this.estaCarregando = true;
+    this.carregando = true;
 
-      this.listaAnos = [];
-      this.anoEscolhido = undefined;
-      this.dadosFipe = undefined;
-      this.resultadoSimulacao = null;
+    this.listaAnos = [];
+    this.anoEscolhido = undefined;
+    this.dadosFipe = undefined;
+    this.resultadoSimulacao = null;
 
-      this.servicoFipe.listarAnos(this.tipoVeiculo, this.marcaEscolhida, this.modeloEscolhido).subscribe({
-        next: (anos: Anos[]) => {
-          if (anos && anos.length > 0) {
-            this.listaAnos = anos.map(a => ({
-              label: a.nome,
-              value: a.codigo
-            }));
-          } else {
-            this.mostrarErro('Nenhum ano encontrado para este modelo.');
-            this.listaAnos = [];
-          }
-          this.estaCarregando = false;
-        },
-        error: (erro) => {
-          console.error('Erro ao carregar anos:', erro);
-          this.mostrarErro('Erro ao carregar anos. Tente novamente.');
+    this.serviceFipe.listarAnos(this.tipoVeiculo, this.marcaEscolhida, this.modeloEscolhido).subscribe({
+      next: (anos: Anos[]) => {
+        if (anos && anos.length > 0) {
+          this.listaAnos = anos.map(a => ({
+            label: a.nome,
+            value: a.codigo
+          }));
+        } else {
+          this.mostrarErro('Nenhum ano encontrado para este modelo.');
           this.listaAnos = [];
-          this.estaCarregando = false;
         }
-      });
-    }, 0);
+        this.carregando = false;
+      },
+      error: (erro) => {
+        console.error('Erro ao carregar anos:', erro);
+        this.mostrarErro('Erro ao carregar anos. Tente novamente.');
+        this.listaAnos = [];
+        this.carregando = false;
+      }
+    });
   }
 
   aoMudarAno(): void {
@@ -385,11 +372,11 @@ export class CSolicitacaoComponent implements OnInit {
       return;
     }
 
-    this.estaCarregando = true;
+    this.carregando = true;
     this.dadosFipe = undefined;
     this.resultadoSimulacao = null;
 
-    this.servicoFipe.listarInformacoes(
+    this.serviceFipe.listarInformacoes(
       this.tipoVeiculo,
       this.marcaEscolhida,
       this.modeloEscolhido,
@@ -397,12 +384,12 @@ export class CSolicitacaoComponent implements OnInit {
     ).subscribe({
       next: (info: InformacoesFipe) => {
         this.dadosFipe = info;
-        this.estaCarregando = false;
+        this.carregando = false;
       },
       error: (erro) => {
         console.error('Erro ao carregar informações da FIPE:', erro);
         this.mostrarErro('Erro ao carregar informações da FIPE. Tente novamente.');
-        this.estaCarregando = false;
+        this.carregando = false;
       }
     });
   }
@@ -441,19 +428,11 @@ export class CSolicitacaoComponent implements OnInit {
       return;
     }
 
-    const taxaMensal = this.taxaJuros / 100;
-    const valorParcela = valorFinanciado * (taxaMensal * Math.pow(1 + taxaMensal, this.numeroParcelas)) /
-      (Math.pow(1 + taxaMensal, this.numeroParcelas) - 1);
-
-    const totalPagar = valorParcela * this.numeroParcelas;
-    const totalJuros = totalPagar - valorFinanciado;
-    const aprovado = valorParcela <= (rendaMensal * 0.3);
+    const resultado = this.serviceSimulacao.calcularFinanciamento(valorFinanciado, this.taxaJuros, this.numeroParcelas);
+    const aprovado = resultado.valorParcela <= (rendaMensal * 0.3);
 
     this.resultadoSimulacao = {
-      valorFinanciado,
-      valorParcela,
-      totalPagar,
-      totalJuros,
+      ...resultado,
       aprovado,
       mensagem: aprovado
         ? 'Sua renda mensal foi aprovada na simulação inicial. \nAperte o botão abaixo e solicite seu financiamento.'
@@ -470,16 +449,15 @@ export class CSolicitacaoComponent implements OnInit {
     if (!this.validarFormulario()) return;
     if (!this.validarDadosFipe()) return;
 
-    this.estaEnviando = true;
+    this.enviando = true;
 
     const dadosCompletos = this.prepararDadosParaEnvio();
-    console.log('Dados do formulário que serão enviados ao backend:', dadosCompletos);
 
-    this.servicoSolicitacao.enviarSolicitacao(dadosCompletos).subscribe({
+    this.serviceSolicitacao.enviarSolicitacao(dadosCompletos).subscribe({
       next: () => {
-        this.estaEnviando = false;
+        this.enviando = false;
         this.mostrarSucesso('Solicitação enviada com sucesso! Acompanhe o andamento em Meus Contratos.');
-        this.servicoSimulacao.limparDadosSimulacao();
+        this.serviceSimulacao.limparDadosSimulacao();
         setTimeout(() => {
           this.roteador.navigate(['/painelcliente']);
         }, 500);
@@ -487,7 +465,7 @@ export class CSolicitacaoComponent implements OnInit {
       error: (erro) => {
         console.error('Erro ao enviar solicitação:', erro);
         this.mostrarErro('Erro ao enviar solicitação. Tente novamente.');
-        this.estaEnviando = false;
+        this.enviando = false;
       }
     });
 
@@ -525,8 +503,8 @@ export class CSolicitacaoComponent implements OnInit {
     const numRenavam = this.formularioVeiculo.get('numRenavam')?.value || '';
     const cor = this.formularioVeiculo.get('cor')?.value || null;
 
-    const authData = localStorage.getItem('auth_data');
-    const idCliente = authData ? JSON.parse(authData).id_cliente : null;
+    const dadosLogin = this.serviceAuth.obterDadosLogin();
+    const idCliente = dadosLogin?.id_cliente || null;
 
     const marcaNome = this.listaMarcas.find(m => m.value === this.marcaEscolhida)?.label || '';
     const modeloNome = this.listaModelos.find(m => m.value === this.modeloEscolhido)?.label || '';
@@ -569,7 +547,7 @@ export class CSolicitacaoComponent implements OnInit {
   }
 
   private mostrarErro(mensagem: string): void {
-    this.servicoMensagem.add({
+    this.serviceMensagem.add({
       severity: 'error',
       summary: 'Erro',
       detail: mensagem,
@@ -578,7 +556,7 @@ export class CSolicitacaoComponent implements OnInit {
   }
 
   private mostrarSucesso(mensagem: string): void {
-    this.servicoMensagem.add({
+    this.serviceMensagem.add({
       severity: 'success',
       summary: 'Sucesso',
       detail: mensagem,

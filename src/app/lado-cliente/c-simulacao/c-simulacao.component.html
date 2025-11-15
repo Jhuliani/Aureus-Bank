@@ -22,13 +22,13 @@
                         <h2>Consulta Tabela FIPE</h2>
                         <p class="subtitle">Consulte o valor de veículos utilizando a tabela FIPE oficial</p>
 
-                        <div *ngIf="estaCarregando && !listaMarcas.length" class="loading-container">
+                        <div *ngIf="carregando && !listaMarcas.length" class="loading-container">
                             <p-progressSpinner></p-progressSpinner>
                             <p>Carregando...</p>
                         </div>
 
 
-                        <div class="form-container" *ngIf="!estaCarregando || listaMarcas.length">
+                        <div class="form-container" *ngIf="!carregando || listaMarcas.length">
                             <div class="p-fluid grid">
 
                                 <div class="field col-12 md:col-6 lg:col-3">
@@ -39,7 +39,7 @@
                                         [(ngModel)]="tipoVeiculo"
                                         (onChange)="aoMudarTipoVeiculo()"
                                         placeholder="Selecione o tipo"
-                                        [disabled]="estaCarregando"
+                                        [disabled]="carregando"
                                         appendTo="body"
                                         name="tipoVeiculo">
                                     </p-dropdown>
@@ -53,12 +53,12 @@
                                         [(ngModel)]="marcaEscolhida"
                                         (onChange)="aoMudarMarca()"
                                         placeholder="Selecione a marca"
-                                        [disabled]="!listaMarcas.length || estaCarregando"
+                                        [disabled]="!listaMarcas.length || carregando"
                                         appendTo="body"
                                         name="marca">
                                         <ng-template pTemplate="empty">
                                             <div class="empty-message">
-                                                {{ estaCarregando ? 'Carregando...' : 'Nenhuma marca encontrada' }}
+                                                {{ carregando ? 'Carregando...' : 'Nenhuma marca encontrada' }}
                                             </div>
                                         </ng-template>
                                     </p-dropdown>
@@ -72,12 +72,12 @@
                                         [(ngModel)]="modeloEscolhido"
                                         (onChange)="aoMudarModelo()"
                                         placeholder="Selecione o modelo"
-                                        [disabled]="!listaModelos.length || estaCarregando"
+                                        [disabled]="!listaModelos.length || carregando"
                                         appendTo="body"
                                         name="modelo">
                                         <ng-template pTemplate="empty">
                                             <div class="empty-message">
-                                                {{ !marcaEscolhida ? 'Selecione uma marca' : (estaCarregando ? 'Carregando...' : 'Nenhum modelo encontrado') }}
+                                                {{ !marcaEscolhida ? 'Selecione uma marca' : (carregando ? 'Carregando...' : 'Nenhum modelo encontrado') }}
                                             </div>
                                         </ng-template>
                                     </p-dropdown>
@@ -91,12 +91,12 @@
                                         [(ngModel)]="anoEscolhido"
                                         (onChange)="aoMudarAno()"
                                         placeholder="Selecione o ano"
-                                        [disabled]="!listaAnos.length || estaCarregando"
+                                        [disabled]="!listaAnos.length || carregando"
                                         appendTo="body"
                                         name="ano">
                                         <ng-template pTemplate="empty">
                                             <div class="empty-message">
-                                                {{ !modeloEscolhido ? 'Selecione um modelo' : (estaCarregando ? 'Carregando...' : 'Nenhum ano encontrado') }}
+                                                {{ !modeloEscolhido ? 'Selecione um modelo' : (carregando ? 'Carregando...' : 'Nenhum ano encontrado') }}
                                             </div>
                                         </ng-template>
                                     </p-dropdown>
@@ -104,7 +104,7 @@
 
                             </div>
 
-                            <div *ngIf="estaCarregando && listaMarcas.length" class="loading-inline">
+                            <div *ngIf="carregando && listaMarcas.length" class="loading-inline">
                                 <p-progressSpinner styleClass="w-1rem h-1rem" strokeWidth="4"></p-progressSpinner>
                                 <span class="ml-2">Consultando...</span>
                             </div>
@@ -117,7 +117,7 @@
                                     label="Limpar Consulta"
                                     class="btn-secundary"
                                     (click)="limparConsulta()"
-                                    [disabled]="estaCarregando">
+                                    [disabled]="carregando">
                                 </button>
                             </div>
                         </div>
@@ -150,7 +150,7 @@
                             </p-card>
                         </div>
 
-                        <div *ngIf="!dadosFipe && formularioEstaValido && !estaCarregando" class="empty-state mt-4">
+                        <div *ngIf="!dadosFipe && formularioEstaValido && !carregando" class="empty-state mt-4">
                             <p-card>
                                 <div class="empty-state-content">
                                     <i class="pi pi-info-circle empty-state-icon"></i>
@@ -321,7 +321,7 @@
                         class="btn-simular"
                         label="Simular Financiamento"
                         type="button"
-                        [disabled]="!dadosFipe || formularioSimulacao.invalid || estaCarregando"
+                        [disabled]="!dadosFipe || formularioSimulacao.invalid || carregando"
                         (click)="calcularSimulacao()">
                     </button>
                 </div>

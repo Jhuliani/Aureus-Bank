@@ -5,7 +5,6 @@ import { ContratosService, ContratoCompleto, Parcela } from '../../services/cont
 import { AuthService } from '../../services/auth.service';
 import { MessageService } from 'primeng/api';
 
-// PrimeNG
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
@@ -31,14 +30,14 @@ import { TooltipModule } from 'primeng/tooltip';
 })
 export class CVisualizarContratosComponent implements OnInit {
   contrato: ContratoCompleto | null = null;
-  estaCarregando: boolean = false;
+  carregando: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private contratosService: ContratosService,
     private authService: AuthService,
-    private servicoMensagem: MessageService
+    private serviceMensagem: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -57,18 +56,18 @@ export class CVisualizarContratosComponent implements OnInit {
   }
 
   carregarDetalhesContrato(idContrato: number): void {
-    this.estaCarregando = true;
+    this.carregando = true;
 
     this.contratosService.buscarDetalhesContrato(idContrato)
       .subscribe({
         next: (contrato: ContratoCompleto) => {
           this.contrato = contrato;
-          this.estaCarregando = false;
+          this.carregando = false;
         },
         error: (err: any) => {
           console.error('Erro ao carregar detalhes do contrato:', err);
           this.mostrarErro('Erro ao carregar detalhes do contrato. Tente novamente.');
-          this.estaCarregando = false;
+          this.carregando = false;
           this.router.navigate(['/meuscontratos']);
         }
       });
@@ -97,7 +96,7 @@ export class CVisualizarContratosComponent implements OnInit {
   }
 
   private mostrarErro(mensagem: string): void {
-    this.servicoMensagem.add({
+    this.serviceMensagem.add({
       severity: 'error',
       summary: 'Erro',
       detail: mensagem,

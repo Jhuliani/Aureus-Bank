@@ -1,0 +1,229 @@
+.main-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background-color: #00235D;
+}
+
+.content-wrapper {
+  flex: 1;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.painel {
+  background-color: rgb(255, 255, 255);
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  border-radius: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+
+  header {
+    color: rgb(0, 0, 0);
+    padding: 0;
+    padding-bottom: 2rem;
+    text-align: center;
+    position: relative;
+    margin-bottom: 1rem;
+
+    .header-actions {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+
+    h2 {
+      margin: 0 0 0.5rem 0;
+      font-size: 2rem;
+      font-weight: 600;
+      color: #00235D;
+    }
+
+    p {
+      margin: 0;
+      color: #5e5c5c;
+      font-size: 1.1rem;
+      line-height: 1.5;
+    }
+  }
+}
+
+.back-button {
+  background-color: #00235D !important;
+  border-color: #00235D !important;
+  color: white !important;
+  width: 40px !important;
+  height: 40px !important;
+  padding: 0 !important;
+  min-width: 40px !important;
+}
+
+.back-button:hover {
+  background-color: #1e4a8c !important;
+  border-color: #1e4a8c !important;
+}
+
+.loading-container {
+  text-align: center;
+  padding: 3rem;
+  color: #64748b;
+
+  p {
+    margin-top: 1rem;
+  }
+}
+
+.conteudo-solicitacao {
+  padding: 0;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+
+  a {
+    color: #00235D;
+    text-decoration: none;
+    transition: color 0.2s;
+
+    &:hover {
+      color: #1e4a8c;
+      text-decoration: underline;
+    }
+  }
+
+  .separator {
+    color: #64748b;
+  }
+
+  .current {
+    color: #64748b;
+    font-weight: 500;
+  }
+}
+
+.secao {
+  margin-bottom: 1.5rem;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e2e8f0;
+
+  .info-label {
+    color: #374151;
+    font-weight: 600;
+  }
+
+  span {
+    color: #64748b;
+
+    &.valor-destaque {
+      color: #00235D;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+  }
+}
+
+.mt-4 {
+  margin-top: 1.5rem;
+}
+
+.actions-container {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+
+  &.status-em_analise,
+  &.status-em-analise {
+    background-color: #fef3c7;
+    color: #92400e;
+  }
+
+  &.status-aprovado {
+    background-color: #d1fae5;
+    color: #065f46;
+  }
+
+  &.status-rejeitado {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+}
+
+::ng-deep {
+  // Estilos para p-card
+  .p-card {
+    margin-bottom: 1.5rem;
+
+    .p-card-header {
+      font-weight: 600;
+      color: #1e293b;
+      padding: 1rem 1.5rem;
+    }
+
+    .p-card-body {
+      padding: 1.5rem;
+    }
+  }
+
+  // Estilos para botões de ação
+  .actions-container {
+    .p-button {
+      min-width: 200px;
+      height: 45px;
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 0.75rem 1.5rem;
+
+      .p-button-icon {
+        margin-right: 0.5rem;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .content-wrapper {
+    padding: 1rem;
+  }
+
+  .painel {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .actions-container {
+    flex-direction: column;
+
+    :host ::ng-deep .p-button {
+      width: 100%;
+    }
+  }
+}
+

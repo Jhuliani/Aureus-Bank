@@ -27,9 +27,9 @@ import { AuthService } from './services/auth.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'Aureus-Bank';
-  showLayout = true;
-  userMenuItems: MenuItem[] = [];
+  titulo = 'Aureus-Bank';
+  mostrarLayout = true;
+  itensMenuUsuario: MenuItem[] = [];
 
   constructor(
     private router: Router,
@@ -39,13 +39,13 @@ export class AppComponent {
       .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
       .subscribe((e: NavigationEnd) => {
         const url = e.urlAfterRedirects || e.url;
-        this.showLayout = !(
+        this.mostrarLayout = !(
           url.startsWith('/login') ||
           url.startsWith('/cadastro')
         );
       });
 
-    this.initializeUserMenu();
+    this.inicializarMenuUsuario();
   }
 
   obterRotaPainel(): string {
@@ -55,21 +55,32 @@ export class AppComponent {
     return '/painelcliente';
   }
 
+  obterRotaInicio(): string {
+    if (this.authService.isAdmin()) {
+      return '/inicio-admin';
+    }
+    return '/inicio';
+  }
+
   mostrarMeusContratos(): boolean {
     return this.authService.isCliente();
   }
 
-  private initializeUserMenu() {
-    this.userMenuItems = [
+  mostrarContratosAdmin(): boolean {
+    return this.authService.isAdmin();
+  }
+
+  private inicializarMenuUsuario() {
+    this.itensMenuUsuario = [
       {
-        label: this.getUsuarioNome(),
+        label: this.obterNomeUsuario(),
         icon: 'pi pi-user',
         items: [
           {
             label: 'Sair',
             icon: 'pi pi-sign-out',
             command: () => {
-              this.logout();
+              this.sair();
             }
           }
         ]
@@ -77,11 +88,11 @@ export class AppComponent {
     ];
   }
 
-  isLoggedIn(): boolean {
+  estaLogado(): boolean {
     return this.authService.isLoggedIn();
   }
 
-  getUsuarioNome(): string {
+  obterNomeUsuario(): string {
     const authData = this.authService.obterDadosLogin();
     if (authData && authData.nome_cliente) {
       return authData.nome_cliente;
@@ -95,7 +106,7 @@ export class AppComponent {
     return 'Usuário';
   }
 
-  logout(): void {
+  sair(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
   }

@@ -18,10 +18,24 @@ export interface Veiculo {
   chassi: string;
 }
 
+export interface Cliente {
+  id_cliente: number;
+  nome: string;
+  cpf: string;
+  email: string;
+  telefone?: string | null;
+  renda?: number | null;
+}
+
 export interface Parcelas {
   pagar: number;
   emAtraso: number;
   aVencer: number;
   situacaoTotal: number;
   totalAtraso: number;
+  qtdPagas: number;
+  qtdEmAtraso: number;
+  qtdAVencer: number;
+  valorParcela: number;
+  valorTotalFinanciado: number;
 }

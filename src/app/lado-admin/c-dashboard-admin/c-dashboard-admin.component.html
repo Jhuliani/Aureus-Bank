@@ -1,0 +1,57 @@
+<div class="main-container">
+    <div class="content-wrapper">
+        <div class="painel">
+            <div *ngIf="carregando" class="loading-container">
+                <p-progressSpinner></p-progressSpinner>
+            </div>
+
+            <div *ngIf="!carregando && metricas" class="metricas-grid">
+                <div class="metrica-card solicitacoes" routerLink="/paineladmin">
+                    <div class="metrica-icon">
+                        <i class="pi pi-clock"></i>
+                    </div>
+                    <div class="metrica-content">
+                        <h3>Solicitações Pendentes</h3>
+                        <p class="metrica-value">{{ metricas.solicitacoes_pendentes }}</p>
+                        <span class="metrica-link">Ver todas →</span>
+                    </div>
+                </div>
+
+                <div class="metrica-card contratos" routerLink="/admin/contratos">
+                    <div class="metrica-icon">
+                        <i class="pi pi-file"></i>
+                    </div>
+                    <div class="metrica-content">
+                        <h3>Contratos Ativos</h3>
+                        <p class="metrica-value">{{ metricas.contratos_ativos }}</p>
+                        <span class="metrica-link">Ver todos →</span>
+                    </div>
+                </div>
+
+                <div class="metrica-card valor-total">
+                    <div class="metrica-icon">
+                        <i class="pi pi-dollar"></i>
+                    </div>
+                    <div class="metrica-content">
+                        <h3>Valor Total Financiado</h3>
+                        <p class="metrica-value">R$ {{ metricas.valor_total_financiado | number:'1.2-2' }}</p>
+                    </div>
+                </div>
+
+                <div class="metrica-card parcelas-atraso">
+                    <div class="metrica-icon">
+                        <i class="pi pi-exclamation-triangle"></i>
+                    </div>
+                    <div class="metrica-content">
+                        <h3>Parcelas em Atraso</h3>
+                        <p class="metrica-value">{{ metricas.parcelas_em_atraso_qtd }}</p>
+                        <p class="metrica-subvalue">Total: R$ {{ metricas.parcelas_em_atraso_valor | number:'1.2-2' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-toast></p-toast>
+

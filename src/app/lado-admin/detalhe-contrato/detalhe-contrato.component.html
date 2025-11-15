@@ -1,0 +1,160 @@
+<div class="main-container">
+  <div class="content-wrapper">
+    <div class="painel">
+      <header>
+        <div class="header-actions">
+          <button pButton
+                  type="button"
+                  icon="pi pi-arrow-left"
+                  class="p-button-outlined p-button-sm back-button"
+                  routerLink="/admin/contratos"
+                  pTooltip="Voltar para Contratos">
+          </button>
+        </div>
+        <h2>Detalhes do Contrato</h2>
+        <p>Visualize todas as informações do contrato de financiamento</p>
+      </header>
+
+      <div *ngIf="carregando" class="loading-container">
+        <p-progressSpinner></p-progressSpinner>
+        <p>Carregando detalhes do contrato...</p>
+      </div>
+
+      <div *ngIf="!carregando && dadosContrato" class="conteudo-contrato">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+          <a routerLink="/paineladmin">Painel Admin</a>
+          <span class="separator">></span>
+          <a routerLink="/admin/contratos">Contratos</a>
+          <span class="separator">></span>
+          <span class="current">Contrato {{ dadosContrato.idContrato }}</span>
+        </div>
+
+      <section class="carrossel-parcelas">
+        <h2 class="carrossel-titulo">PARCELAS</h2>
+        <div class="carrossel-container">
+          <div class="card-parcela pagar">
+            <h3>PAGAS</h3>
+            <p class="quantidade">{{ dadosParcelas?.qtdPagas || 0 }} parcela(s)</p>
+            <p class="valor">R$ {{ dadosParcelas?.pagar || 0 | number:'1.2-2' }}</p>
+          </div>
+          <div class="card-parcela atraso">
+            <h3>EM ATRASO</h3>
+            <p class="quantidade">{{ dadosParcelas?.qtdEmAtraso || 0 }} parcela(s)</p>
+            <p class="valor">R$ {{ dadosParcelas?.emAtraso || 0 | number:'1.2-2' }}</p>
+          </div>
+          <div class="card-parcela vencer">
+            <h3>A VENCER</h3>
+            <p class="quantidade">{{ dadosParcelas?.qtdAVencer || 0 }} parcela(s)</p>
+            <p class="valor">R$ {{ dadosParcelas?.aVencer || 0 | number:'1.2-2' }}</p>
+          </div>
+        </div>
+        <div class="resumo">
+          <p class="situacao">Situação: R$ {{ dadosParcelas?.situacaoTotal || 0 | number:'1.2-2' }}</p>
+          <p class="valor-parcela" *ngIf="dadosParcelas?.valorParcela">Valor da Parcela: R$ {{ dadosParcelas?.valorParcela | number:'1.2-2' }}</p>
+          <p class="total-atraso">Total em atraso: R$ {{ dadosParcelas?.totalAtraso || 0 | number:'1.2-2' }}</p>
+        </div>
+      </section>
+
+      <div class="cards-container">
+        <div class="card-info contrato">
+          <h3>Informações do Contrato</h3>
+          <div class="info-container">
+            <div class="info-line">
+              <span class="info-label">ID do contrato:</span>
+              <span class="info-value">{{ dadosContrato.idContrato || 'N/A' }}</span>
+            </div>
+            <div class="info-line">
+              <span class="info-label">Data de emissão:</span>
+              <span class="info-value">{{ dadosContrato.dataEmissao || 'N/A' }}</span>
+            </div>
+            <div class="info-line">
+              <span class="info-label">Prazo de vigência:</span>
+              <span class="info-value">{{ dadosContrato.vigenciaInicio || 'N/A' }} - {{ dadosContrato.vigenciaFim || 'N/A' }}</span>
+            </div>
+            <div class="info-line">
+              <span class="info-label">Status do contrato:</span>
+              <span class="info-value status-{{ dadosContrato.statusContrato.toLowerCase() || 'indefinido' }}">
+                {{ dadosContrato.statusContrato || 'N/A' }}
+              </span>
+            </div>
+            <div class="info-line">
+              <span class="info-label">Produto:</span>
+              <span class="info-value">{{ dadosContrato.produto || 'N/A' }}</span>
+            </div>
+            <div class="info-line">
+              <span class="info-label">Tipo de produto:</span>
+              <span class="info-value">{{ dadosContrato.tipoProduto || 'N/A' }}</span>
+            </div>
+            <div class="info-line">
+              <span class="info-label">Cedente:</span>
+              <span class="info-value">{{ dadosContrato.cedente || 'N/A' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-info veiculo">
+          <h3>Detalhes do Veículo</h3>
+          <div class="info-container">
+            <div class="info-line">
+              <span class="info-label">Marca:</span>
+              <span class="info-value">{{ dadosVeiculo?.marca || 'N/A' }}</span>
+            </div>
+            <div class="info-line">
+              <span class="info-label">Modelo:</span>
+              <span class="info-value">{{ dadosVeiculo?.modelo || 'N/A' }}</span>
+            </div>
+            <div class="info-line">
+              <span class="info-label">Ano:</span>
+              <span class="info-value">{{ dadosVeiculo?.ano || 'N/A' }}</span>
+            </div>
+            <div class="info-line">
+              <span class="info-label">Placa:</span>
+              <span class="info-value">{{ dadosVeiculo?.placa || 'N/A' }}</span>
+            </div>
+            <div class="info-line">
+              <span class="info-label">Renavam:</span>
+              <span class="info-value">{{ dadosVeiculo?.renavam || 'N/A' }}</span>
+            </div>
+            <div class="info-line">
+              <span class="info-label">Chassi:</span>
+              <span class="info-value">{{ dadosVeiculo?.chassi || 'N/A' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-info cliente" *ngIf="dadosCliente">
+          <h3>Informações do Cliente</h3>
+          <div class="info-container">
+            <div class="info-line">
+              <span class="info-label">ID do Cliente:</span>
+              <span class="info-value">{{ dadosCliente.id_cliente || 'N/A' }}</span>
+            </div>
+            <div class="info-line">
+              <span class="info-label">Nome:</span>
+              <span class="info-value">{{ dadosCliente.nome || 'N/A' }}</span>
+            </div>
+            <div class="info-line">
+              <span class="info-label">CPF:</span>
+              <span class="info-value">{{ dadosCliente.cpf || 'N/A' }}</span>
+            </div>
+            <div class="info-line">
+              <span class="info-label">Email:</span>
+              <span class="info-value">{{ dadosCliente.email || 'N/A' }}</span>
+            </div>
+            <div class="info-line" *ngIf="dadosCliente.telefone">
+              <span class="info-label">Telefone:</span>
+              <span class="info-value">{{ dadosCliente.telefone }}</span>
+            </div>
+            <div class="info-line" *ngIf="dadosCliente.renda">
+              <span class="info-label">Renda:</span>
+              <span class="info-value">R$ {{ dadosCliente.renda | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-toast></p-toast>

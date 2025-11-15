@@ -5,11 +5,10 @@
             <h1>Meus Contratos</h1>
             <p>Aqui você pode acompanhar todos os seus contratos. Total: {{ totalContratos }}</p>
             <div class="card">
-                <p *ngIf="loading">Carregando contratos...</p>
+                <p *ngIf="carregando">Carregando contratos...</p>
 
-                <div *ngIf="!loading">
+                <div *ngIf="!carregando">
 
-                    <!-- PrimeNG Table -->
                     <p-table [value]="contratos" styleClass="p-datatable-striped" [rowHover]="true">
                         <ng-template pTemplate="header">
                             <tr>

@@ -16,13 +16,12 @@
                 <p>Visualize todas as informações do seu contrato de financiamento</p>
             </header>
 
-            <div *ngIf="estaCarregando" class="loading-container">
+            <div *ngIf="carregando" class="loading-container">
                 <p-progressSpinner></p-progressSpinner>
                 <p>Carregando detalhes do contrato...</p>
             </div>
 
-            <div *ngIf="!estaCarregando && contrato" class="conteudo-contrato">
-                <!-- Breadcrumb -->
+            <div *ngIf="!carregando && contrato" class="conteudo-contrato">
                 <div class="breadcrumb">
                     <a routerLink="/painelcliente">Painel</a>
                     <span class="separator">></span>
@@ -31,7 +30,6 @@
                     <span class="current">Contrato {{ contrato.numero_contrato }}</span>
                 </div>
 
-                <!-- Dados do Contrato -->
                 <div class="secao mt-4">
                     <p-card header="Informações do Contrato">
                         <div class="grid">
@@ -61,7 +59,6 @@
                     </p-card>
                 </div>
 
-                <!-- Dados do Veículo -->
                 <div class="secao mt-4">
                     <p-card header="Informações do Veículo">
                         <div class="grid">
@@ -105,7 +102,6 @@
                     </p-card>
                 </div>
 
-                <!-- Dados Financeiros -->
                 <div class="secao mt-4">
                     <p-card header="Informações Financeiras">
                         <div class="grid">
@@ -151,7 +147,6 @@
                     </p-card>
                 </div>
 
-                <!-- Resumo das Parcelas -->
                 <div class="secao mt-4">
                     <p-card header="Resumo das Parcelas">
                         <div class="grid resumo-parcelas">
@@ -177,7 +172,6 @@
                     </p-card>
                 </div>
 
-                <!-- Tabela de Parcelas -->
                 <div class="secao mt-4">
                     <p-card header="Parcelas">
                         <p-table [value]="contrato.financeiro.parcelas" styleClass="p-datatable-striped">

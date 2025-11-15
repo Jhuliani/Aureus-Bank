@@ -3,6 +3,7 @@ import { InformacoesFipe } from '../_models/fipe.models';
 import { environment } from '../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { AuthService } from './auth.service';
 
 export interface DadosSolicitacao {
   informacoesFipe?: InformacoesFipe;
@@ -23,7 +24,10 @@ export interface DadosSolicitacao {
 export class SolicitacaoService {
   private apiUrl = `${environment.apiUrl}/cliente`;
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) { }
 
   enviarSolicitacao(dados: DadosSolicitacao): Observable<any> {
     const token = this.obterToken();
@@ -35,14 +39,8 @@ export class SolicitacaoService {
     return this.http.post(`${this.apiUrl}/solicitacao`, dados, { headers });
   }
 
-
   private obterToken(): string | null {
-    const authData = localStorage.getItem('auth_data');
-    if (authData) {
-      const parsed = JSON.parse(authData);
-      return parsed.access_token || null;
-    }
-    return null;
+    return this.authService.obterToken();
   }
 }
 

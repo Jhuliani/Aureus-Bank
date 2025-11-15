@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { AuthService } from './auth.service';
 
 export interface Contrato {
   id_contrato: number;
@@ -99,11 +100,12 @@ export interface Financeiro {
 export class ContratosService {
   private apiUrl = `${environment.apiUrl}/cliente`;
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) { }
 
-  /**
-   * Busca contratos do cliente logado usando o ID do localStorage
-   */
+
   buscarContratosDoCliente(idCliente: number): Observable<ContratosResponse> {
     const token = this.obterToken();
     const headers = new HttpHeaders({
@@ -114,9 +116,7 @@ export class ContratosService {
     return this.http.get<ContratosResponse>(`${this.apiUrl}/contratos/${idCliente}`, { headers });
   }
 
-  /**
-   * Busca detalhes completos de um contrato específico
-   */
+
   buscarDetalhesContrato(idContrato: number): Observable<ContratoCompleto> {
     const token = this.obterToken();
     const headers = new HttpHeaders({
@@ -127,15 +127,77 @@ export class ContratosService {
     return this.http.get<ContratoCompleto>(`${this.apiUrl}/contrato/${idContrato}`, { headers });
   }
 
-  /**
-   * Obtém o token de autenticação do localStorage
-   */
   private obterToken(): string | null {
-    const authData = localStorage.getItem('auth_data');
-    if (authData) {
-      const parsed = JSON.parse(authData);
-      return parsed.access_token || null;
+    return this.authService.obterToken();
+  }
+
+  calcularDadosParcelas(parcelas: Parcela[], valorTotal: number, valorEntrada: number): {
+    pagar: number;
+    emAtraso: number;
+    aVencer: number;
+    situacaoTotal: number;
+    totalAtraso: number;
+    qtdPagas: number;
+    qtdEmAtraso: number;
+    qtdAVencer: number;
+    valorParcela: number;
+    valorTotalFinanciado: number;
+  } {
+    if (!parcelas || parcelas.length === 0) {
+      const valorTotalFinanciado = valorTotal - valorEntrada;
+      return {
+        pagar: 0,
+        emAtraso: 0,
+        aVencer: 0,
+        situacaoTotal: valorTotalFinanciado,
+        totalAtraso: 0,
+        qtdPagas: 0,
+        qtdEmAtraso: 0,
+        qtdAVencer: 0,
+        valorParcela: 0,
+        valorTotalFinanciado: valorTotalFinanciado
+      };
     }
-    return null;
+
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+
+    const parcelasPagas = parcelas.filter((p) => p.status === 'paga' || p.status === 'pago');
+    const qtdPagas = parcelasPagas.length;
+    const valorPagas = parcelasPagas.reduce((sum, p) => sum + (p.valor_pago || p.valor_parcela), 0);
+
+    const parcelasAtraso = parcelas.filter((p) => {
+      const dataVenc = new Date(p.data_vencimento);
+      dataVenc.setHours(0, 0, 0, 0);
+      return p.status === 'atrasada' || (p.status === 'pendente' && dataVenc < hoje);
+    });
+    const qtdEmAtraso = parcelasAtraso.length;
+    const valorEmAtraso = parcelasAtraso.reduce((sum, p) => sum + p.valor_parcela, 0);
+
+    const parcelasAVencer = parcelas.filter((p) => {
+      const dataVenc = new Date(p.data_vencimento);
+      dataVenc.setHours(0, 0, 0, 0);
+      return p.status === 'pendente' && dataVenc >= hoje;
+    });
+    const qtdAVencer = parcelasAVencer.length;
+    const valorAVencer = parcelasAVencer.reduce((sum, p) => sum + p.valor_parcela, 0);
+
+    const primeiraParcela = parcelas.find((p) => p.status === 'pendente') || parcelas[0];
+    const valorParcela = primeiraParcela ? primeiraParcela.valor_parcela : 0;
+
+    const valorTotalFinanciado = valorTotal - valorEntrada;
+
+    return {
+      pagar: valorPagas,
+      emAtraso: valorEmAtraso,
+      aVencer: valorAVencer,
+      situacaoTotal: valorTotalFinanciado,
+      totalAtraso: valorEmAtraso,
+      qtdPagas: qtdPagas,
+      qtdEmAtraso: qtdEmAtraso,
+      qtdAVencer: qtdAVencer,
+      valorParcela: valorParcela,
+      valorTotalFinanciado: valorTotalFinanciado
+    };
   }
 }

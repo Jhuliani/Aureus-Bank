@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PasswordModule} from 'primeng/password';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
@@ -20,15 +20,14 @@ import { AuthService } from '../../services/auth.service';
     BreadcrumbModule, MenubarModule,
     InputTextModule, CommonModule, ToastModule],
   templateUrl: './c-login.component.html',
-  styleUrls: ['./c-login.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Default,
+  styleUrls: ['./c-login.component.scss']
 })
 export class CLoginComponent {
   senha = '';
   login: string = '';
-  loading = signal(false);
+  carregando = false;
 
-  hide = signal(true);
+  ocultarSenha = true;
 
   constructor(
     private authService: AuthService,
@@ -36,8 +35,8 @@ export class CLoginComponent {
     private messageService: MessageService
   ) {}
 
-  clickEvent(event: MouseEvent) {
-    this.hide.set(!this.hide());
+  alternarVisibilidadeSenha(event: MouseEvent) {
+    this.ocultarSenha = !this.ocultarSenha;
     event.stopPropagation();
   }
 
@@ -51,18 +50,14 @@ export class CLoginComponent {
       return;
     }
 
-    this.loading.set(true);
+    this.carregando = true;
 
     this.authService.fazerLogin(this.login, this.senha)
       .subscribe({
         next: (response) => {
-
-          // Verificar se a resposta contém os dados necessários
           if (response && response.access_token && response.id_cliente) {
-            // Salvar dados de autenticação no localStorage
             this.authService.salvarDadosLogin(response);
 
-            // Criar objeto usuário com os dados disponíveis
             const usuario = {
               id_cliente: response.id_cliente,
               id_perfil: response.id_perfil,
@@ -79,7 +74,7 @@ export class CLoginComponent {
             });
 
             if (this.authService.isAdmin()) {
-              this.router.navigate(['/bemvindo']);
+              this.router.navigate(['/inicio-admin']);
             } else {
               this.router.navigate(['/inicio']);
             }
@@ -90,7 +85,7 @@ export class CLoginComponent {
               detail: 'Login ou senha incorretos'
             });
           }
-          this.loading.set(false);
+          this.carregando = false;
         },
         error: (err: any) => {
           console.error('Erro na requisição:', err);
@@ -99,7 +94,7 @@ export class CLoginComponent {
             summary: 'Erro',
             detail: 'Erro ao conectar com o servidor.'
           });
-          this.loading.set(false);
+          this.carregando = false;
         }
       });
   }

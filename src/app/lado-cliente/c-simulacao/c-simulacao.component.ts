@@ -69,14 +69,14 @@ export class CSimulacaoComponent implements OnInit {
   ];
 
   resultadoSimulacao: any = null;
-  estaCarregando: boolean = false;
+  carregando: boolean = false;
 
   constructor(
-    private servicoFipe: FipeService,
+    private serviceFipe: FipeService,
     private construtorFormulario: FormBuilder,
     private roteador: Router,
-    private servicoSimulacao: SimulacaoService,
-    private servicoMensagem: MessageService
+    private serviceSimulacao: SimulacaoService,
+    private serviceMensagem: MessageService
   ) {
     this.criarFormulario();
   }
@@ -139,21 +139,21 @@ export class CSimulacaoComponent implements OnInit {
   }
 
   carregarMarcas(): void {
-    this.estaCarregando = true;
+    this.carregando = true;
 
-    this.servicoFipe.listarMarcas(this.tipoVeiculo).subscribe({
+    this.serviceFipe.listarMarcas(this.tipoVeiculo).subscribe({
       next: (marcas: Marcas[]) => {
         this.listaMarcas = marcas.map(m => ({
           label: m.nome,
           value: m.codigo
         }));
-        this.estaCarregando = false;
+        this.carregando = false;
       },
       error: (erro) => {
         console.error('Erro ao carregar marcas:', erro);
         this.mostrarErro('Erro ao carregar marcas. Tente novamente.');
         this.listaMarcas = [];
-        this.estaCarregando = false;
+        this.carregando = false;
       }
     });
   }
@@ -169,10 +169,10 @@ export class CSimulacaoComponent implements OnInit {
       return;
     }
 
-    this.estaCarregando = true;
+    this.carregando = true;
     this.limparDadosFipe();
 
-    this.servicoFipe.listarModelos(this.tipoVeiculo, this.marcaEscolhida).subscribe({
+    this.serviceFipe.listarModelos(this.tipoVeiculo, this.marcaEscolhida).subscribe({
       next: (resposta: ModelosResponse) => {
         if (resposta && resposta.modelos && resposta.modelos.length > 0) {
           this.listaModelos = resposta.modelos.map(m => ({
@@ -183,55 +183,53 @@ export class CSimulacaoComponent implements OnInit {
           this.mostrarErro('Nenhum modelo encontrado para esta marca.');
           this.listaModelos = [];
         }
-        this.estaCarregando = false;
+        this.carregando = false;
       },
       error: (erro) => {
         console.error('Erro ao carregar modelos:', erro);
         this.mostrarErro('Erro ao carregar modelos. Tente novamente.');
         this.listaModelos = [];
-        this.estaCarregando = false;
+        this.carregando = false;
       }
     });
   }
 
   aoMudarModelo(): void {
-    setTimeout(() => {
-      if (!this.marcaEscolhida || !this.modeloEscolhido) {
-        return;
-      }
+    if (!this.marcaEscolhida || !this.modeloEscolhido) {
+      return;
+    }
 
-      if (this.modeloEscolhido === 'undefined' || this.modeloEscolhido === 'null') {
-        return;
-      }
+    if (this.modeloEscolhido === 'undefined' || this.modeloEscolhido === 'null') {
+      return;
+    }
 
-      this.estaCarregando = true;
+    this.carregando = true;
 
-      this.listaAnos = [];
-      this.anoEscolhido = undefined;
-      this.dadosFipe = undefined;
-      this.resultadoSimulacao = null;
+    this.listaAnos = [];
+    this.anoEscolhido = undefined;
+    this.dadosFipe = undefined;
+    this.resultadoSimulacao = null;
 
-      this.servicoFipe.listarAnos(this.tipoVeiculo, this.marcaEscolhida, this.modeloEscolhido).subscribe({
-        next: (anos: Anos[]) => {
-          if (anos && anos.length > 0) {
-            this.listaAnos = anos.map(a => ({
-              label: a.nome,
-              value: a.codigo
-            }));
-          } else {
-            this.mostrarErro('Nenhum ano encontrado para este modelo.');
-            this.listaAnos = [];
-          }
-          this.estaCarregando = false;
-        },
-        error: (erro) => {
-          console.error('Erro ao carregar anos:', erro);
-          this.mostrarErro('Erro ao carregar anos. Tente novamente.');
+    this.serviceFipe.listarAnos(this.tipoVeiculo, this.marcaEscolhida, this.modeloEscolhido).subscribe({
+      next: (anos: Anos[]) => {
+        if (anos && anos.length > 0) {
+          this.listaAnos = anos.map(a => ({
+            label: a.nome,
+            value: a.codigo
+          }));
+        } else {
+          this.mostrarErro('Nenhum ano encontrado para este modelo.');
           this.listaAnos = [];
-          this.estaCarregando = false;
         }
-      });
-    }, 0);
+        this.carregando = false;
+      },
+      error: (erro) => {
+        console.error('Erro ao carregar anos:', erro);
+        this.mostrarErro('Erro ao carregar anos. Tente novamente.');
+        this.listaAnos = [];
+        this.carregando = false;
+      }
+    });
   }
 
   aoMudarAno(): void {
@@ -243,11 +241,11 @@ export class CSimulacaoComponent implements OnInit {
       return;
     }
 
-    this.estaCarregando = true;
+    this.carregando = true;
     this.dadosFipe = undefined;
     this.resultadoSimulacao = null;
 
-    this.servicoFipe.listarInformacoes(
+    this.serviceFipe.listarInformacoes(
       this.tipoVeiculo,
       this.marcaEscolhida,
       this.modeloEscolhido,
@@ -256,12 +254,12 @@ export class CSimulacaoComponent implements OnInit {
       next: (info: InformacoesFipe) => {
         this.dadosFipe = info;
         this.atualizarValorMaximoEntrada();
-        this.estaCarregando = false;
+        this.carregando = false;
       },
       error: (erro) => {
         console.error('Erro ao carregar informações da FIPE:', erro);
         this.mostrarErro('Erro ao carregar informações da FIPE. Tente novamente.');
-        this.estaCarregando = false;
+        this.carregando = false;
       }
     });
   }
@@ -312,7 +310,7 @@ export class CSimulacaoComponent implements OnInit {
       return;
     }
 
-    const resultado = this.calcularFinanciamento(valorFinanciado, taxaJuros, numeroParcelas);
+    const resultado = this.serviceSimulacao.calcularFinanciamento(valorFinanciado, taxaJuros, numeroParcelas);
     const aprovado = resultado.valorParcela <= (rendaMensal * 0.3);
 
     this.resultadoSimulacao = {
@@ -326,21 +324,6 @@ export class CSimulacaoComponent implements OnInit {
     if (aprovado) {
       this.salvarDadosParaSolicitacao();
     }
-  }
-
-  private calcularFinanciamento(valorFinanciado: number, taxaJuros: number, numeroParcelas: number): any {
-    const taxaMensal = taxaJuros / 100;
-    const valorParcela = valorFinanciado * (taxaMensal * Math.pow(1 + taxaMensal, numeroParcelas)) /
-      (Math.pow(1 + taxaMensal, numeroParcelas) - 1);
-    const totalPagar = valorParcela * numeroParcelas;
-    const totalJuros = totalPagar - valorFinanciado;
-
-    return {
-      valorFinanciado,
-      valorParcela,
-      totalPagar,
-      totalJuros
-    };
   }
 
   private mostrarErroValidacao(): void {
@@ -392,12 +375,11 @@ export class CSimulacaoComponent implements OnInit {
       resultadoSimulacao: this.resultadoSimulacao
     };
 
-    console.log('Salvando dados para solicitação:', dadosParaSalvar);
-    this.servicoSimulacao.salvarDadosSimulacao(dadosParaSalvar);
+    this.serviceSimulacao.salvarDadosSimulacao(dadosParaSalvar);
   }
 
   private mostrarErro(mensagem: string): void {
-    this.servicoMensagem.add({
+    this.serviceMensagem.add({
       severity: 'error',
       summary: 'Erro',
       detail: mensagem,
@@ -406,7 +388,7 @@ export class CSimulacaoComponent implements OnInit {
   }
 
   private mostrarSucesso(mensagem: string): void {
-    this.servicoMensagem.add({
+    this.serviceMensagem.add({
       severity: 'success',
       summary: 'Sucesso',
       detail: mensagem,
