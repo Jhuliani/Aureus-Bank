@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
@@ -33,16 +33,25 @@ export class AppComponent {
 
   constructor(
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {
     this.router.events
       .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
       .subscribe((e: NavigationEnd) => {
         const url = e.urlAfterRedirects || e.url;
+        const layoutAnterior = this.mostrarLayout;
+
         this.mostrarLayout = !(
           url.startsWith('/login') ||
           url.startsWith('/cadastro')
         );
+
+
+        if (this.mostrarLayout && this.authService.isLoggedIn()) {
+          this.inicializarMenuUsuario();
+          this.cdr.detectChanges();
+        }
       });
 
     this.inicializarMenuUsuario();
@@ -71,9 +80,10 @@ export class AppComponent {
   }
 
   private inicializarMenuUsuario() {
+    const nomeUsuario = this.obterNomeUsuario();
     this.itensMenuUsuario = [
       {
-        label: this.obterNomeUsuario(),
+        label: nomeUsuario,
         icon: 'pi pi-user',
         items: [
           {
@@ -108,6 +118,7 @@ export class AppComponent {
 
   sair(): void {
     this.authService.logout();
+    this.itensMenuUsuario = [];
     this.router.navigate(['/login']);
   }
 }
