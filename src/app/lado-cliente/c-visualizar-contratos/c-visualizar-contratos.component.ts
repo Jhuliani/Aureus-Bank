@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ContratosService, ContratoCompleto, Parcela } from '../../services/contratos.service';
 import { AuthService } from '../../services/auth.service';
 import { MessageService } from 'primeng/api';
+import { extrairMensagemErro } from '../../utils/error-handler.util';
 
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
@@ -65,8 +66,8 @@ export class CVisualizarContratosComponent implements OnInit {
           this.carregando = false;
         },
         error: (err: any) => {
-          console.error('Erro ao carregar detalhes do contrato:', err);
-          this.mostrarErro('Erro ao carregar detalhes do contrato. Tente novamente.');
+          const mensagemErro = extrairMensagemErro(err, 'Erro ao carregar detalhes do contrato. Tente novamente.');
+          this.mostrarErro(mensagemErro);
           this.carregando = false;
           this.router.navigate(['/meuscontratos']);
         }
@@ -100,7 +101,7 @@ export class CVisualizarContratosComponent implements OnInit {
       severity: 'error',
       summary: 'Erro',
       detail: mensagem,
-      life: 5000
+      life: 10000
     });
   }
 }

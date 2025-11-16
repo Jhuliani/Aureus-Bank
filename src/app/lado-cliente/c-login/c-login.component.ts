@@ -45,7 +45,8 @@ export class CLoginComponent {
       this.messageService.add({
         severity: 'error',
         summary: 'Erro',
-        detail: 'Login e senha são obrigatórios'
+        detail: 'Login e senha são obrigatórios',
+        life: 5000
       });
       return;
     }
@@ -70,7 +71,8 @@ export class CLoginComponent {
             this.messageService.add({
               severity: 'success',
               summary: 'Sucesso',
-              detail: 'Login realizado com sucesso!'
+              detail: 'Login realizado com sucesso!',
+              life: 5000
             });
 
             if (this.authService.isAdmin()) {
@@ -82,17 +84,63 @@ export class CLoginComponent {
             this.messageService.add({
               severity: 'error',
               summary: 'Erro',
-              detail: 'Login ou senha incorretos'
+              detail: 'Login ou senha incorretos',
+              life: 5000
             });
           }
           this.carregando = false;
         },
         error: (err: any) => {
-          console.error('Erro na requisição:', err);
+          // Log detalhado para debug
+          console.error('❌ Erro no login:', {
+            error: err,
+            errorError: err.error,
+            errorMessage: err.message,
+            errorDetail: err.error?.detail,
+            status: err.status
+          });
+
+          // Tenta extrair a mensagem de erro específica
+          let mensagemErro = 'Erro ao conectar com o servidor.';
+
+          // 1. Verifica se o erro vem do backend FastAPI (err.error.detail)
+          if (err.error?.detail) {
+            mensagemErro = err.error.detail;
+          }
+          // 2. Verifica se vem como err.error.message
+          else if (err.error?.message) {
+            mensagemErro = err.error.message;
+          }
+          // 3. Verifica se é uma string direta
+          else if (typeof err.error === 'string') {
+            mensagemErro = err.error;
+          }
+          // 4. Mensagens específicas baseadas no status code
+          else if (err.status === 400) {
+            mensagemErro = 'Usuário não encontrado ou credenciais inválidas. Verifique seu login e senha.';
+          } else if (err.status === 401) {
+            mensagemErro = 'Credenciais inválidas. Verifique seu login e senha.';
+          } else if (err.status === 403) {
+            mensagemErro = 'Acesso negado. Entre em contato com o suporte.';
+          } else if (err.status === 404) {
+            mensagemErro = 'Serviço não encontrado. Tente novamente mais tarde.';
+          } else if (err.status === 500) {
+            mensagemErro = 'Erro interno do servidor. Tente novamente mais tarde.';
+          } else if (err.status === 0) {
+            mensagemErro = 'Erro de conexão. Verifique sua internet e tente novamente.';
+          }
+
+          // Remove prefixos desnecessários
+          mensagemErro = mensagemErro
+            .replace(/^Erro na requisição:\s*/i, '')
+            .replace(/^Error:\s*/i, '')
+            .trim();
+
           this.messageService.add({
             severity: 'error',
             summary: 'Erro',
-            detail: 'Erro ao conectar com o servidor.'
+            detail: mensagemErro,
+            life: 5000
           });
           this.carregando = false;
         }

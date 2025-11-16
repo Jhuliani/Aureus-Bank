@@ -73,7 +73,8 @@ export class CCadastroComponent implements OnInit {
       this.messageService.add({
         severity: 'error',
         summary: 'Erro',
-        detail: 'Por favor, preencha todos os campos obrigatórios corretamente.'
+        detail: 'Por favor, preencha todos os campos obrigatórios corretamente.',
+        life: 5000
       });
       return;
     }
@@ -104,17 +105,59 @@ export class CCadastroComponent implements OnInit {
         this.messageService.add({
           severity: 'success',
           summary: 'Sucesso',
-          detail: 'Cadastro realizado com sucesso!'
+          detail: 'Cadastro realizado com sucesso!',
+          life: 5000
         });
         this.carregando = false;
-        this.router.navigate(['/login']);
+        // Aguarda 3 segundos para o usuário ver o toast antes de redirecionar
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 3000);
       },
       error: (err) => {
-        console.error('Erro no cadastro:', err);
+        // Log detalhado para debug
+        console.error('❌ Erro no cadastro:', {
+          error: err,
+          errorError: err.error,
+          errorMessage: err.message,
+          errorDetail: err.error?.detail
+        });
+
+        // Tenta extrair a mensagem de erro específica
+        let mensagemErro = 'Erro ao realizar cadastro. Tente novamente.';
+
+        // 1. Verifica se o erro vem do serviço (throwError com new Error)
+        if (err.error instanceof Error) {
+          mensagemErro = err.error.message;
+        }
+        // 2. Verifica se vem diretamente como mensagem
+        else if (err.message && !err.error) {
+          mensagemErro = err.message;
+        }
+        // 3. Verifica se vem do backend FastAPI (err.error.detail)
+        else if (err.error?.detail) {
+          mensagemErro = err.error.detail;
+        }
+        // 4. Verifica se vem como err.error.message
+        else if (err.error?.message) {
+          mensagemErro = err.error.message;
+        }
+        // 5. Verifica se é uma string direta
+        else if (typeof err.error === 'string') {
+          mensagemErro = err.error;
+        }
+
+        // Remove prefixos desnecessários
+        mensagemErro = mensagemErro
+          .replace(/^Erro no cadastro:\s*Error:\s*/i, '')
+          .replace(/^Error:\s*/i, '')
+          .trim();
+
         this.messageService.add({
           severity: 'error',
           summary: 'Erro',
-          detail: 'Erro ao realizar cadastro. Tente novamente.'
+          detail: mensagemErro,
+          life: 5000
         });
         this.carregando = false;
       }
@@ -213,7 +256,8 @@ export class CCadastroComponent implements OnInit {
           this.messageService.add({
             severity: 'warn',
             summary: 'Aviso',
-            detail: 'CEP não encontrado. Preencha os campos manualmente.'
+            detail: 'CEP não encontrado. Preencha os campos manualmente.',
+            life: 5000
           });
         } else {
           this.cepEncontrado = true;
@@ -227,7 +271,8 @@ export class CCadastroComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Erro',
-          detail: 'Erro ao consultar CEP. Tente novamente.'
+          detail: 'Erro ao consultar CEP. Tente novamente.',
+          life: 5000
         });
       }
     });

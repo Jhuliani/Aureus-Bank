@@ -39,7 +39,8 @@ export class CDashboardAdminComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Erro',
-          detail: 'Não foi possível carregar as métricas do dashboard.'
+          detail: 'Não foi possível carregar as métricas do dashboard.',
+          life: 5000
         });
         this.carregando = false;
       }

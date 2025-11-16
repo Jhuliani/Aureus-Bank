@@ -6,6 +6,7 @@ import { AuthService } from '../../services/auth.service';
 import { AdminService, SolicitacaoLista } from '../../services/admin.service';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { extrairMensagemErro } from '../../utils/error-handler.util';
 
 @Component({
   selector: 'app-c-paineladmin',
@@ -46,11 +47,12 @@ export class CPaineladminComponent implements OnInit {
         this.carregando = false;
       },
       error: (error) => {
-        console.error('Erro ao carregar solicitações:', error);
+        const mensagemErro = extrairMensagemErro(error, 'Erro ao carregar solicitações. Tente novamente.');
         this.messageService.add({
           severity: 'error',
           summary: 'Erro',
-          detail: 'Erro ao carregar solicitações. Tente novamente.'
+          detail: mensagemErro,
+          life: 5000
         });
         this.carregando = false;
       }

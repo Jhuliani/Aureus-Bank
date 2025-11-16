@@ -264,6 +264,7 @@
                                     id="parcelas"
                                     [options]="listaParcelas"
                                     [(ngModel)]="numeroParcelas"
+                                    (onChange)="aoMudarParcelas()"
                                     placeholder="Selecione as parcelas"
                                     appendTo="body"
                                     name="parcelas">
@@ -276,14 +277,16 @@
                                     id="taxaJuros"
                                     [(ngModel)]="taxaJuros"
                                     mode="decimal"
-                                    [min]="0"
-                                    [max]="20"
+                                    [readonly]="true"
                                     [minFractionDigits]="2"
                                     [maxFractionDigits]="2"
                                     placeholder="0.00"
                                     suffix="%"
                                     name="taxaJuros">
                                 </p-inputNumber>
+                                <small class="p-d-block p-mt-1" style="color: #64748b;">
+                                    Taxa automática baseada no número de parcelas
+                                </small>
                             </div>
 
                             <div class="field col-12 md:col-6">

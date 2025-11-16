@@ -6,6 +6,7 @@ import { AuthService } from '../../services/auth.service';
 import { AdminService, ContratoLista } from '../../services/admin.service';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { extrairMensagemErro } from '../../utils/error-handler.util';
 
 @Component({
   selector: 'app-c-contratos',
@@ -42,7 +43,7 @@ export class CContratosComponent implements OnInit {
 
   carregarContratos() {
     this.carregando = true;
-    
+
     this.adminService.listarContratosVigentes().subscribe({
       next: (response) => {
         this.contratos = response.contratos;
@@ -50,11 +51,12 @@ export class CContratosComponent implements OnInit {
         this.carregando = false;
       },
       error: (error) => {
-        console.error('Erro ao carregar contratos:', error);
+        const mensagemErro = extrairMensagemErro(error, 'Erro ao carregar contratos. Tente novamente.');
         this.messageService.add({
           severity: 'error',
           summary: 'Erro',
-          detail: 'Erro ao carregar contratos. Tente novamente.'
+          detail: mensagemErro,
+          life: 5000
         });
         this.carregando = false;
       }

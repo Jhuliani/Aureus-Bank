@@ -6,6 +6,9 @@ import { MenuItem } from 'primeng/api';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { Contrato, ContratosResponse, ContratosService } from '../../services/contratos.service';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { extrairMensagemErro } from '../../utils/error-handler.util';
 
 @Component({
   selector: 'app-meuscontratos',
@@ -13,7 +16,9 @@ import { Contrato, ContratosResponse, ContratosService } from '../../services/co
   imports: [TableModule,
     CommonModule,
     TabMenuModule,
+    ToastModule
   ],
+  providers: [MessageService],
   templateUrl: './c-meuscontratos.component.html',
   styleUrl: './c-meuscontratos.component.scss',
 })
@@ -28,7 +33,8 @@ export class CMeuscontratosComponent implements OnInit{
     private router: Router,
     private authService: AuthService,
     private contratosService: ContratosService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private messageService: MessageService
   ) {}
 
   ngOnInit() {
@@ -59,7 +65,13 @@ export class CMeuscontratosComponent implements OnInit{
           this.cdr.detectChanges();
         },
         error: (err: any) => {
-          console.error('Erro ao carregar contratos:', err);
+          const mensagemErro = extrairMensagemErro(err, 'Erro ao carregar contratos. Tente novamente.');
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: mensagemErro,
+            life: 5000
+          });
           this.carregando = false;
           this.cdr.detectChanges();
         }

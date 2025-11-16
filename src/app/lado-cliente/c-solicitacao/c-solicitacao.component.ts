@@ -70,7 +70,7 @@ export class CSolicitacaoComponent implements OnInit {
     { label: '60x', value: 60 }
   ];
   numeroParcelas: number = 36;
-  taxaJuros: number = 1.5;
+  taxaJuros: number = 3.5; // Taxa padrão para 36 parcelas
   rendaMensal: number | null = null;
   resultadoSimulacao: any = null;
 
@@ -111,6 +111,9 @@ export class CSolicitacaoComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Inicializa a taxa de juros baseada no número de parcelas padrão
+    this.taxaJuros = this.obterTaxaJuros(this.numeroParcelas);
+
     const dadosSimulacao = this.serviceSimulacao.obterDadosSimulacao();
 
     if (dadosSimulacao && dadosSimulacao.informacoesFipe) {
@@ -146,7 +149,8 @@ export class CSolicitacaoComponent implements OnInit {
     this.dadosFipe = dados.informacoesFipe;
     this.valorEntrada = dados.valorEntrada || null;
     this.numeroParcelas = dados.parcelasSelecionadas || 36;
-    this.taxaJuros = dados.taxaJuros || 1.5;
+    // Se não vier taxa nos dados, calcula baseado no número de parcelas
+    this.taxaJuros = dados.taxaJuros || this.obterTaxaJuros(this.numeroParcelas);
     this.rendaMensal = dados.rendaMensal || null;
     this.resultadoSimulacao = dados.resultadoSimulacao;
 
@@ -445,6 +449,25 @@ export class CSolicitacaoComponent implements OnInit {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  aoMudarParcelas(): void {
+    this.taxaJuros = this.obterTaxaJuros(this.numeroParcelas);
+    // Se já houver uma simulação, recalcula automaticamente
+    if (this.resultadoSimulacao && this.valorNumericoDoVeiculo) {
+      this.calcularSimulacao();
+    }
+  }
+
+  private obterTaxaJuros(parcelas: number): number {
+    switch (parcelas) {
+      case 12: return 1.5;
+      case 24: return 2.5;
+      case 36: return 3.5;
+      case 48: return 4.5;
+      case 60: return 5.5;
+      default: return 3.5;
+    }
+  }
+
   enviarSolicitacao(): void {
     if (!this.validarFormulario()) return;
     if (!this.validarDadosFipe()) return;
@@ -463,8 +486,45 @@ export class CSolicitacaoComponent implements OnInit {
         }, 500);
       },
       error: (erro) => {
-        console.error('Erro ao enviar solicitação:', erro);
-        this.mostrarErro('Erro ao enviar solicitação. Tente novamente.');
+        // Log detalhado para debug
+        console.error('❌ Erro ao enviar solicitação:', {
+          status: erro.status,
+          statusText: erro.statusText,
+          url: erro.url,
+          error: erro.error,
+          message: erro.message
+        });
+
+        // Tenta extrair a mensagem de erro do backend
+        let mensagemErro = 'Erro ao enviar solicitação. Tente novamente.';
+
+        if (erro.error) {
+          // FastAPI retorna o erro em erro.error.detail
+          if (erro.error.detail) {
+            mensagemErro = erro.error.detail;
+          } else if (erro.error.message) {
+            mensagemErro = erro.error.message;
+          } else if (typeof erro.error === 'string') {
+            mensagemErro = erro.error;
+          }
+        }
+
+        // Mensagens específicas baseadas no status code
+        if (erro.status === 400) {
+          mensagemErro = mensagemErro || 'Dados inválidos. Verifique as informações e tente novamente.';
+        } else if (erro.status === 401) {
+          mensagemErro = 'Sessão expirada. Por favor, faça login novamente.';
+        } else if (erro.status === 403) {
+          mensagemErro = 'Você não tem permissão para realizar esta ação.';
+        } else if (erro.status === 404) {
+          mensagemErro = mensagemErro || 'Recurso não encontrado.';
+        } else if (erro.status === 500) {
+          mensagemErro = mensagemErro || 'Erro interno do servidor. Por favor, tente novamente mais tarde ou entre em contato com o suporte.';
+        } else if (erro.status === 0) {
+          mensagemErro = 'Erro de conexão. Verifique sua internet e tente novamente.';
+        }
+
+        this.mostrarErro(mensagemErro);
         this.enviando = false;
       }
     });
@@ -551,7 +611,7 @@ export class CSolicitacaoComponent implements OnInit {
       severity: 'error',
       summary: 'Erro',
       detail: mensagem,
-      life: 5000
+      life: 10000
     });
   }
 
@@ -560,7 +620,7 @@ export class CSolicitacaoComponent implements OnInit {
       severity: 'success',
       summary: 'Sucesso',
       detail: mensagem,
-      life: 5000
+      life: 10000
     });
   }
 }

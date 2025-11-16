@@ -9,6 +9,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { AuthService } from '../../services/auth.service';
 import { AdminService, SolicitacaoDetalhe } from '../../services/admin.service';
+import { extrairMensagemErro } from '../../utils/error-handler.util';
 
 
 @Component({
@@ -55,11 +56,12 @@ export class SolicitacaoDetalheComponent implements OnInit {
         this.carregando = false;
       },
       error: (error) => {
-        console.error('Erro ao carregar solicitação:', error);
+        const mensagemErro = extrairMensagemErro(error, 'Erro ao carregar detalhes da solicitação. Tente novamente.');
         this.messageService.add({
           severity: 'error',
           summary: 'Erro',
-          detail: 'Erro ao carregar detalhes da solicitação. Tente novamente.'
+          detail: mensagemErro,
+          life: 5000
         });
         this.carregando = false;
         this.router.navigate(['/paineladmin']);
@@ -77,7 +79,8 @@ export class SolicitacaoDetalheComponent implements OnInit {
         this.messageService.add({
           severity: 'success',
           summary: 'Sucesso',
-          detail: 'Solicitação aprovada com sucesso!'
+          detail: 'Solicitação aprovada com sucesso!',
+          life: 5000
         });
         this.processando = false;
 
@@ -87,11 +90,12 @@ export class SolicitacaoDetalheComponent implements OnInit {
         }, 2000);
       },
       error: (error) => {
-        console.error('Erro ao aprovar solicitação:', error);
+        const mensagemErro = extrairMensagemErro(error, 'Erro ao aprovar solicitação. Tente novamente.');
         this.messageService.add({
           severity: 'error',
           summary: 'Erro',
-          detail: error.error?.detail || 'Erro ao aprovar solicitação. Tente novamente.'
+          detail: mensagemErro,
+          life: 5000
         });
         this.processando = false;
       }
@@ -108,7 +112,8 @@ export class SolicitacaoDetalheComponent implements OnInit {
         this.messageService.add({
           severity: 'warn',
           summary: 'Solicitação Recusada',
-          detail: 'A solicitação foi recusada com sucesso.'
+          detail: 'A solicitação foi recusada com sucesso.',
+          life: 5000
         });
         this.processando = false;
 
@@ -118,11 +123,12 @@ export class SolicitacaoDetalheComponent implements OnInit {
         }, 2000);
       },
       error: (error) => {
-        console.error('Erro ao rejeitar solicitação:', error);
+        const mensagemErro = extrairMensagemErro(error, 'Erro ao rejeitar solicitação. Tente novamente.');
         this.messageService.add({
           severity: 'error',
           summary: 'Erro',
-          detail: error.error?.detail || 'Erro ao rejeitar solicitação. Tente novamente.'
+          detail: mensagemErro,
+          life: 5000
         });
         this.processando = false;
       }

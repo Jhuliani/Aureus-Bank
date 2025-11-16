@@ -10,6 +10,7 @@ import { AdminService } from '../../services/admin.service';
 import { ContratosService } from '../../services/contratos.service';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { extrairMensagemErro } from '../../utils/error-handler.util';
 
 interface Cliente {
   id_cliente: number;
@@ -123,11 +124,11 @@ export class DetalheContratoComponent implements OnInit {
         this.carregando = false;
       },
       error: (error) => {
-        console.error('Erro ao carregar contrato:', error);
+        const mensagemErro = extrairMensagemErro(error, 'Erro ao carregar detalhes do contrato. Tente novamente.');
         this.messageService.add({
           severity: 'error',
           summary: 'Erro',
-          detail: 'Erro ao carregar detalhes do contrato. Tente novamente.'
+          detail: mensagemErro
         });
         this.carregando = false;
         this.router.navigate(['/admin/contratos']);

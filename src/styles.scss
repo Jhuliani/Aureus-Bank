@@ -41,3 +41,114 @@ html, body {
   scrollbar-color: rgba(0, 35, 93, 0.3) transparent;
 }
 
+/* Estilos globais para Toasts do PrimeNG */
+.p-toast {
+  .p-toast-message {
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+    margin: 0 0 1rem 0;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    
+    .p-toast-message-content {
+      padding: 12px 16px !important;
+      gap: 0.75rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .p-toast-message-icon {
+      flex-shrink: 0;
+    }
+
+    .p-toast-message-text {
+      flex: 1;
+    }
+
+    .p-toast-summary {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .p-toast-detail {
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    // Toast de Sucesso (verde)
+    &.p-toast-message-success {
+      background-color: #f0fdf4 !important;
+      border-left: 4px solid #22c55e;
+      color: #166534;
+      
+      .p-toast-icon-close {
+        color: #22c55e;
+      }
+      
+      .p-toast-summary {
+        color: #166534;
+      }
+      
+      .p-toast-detail {
+        color: #166534;
+      }
+    }
+
+    // Toast de Erro (vermelho)
+    &.p-toast-message-error {
+      background-color: #fef2f2 !important;
+      border-left: 4px solid #ef4444;
+      color: #991b1b;
+      
+      .p-toast-icon-close {
+        color: #ef4444;
+      }
+      
+      .p-toast-summary {
+        color: #991b1b;
+      }
+      
+      .p-toast-detail {
+        color: #991b1b;
+      }
+    }
+
+    // Toast de Aviso (amarelo/laranja)
+    &.p-toast-message-warn {
+      background-color: #fffbeb !important;
+      border-left: 4px solid #f59e0b;
+      color: #92400e;
+      
+      .p-toast-icon-close {
+        color: #f59e0b;
+      }
+      
+      .p-toast-summary {
+        color: #92400e;
+      }
+      
+      .p-toast-detail {
+        color: #92400e;
+      }
+    }
+
+    // Toast de Informação (azul)
+    &.p-toast-message-info {
+      background-color: #eff6ff !important;
+      border-left: 4px solid #3b82f6;
+      color: #1e40af;
+      
+      .p-toast-icon-close {
+        color: #3b82f6;
+      }
+      
+      .p-toast-summary {
+        color: #1e40af;
+      }
+      
+      .p-toast-detail {
+        color: #1e40af;
+      }
+    }
+  }
+}
+
